@@ -26,6 +26,10 @@
     
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     
+     <script src="js/ContextMenu/jquery.contextMenu.js" type="text/javascript"></script>
+     <link href="js/ContextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
+
+    
     <script src="stable/islandora_image_annotation_init.js" type="text/javascript"></script>
     <script src="stable/sc_ui.js" type="text/javascript"></script>
     <script src="stable/sc_utils.js" type="text/javascript"></script>

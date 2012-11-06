@@ -343,6 +343,70 @@ function maybeResize() {
   }
 }
 
+$(function(){
+    $.contextMenu({
+      selector: '.comment_title',
+      callback: function(key, options) {
+     
+        var urn = $(this).attr('id');
+        urn = urn.substring(5,100);
+        var title = $(this).text().substring(2,100);
+        title = title.trim();
+
+        var comment_text = $(this).next('.comment_text');
+        var anno_type = comment_text.find('.comment_type').text();
+   
+        if(key == 'delete'){
+          if (confirm("Permananently Delete Annotation '" + title + "'")) {
+            pb_deleteAnno(urn);
+          }
+       
+        }
+
+        if(key == 'edit'){
+          $(this).addClass('annotation-opened').next().show();
+          var annotation = comment_text.find('.comment_content').text();
+          var pm = $(this).find('.comment_showhide');
+          if (pm.text() == '+ ') {
+            pm.empty().append('- ');
+            console.log(this);
+            var id = $(this).attr('id').substring(5,100);
+            var canvas = $(this).attr('canvas');
+            paint_commentAnnoTargets(this, canvas, id);
+          }
+          startEditting(title, annotation, anno_type, urn)
+        }
+      },
+      items: {
+        "edit": {
+          name: "Edit",
+          icon: "edit",
+          accesskey: "e"
+        },
+        "delete": {
+          name: "Delete annotation",
+          icon: "delete"
+        }
+
+      }
+    });
+  });
+
+  $(function() {
+    var availableTypes = [
+    "Textual Notes",
+    "Explanatory Notes",
+    "Marginalia",
+    "Speculative"
+    ];
+    $( "#anno_classification" ).autocomplete({
+      source: availableTypes
+    });
+  });
+
+
+
+
 
 // Let's start it up!
 

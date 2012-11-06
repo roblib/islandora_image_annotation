@@ -177,9 +177,9 @@ function islandora_shared_get_annotation($pid) {
  * @param urn $urn
  */
 function islandora_delete_annotation($pid, $urn) {
-  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+ // module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid_to_delete = islandora_canvas_get_pid_from_urn($urn);
-  $item = islandora_object_load($pid);
+  $item = islandora_object_load($pid_to_delete);
   $item->repository->purgeObject($item->id);
 }
 
@@ -249,12 +249,16 @@ function build_annotationList($pid) {
  * @return PID
  */
 function islandora_canvas_get_pid_from_urn($urn) {
-  $solr = variable_get('islandora_solr_search_block_url', 'http://localhost:8080/solr');
-  $urn = str_replace(':', '\:', $urn);
-  $url = "http://$solr/select?indent=on&version=2.2&q=annotation_urn%3A$urn&fq=&start=0&rows=10&fl=PID&qt=standard&wt=json&explainOther=&hl.fl=";
-  $results = json_decode(file_get_contents($url), TRUE);
-  $annotation_pid = $results['response']['docs'][0]['PID'];
-  return $annotation_pid;
+  global $user;
+  module_load_include('inc', 'islandora', 'includes/tuque');
+  $connection= new IslandoraTuque($user);
+  $query = "select \$id  from <#ri> where \$id <http://islandora.ca/ontology/relsext#hasURN> \$urn
+and \$urn <mulgara:is> 'urn:uuid:$urn'";
+  
+  $objects = $connection->repository->ri->itqlQuery($query);
+  $pid = $objects[0]['id']['value'];
+  
+  return $pid;
 }
 
 /**

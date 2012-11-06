@@ -1,9 +1,11 @@
+
+
 // XXX Need author info in annotations
 // Plus other XXXs (!)
 
 // Raphael overwrites CSS with defaults :(
 var outsideStyle = {
-  fill: '#FFBBFF',
+  fill: '#fff',
   opacity: 0.7,
   'stroke-width': 2,
   stroke: 'black'
@@ -28,6 +30,7 @@ function maybe_config_create_annotation() {
   $('#cancelAnno').click(closeAndEndAnnotating);
   $('#saveAnno').click(saveAndEndAnnotating);
 
+
   $('.annoShape').click(function() {
     var typ = $(this).attr('id').substr(10,5);
     topinfo['svgAnnoShape'] = typ;
@@ -49,13 +52,13 @@ function startAnnotating() {
   if ($('#create_annotation').text() == 'Annotating') {
     return;
   }
-	
+  $('#saveAnno').html('<span class="ui-button-text">Save</span>');
   $('#create_annotation').css({
     color:'#808080'
   });
   $('#create_annotation').empty().append('Annotating');
   $('#create_annotation_box').show();
-  $('#create_annotation_box').offset({
+  $('#create_annotation_box').position({
     top:200,
     left:35
   });
@@ -66,8 +69,32 @@ function startAnnotating() {
   });
 }
 
+function startEditting(title, annotation, annoType, urn) {
+
+  if ($('#create_annotation').text() == 'Annotating') {
+    return;
+  }
+
+  $('#create_annotation').css({
+    color:'#808080'
+  });
+  $('#create_annotation').empty().append('Annotating');
+  $('#create_annotation_box').show();
+  $('#create_annotation_box').position({
+    top:200,
+    left:35
+  });
+  $('#anno_title').val(title);
+  $('#anno_text').val(annotation);
+  $('#anno_classification').val(annoType);
+  $('#saveAnno').html('<span class="ui-button-text">Update Annotation</span>');
+  $('#saveAnno').attr('urn', urn);
+  $('#canvases .canvas').each(function() {
+    var cnv = $(this).attr('canvas');
+    initForCreate(cnv);
+  });
+}
 function saveAndEndAnnotating() {
-	
   var okay = saveAnnotation();
   if (okay) {
     closeAndEndAnnotating();
@@ -91,6 +118,10 @@ function closeAndEndAnnotating() {
   $('#anno_text').val('');
   $('#anno_aboutCanvas').prop('checked', false);
   $('#anno_isResource').prop('checked', false);
+  $('#annotation_tab').tabs('select', 0);
+  var tabs = $('#tabs').tabs();
+  tabs.tabs('select', 3);
+
     
 }
 	
@@ -131,15 +162,17 @@ function destroyAll(canvas) {
   if ( topinfo['raphaels']['comment'][canvas]){
     var r = topinfo['raphaels']['comment'][canvas];
     var bg = r.annotateRect;
-    for (var x in bg.myShapes) {
-      var sh = bg.myShapes[x];
-      if (sh.set != undefined) {
-        sh.set.remove();
-      } else {
-        sh.remove();
-      }
-    };
-    bg.remove();
+    if(bg){
+      for (var x in bg.myShapes) {
+        var sh = bg.myShapes[x];
+        if (sh.set != undefined) {
+          sh.set.remove();
+        } else {
+          sh.remove();
+        }
+      };
+      bg.remove();
+    }
     $(r.wrapperElem).remove();
     $(r).remove();
   }
@@ -148,24 +181,20 @@ function destroyAll(canvas) {
 }
 
 function saveAnnotation() {
-  // Basic Sanity Checks
+  // Basic Sanity Check
   var title = $('#anno_title').val();
   var content = $('#anno_text').val();
-  var typ = $('#anno_type :selected')[0].value;
-  var isResc = $('#anno_isResource').prop('checked');
-  var tgtsCanvas = $('#anno_aboutCanvas').prop('checked');
-	
+  var annoType = $('#anno_classification').val();
+  if($('#saveAnno').text() == 'Update Annotation'){
+    urn = $('#saveAnno').attr('urn');
+    pb_update_annotation(urn, title, annoType, content);
+    return;
+  }
+
   if (!content || (!title && typ == 'comment')) {
     alert('An annotation needs both title and content');
     return 0;
-  } else if (isResc && content.substr(0,4) != 'http') {
-    // check content is vaguely like a URI
-    alert('The content of the annotation must be an HTTP uri if "Text is Link" is selected.');
-    return 0;
-  } else if (!isResc && (typ == 'image' || typ == 'audio')) {
-    alert('Image or Audio annotations must have the "Text is URL" box checked');
-    return 0;
-  }
+  } 
 	
   // Create
   var rinfo = create_rdfAnno();
@@ -173,22 +202,20 @@ function saveAnnotation() {
   var tgt = rinfo[1];
 	
   if (tgt == null) {
-    alert('You must either check "About Canvas" or draw a shape around the target.');
+    alert('You must draw a shape around the target.');
     return 0;
   }
 	
-  var which = $('#create_body input[name="blog_radio"]:radio:checked').attr('id');
+
   // Save
-  if (which == 'pb_pastebin') {
-    var data = $(rdfa).rdf().databank.dump({
-      format:'text/turtle',
-      serialize:true
-    });
-    // var data = $(rdfa).rdf().databank.dump({format:'application/rdf+xml',serialize:true});
-    pb_postData(tgt, rdfa);
-  } else {
-    postToBlog(title, rdfa, typ);
-  }
+  var data = $(rdfa).rdf().databank.dump({
+    format:'text/turtle',
+    serialize:true
+  });
+  // var data = $(rdfa).rdf().databank.dump({format:'application/rdf+xml',serialize:true});
+  var type = $('#anno_classification').val();
+  pb_postData(tgt, rdfa, type);
+
   return 1;
 }
 
@@ -257,6 +284,10 @@ function create_rdfAnno() {
   var title = $('#anno_title').val();
   if (title != '') {
     rdfa += '<span property="dc:title" content="' + title + '"></span>';
+  }
+  var type = $('#anno_classification').val();
+  if (title != '') {
+    rdfa += '<span property="dc:type" content="' + type + '"></span>';
   }
     
   try {

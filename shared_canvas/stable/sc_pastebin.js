@@ -65,8 +65,6 @@ function pb_getPaste(pid) {
   });
 }
 
-// unimplemented.
-
 function pb_deleteAnno(urn) {
 
   var selector = '#anno_'+urn;
@@ -83,5 +81,37 @@ function pb_deleteAnno(urn) {
     error: function(data,status,xhr) {
       alert('Failed to delete annotation')
     }
+  });
+}
+
+function pb_update_annotation(urn, title,annoType, content){
+  $.ajax({
+    type:'POST',
+    url:emic_canvas_params.islandora_update_annotation,
+    data: {
+      urn:urn,
+      title:title,
+      annoType:annoType,
+      content:content
+    },
+    success: function(data,status,xhr) {
+      $('#create_annotation_box').hide();
+      var selector = '#anno_'+urn;
+      var text = $(selector).text().trim().substring(2,100);
+      old_title = $(selector).html();
+      new_title = old_title.replace(text, title);
+      $(selector).html(new_title);
+
+      $(selector).next('.comment_text').find('.comment_type').text(annoType);
+      $(selector).next('.comment_text').find('.comment_content').text(content);
+     
+    },
+    error: function(data,status,xhr) {
+      alert('Failed to update annotation')
+    }
+  });
+  $('#create_annotation').empty().append('Annotate');
+  $('#create_annotation').css({
+    color:'#000000'
   });
 }
