@@ -116,23 +116,18 @@ function islandora_shared_transform_annotationList($xml_in, $input_type) {
 }
 
 /**
- * Gets individual annotation urns from solr
+ * Gets individual annotation pids from resource index
  * called with emic/get_urns
  * @global url $base_url
- * @param <type> $pid
+ * @param array $pids
  */
 function islandora_shared_get_annotation_pids($pid) {
   $query = "select \$id from <#ri> where \$id <http://islandora.ca/ontology/relsext#targets> <info:fedora/$pid";
   
   $item = islandora_object_load($pid);
-  //get($predicate_uri = NULL, $predicate = NULL, $object = NULL, $literal = FALSE)
+  
   $objects = $item->repository->ri->itqlQuery($query);
-  //$pid = str_replace(':', '\:', $pid);
-  //$solr = variable_get('islandora_solr_search_block_url', 'http://localhost:8080/solr');
-
-  //$url = "http://$solr/select?indent=on&version=2.2&q=constrains_canvas%3A$pid&fq=&start=0&rows=10&fl=annotation_urn&qt=standard&wt=json&explainOther=&hl.fl=";
-  //$results = json_decode(file_get_contents($url), TRUE);
-  //$candidates = $results['response']['docs'];
+ 
   foreach ($objects as $object) {
     $pids[] = $object['id']['value'];
   }
@@ -144,7 +139,7 @@ function islandora_shared_get_annotation_pids($pid) {
  * Retrieves details of individual annotation from datastream
  * @global url $base_url
  * @param string $pid
- * @param urn $urn
+ * 
  * @return IslandoraRdfBuilder
  */
 function islandora_get_annotation_data($pid) {
@@ -206,7 +201,7 @@ function islandora_save_updated_annotations($pid, $rdf) {
   //  mkdir($file_path, 0777, TRUE);
   //}
   //file_put_contents($file, $updated_annotationList);
-  $item->add_or_modify_by_reference("$base_url/$file", 'AnnotationList', "AnnotationList", 'text/plain', FALSE, 'Modified by Islandora API');
+  //$item->add_or_modify_by_reference("$base_url/$file", 'AnnotationList', "AnnotationList", 'text/plain', FALSE, 'Modified by Islandora API');
   $item['AnnotationList']->content = $updated_annotationList;
   //file_delete("$file");
   //rmdir($file_path);
