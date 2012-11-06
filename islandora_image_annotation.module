@@ -125,6 +125,9 @@ function islandora_image_annotation_theme($existing, $type, $theme, $path) {
       'template' => 'theme/islandora-image-annotation',
       'variables' => array('islandora_objects' => NULL),
     ),
+    'islandora_annotation_table' => array(
+      'render element' => 'form',
+    ),
   );
 }
 
@@ -148,7 +151,7 @@ function islandora_image_annotation_preprocess_islandora_image_annotation_view(&
   $src = "$base_url/$path/shared_canvas/index.php?PID=$pid";
   $variables['islandora_image_annotation_src'] = $src;
   $variables['islandora_image_annotation_pid'] = $pid;
-  
+
   drupal_add_js($path . '/shared_canvas/js/window_behaviours.js');
 
   // add css
