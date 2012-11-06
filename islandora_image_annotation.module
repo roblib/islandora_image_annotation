@@ -61,8 +61,14 @@ function islandora_image_annotation_menu() {
     'access arguments' => array(ISLANDORA_IMAGE_ANNOTATION_VIEW),
     'file' => 'includes/islandora_image_annotation_build_streams.inc',
   );
+  $items['emic/update_annotation'] = array(
+    'page callback' => 'emic_canvas_update_annotation',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array(ISLANDORA_IMAGE_ANNOTATION_CREATE),
+    'file' => 'includes/islandora_image_annotation_build_streams.inc',
+  );
 
-  $items['islandora/object/%islandora_object/view/annoation'] = array(
+  $items['islandora/object/%islandora_object/view/annotation'] = array(
     'title' => 'Image Annotation',
     'page callback' => 'islandora_image_annotation_view',
     'page arguments' => array(2),
@@ -148,7 +154,7 @@ function islandora_image_annotation_preprocess_islandora_image_annotation_view(&
   $src = "$base_url/$path/shared_canvas/index.php?PID=$pid";
   $variables['islandora_image_annotation_src'] = $src;
   $variables['islandora_image_annotation_pid'] = $pid;
-  
+
   drupal_add_js($path . '/shared_canvas/js/window_behaviours.js');
 
   // add css

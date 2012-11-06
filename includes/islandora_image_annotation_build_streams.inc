@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Builds initial suite of xml's for Shared Canvas installation
  *
@@ -8,12 +9,15 @@
  *
  */
 function build_manifest($pid) {
+  $dsid = 'OBJ';
   global $base_url;
-  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-  $item = new Fedora_Item($pid);
-  $title = $item->objectProfile->objLabel;
+  //module_load_include('inc', 'islandora', 'api/fedora_item');
+  //$item = new Fedora_Item($pid);
+  $item = islandora_object_load($pid);
+  
+  $title = $item->label;
   $file_array = array();
-  $doc_url = "$base_url/fedora/repository/$pid";
+  $doc_url = "$base_url/islandora/object/$pid/datastream/$dsid/view/";
   //xml datastreams used by Shared Canvas must be echoed though ajax.
   $doc_path_url = "$base_url/emic/serve/$pid";
   $dimensions = get_height_and_width($pid);
@@ -21,7 +25,7 @@ function build_manifest($pid) {
   $height = $dimensions['height'];
   $width = $dimensions['width'];
   $file_array['Manifest'] = get_manifest($doc_url, $doc_path_url);
-  $file_array['ImageAnnotations'] = get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title, $pid);
+  $file_array['ImageAnnotations'] = get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title);
   $file_array['NormalSequence'] = get_normal_sequence($doc_url, $doc_path_url, $pid, $height, $width);
   $file_array['AnnotationList'] = get_annotationList($doc_url, $doc_path_url);
   $flat_pid = str_replace(':', '_', $pid);
@@ -30,9 +34,10 @@ function build_manifest($pid) {
     mkdir($file_path, 0777, TRUE);
   }
   foreach ($file_array as $name => $content) {
-    file_put_contents("$file_path/$name.xml", $content);
-    $item->add_or_modify_by_reference("$base_url/$file_path/$name.xml", $name, $name, 'text/plain', FALSE, 'Modified by Islandora API');
-    file_delete("$file_path/$name.xml");
+    //file_put_contents("$file_path/$name.xml", $content);
+    //$item->add_or_modify_by_reference("$base_url/$file_path/$name.xml", $name, $name, 'text/plain', FALSE, 'Modified by Islandora API');
+    $item["$name"]->content=$content;
+    //file_delete("$file_path/$name.xml");
   }
   rmdir($file_path);
   rmdir(file_directory_path() . "/$flat_pid");
@@ -166,7 +171,7 @@ function get_normal_sequence($doc_url, $doc_path_url, $pid, $height, $width) {
  * @return string
  *
  */
-function get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title, $pid) {
+function get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title) {
   module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_rdf_builder');
   $timestamp = date(DATE_W3C);
   $rdf = new IslandoraRdfBuilder();
@@ -215,9 +220,8 @@ function get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title, 
   $children[] = $rdf->build_child('foaf:mbox', null, "info@islandora.ca");
   $children[] = $rdf->build_child('rdf:type', array('rdf:resource' => 'http://purl.org/dc/terms/Agent'));
   $rdf->addDescriptionNode($name, $children);
-  module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_image_annotation.utils');
-  $dsid = islandora_image_annotation_get_dsid($pid);
-  $name = "$doc_url/datastream/$dsid";
+
+  $name = "$doc_url/JPEG";
   $children = array();
   $children[] = $rdf->build_child('exif:width', array('rdf:datatype' => 'http://www.w3.org/2001/XMLSchema#integer'), $height);
   $children[] = $rdf->build_child('exif:height', array('rdf:datatype' => "http://www.w3.org/2001/XMLSchema#integer"), $width);
@@ -236,7 +240,7 @@ function get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title, 
   $name = "$option_uuid";
   $children = array();
   $children[] = $rdf->build_child('rdf:type', array('rdf:resource' => 'http://dms.stanford.edu/ns/ImageChoice'));
-  $children[] = $rdf->build_child('dms:option', array('rdf:resource' => "$doc_url/datastream/$dsid"));
+  $children[] = $rdf->build_child('dms:option', array('rdf:resource' => "$doc_url/JPEG"));
   $rdf->addDescriptionNode($name, $children);
 
   return $rdf->printRDF();
@@ -271,7 +275,6 @@ function get_annotationList($doc_url, $doc_path_url) {
   $name = "$doc_path_url/AnnotationList/AnnotationList.xml";
   $children = array();
   $children[] = $rdf->build_child('ore:describes', array('rdf:resource' => "$doc_url/AnnotationList"));
-//  $children[] = $rdf->build_child('dcterms:creator', array('rdf:resource' => "Emic Shared Canvas"));
   $children[] = $rdf->build_child('rdf:type', array('rdf:resource' => ""));
   $children[] = $rdf->build_child('dc:format', null, 'application/rdf+xml');
   $children[] = $rdf->build_child('dcterms:modified', null, "$timestamp");
@@ -315,7 +318,8 @@ function get_height_and_width($pid) {
  */
 function emic_serve($pid, $stream) {
   global $base_url;
-  $doc_url = "$base_url/islandora/object/$pid";
+  $dsid = 'OBJ';
+  $doc_url = "$base_url/islandora/object/$pid/datastream/$dsid/view";
   $doc_path_url = "$base_url/emic/serve/$pid";
 
   if ($stream == 'Manifest') {
@@ -334,7 +338,7 @@ function emic_serve($pid, $stream) {
     return;
   }
   if ($stream == 'ImageAnnotations') {
-    $imageAnnotations = get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title, $pid);
+    $imageAnnotations = get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title);
     echo $imageAnnotations;
     return;
   }
