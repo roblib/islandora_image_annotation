@@ -316,7 +316,7 @@ function get_height_and_width($pid) {
  * @param string $pid
  * @param string $stream
  */
-function emic_serve($pid, $stream) {
+function islandora_serve($pid, $stream) {
   global $base_url;
   $dsid = 'OBJ';
   $doc_url = "$base_url/islandora/object/$pid/datastream/$dsid/view";

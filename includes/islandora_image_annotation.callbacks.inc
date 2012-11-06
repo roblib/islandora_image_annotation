@@ -46,7 +46,7 @@ function islandora_add_annotation($pid) {
   module_load_include('inc', 'emic_canvas', 'islandora_rdf_builder');
   module_load_include('inc', 'emic_canvas', 'build_sharedcanvas_streams');
   module_load_include('inc', 'islandora', 'includes/islandora.ingest');
-  $annotation_xml = emic_shared_transform_annotationList(urldecode($_POST['data']), 'html');
+  $annotation_xml = islandora_shared_transform_annotationList(urldecode($_POST['data']), 'html');
   $type = $_POST['type'];
   if (!$type) {
     $type = 'unclassified';
@@ -86,7 +86,7 @@ function islandora_add_annotation($pid) {
  * @param string $xml_in
  * @return string
  */
-function emic_shared_transform_annotationList($xml_in, $input_type) {
+function islandora_shared_transform_annotationList($xml_in, $input_type) {
 
   if ($xml_in == NULL || strlen($xml_in) < 5) {
     return " ";
@@ -121,18 +121,22 @@ function emic_shared_transform_annotationList($xml_in, $input_type) {
  * @global url $base_url
  * @param <type> $pid
  */
-function islandora_shared_get_annotation_urns($pid) {
+function islandora_shared_get_annotation_pids($pid) {
+  $query = "select \$id from <#ri> where \$id <http://islandora.ca/ontology/relsext#targets> <info:fedora/$pid";
+  
+  $item = islandora_object_load($pid);
+  //get($predicate_uri = NULL, $predicate = NULL, $object = NULL, $literal = FALSE)
+  $objects = $item->repository->ri->itqlQuery($query);
+  //$pid = str_replace(':', '\:', $pid);
+  //$solr = variable_get('islandora_solr_search_block_url', 'http://localhost:8080/solr');
 
-  $pid = str_replace(':', '\:', $pid);
-  $solr = variable_get('islandora_solr_search_block_url', 'http://localhost:8080/solr');
-
-  $url = "http://$solr/select?indent=on&version=2.2&q=constrains_canvas%3A$pid&fq=&start=0&rows=10&fl=annotation_urn&qt=standard&wt=json&explainOther=&hl.fl=";
-  $results = json_decode(file_get_contents($url), TRUE);
-  $candidates = $results['response']['docs'];
-  foreach ($candidates as $candidate) {
-    $urns[] = $candidate['annotation_urn'][0];
+  //$url = "http://$solr/select?indent=on&version=2.2&q=constrains_canvas%3A$pid&fq=&start=0&rows=10&fl=annotation_urn&qt=standard&wt=json&explainOther=&hl.fl=";
+  //$results = json_decode(file_get_contents($url), TRUE);
+  //$candidates = $results['response']['docs'];
+  foreach ($objects as $object) {
+    $pids[] = $object['id']['value'];
   }
-  $json = json_encode($urns);
+  $json = json_encode($pids);
   echo $json;
 }
 
@@ -143,15 +147,14 @@ function islandora_shared_get_annotation_urns($pid) {
  * @param urn $urn
  * @return IslandoraRdfBuilder
  */
-function get_annotation_data($urn) {
+function islandora_get_annotation_data($pid) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   global $base_url;
-  $annotation_pid = emic_canvas_get_pid_from_urn($urn);
-  $item = new Fedora_Item($annotation_pid);
-  if (!$item->exists()) {
+  $item = islandora_object_load($pid);
+  if (!isset($item)) {
     return;
   }
-  $annotation_xml = $item->get_datastream_dissemination('OAC');
+  $annotation_xml = $item['OAC']->content;
   return $annotation_xml;
 }
 
@@ -162,10 +165,10 @@ function get_annotation_data($urn) {
  * @param string $pid
  * @param urn $urn
  */
-function islandora_shared_get_annotation($urn) {
+function islandora_shared_get_annotation($pid) {
 
-  $xml = get_annotation_data($urn);
-  $results = emic_shared_transform_annotationList($xml, 'rdf');
+  $xml = islandora_get_annotation_data($pid);
+  $results = islandora_shared_transform_annotationList($xml, 'rdf');
   $results = preg_replace('/<\?xml.*?\?>/', '', $results);
   $results = preg_replace('/<!DOCTYPE.*?>/', '', $results);
 
@@ -180,7 +183,7 @@ function islandora_shared_get_annotation($urn) {
  */
 function islandora_delete_annotation($pid, $urn) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-  $pid_to_delete = emic_canvas_get_pid_from_urn($urn);
+  $pid_to_delete = islandora_canvas_get_pid_from_urn($urn);
   $item = islandora_object_load($pid);
   $item->repository->purgeObject($item->id);
 }
@@ -250,7 +253,7 @@ function build_annotationList($pid) {
  * @param URN $urn
  * @return PID
  */
-function emic_canvas_get_pid_from_urn($urn) {
+function islandora_canvas_get_pid_from_urn($urn) {
   $solr = variable_get('islandora_solr_search_block_url', 'http://localhost:8080/solr');
   $urn = str_replace(':', '\:', $urn);
   $url = "http://$solr/select?indent=on&version=2.2&q=annotation_urn%3A$urn&fq=&start=0&rows=10&fl=PID&qt=standard&wt=json&explainOther=&hl.fl=";
@@ -263,7 +266,7 @@ function emic_canvas_get_pid_from_urn($urn) {
  * Updates existing annotation
  * Called by Shared Canvas with ajax
  */
-function emic_canvas_update_annotation() {
+function islandora_canvas_update_annotation() {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $changed = FALSE;
   //retrieve variables from POST
@@ -271,7 +274,7 @@ function emic_canvas_update_annotation() {
   $title = urldecode($_POST['title']);
   $content = urldecode($_POST['content']);
   $type = urldecode($_POST['t']);
-  $pid = emic_canvas_get_pid_from_urn($urn);
+  $pid = islandora_canvas_get_pid_from_urn($urn);
 
   $item = islandora_object_load($pid);
   $annotation = $item->get_datastream_dissemination('OAC');
