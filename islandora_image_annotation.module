@@ -131,6 +131,9 @@ function islandora_image_annotation_theme($existing, $type, $theme, $path) {
       'template' => 'theme/islandora-image-annotation',
       'variables' => array('islandora_objects' => NULL),
     ),
+    'islandora_annotation_table' => array(
+      'render element' => 'form',
+    ),
   );
 }
 
