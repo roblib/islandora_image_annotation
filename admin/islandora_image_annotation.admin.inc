@@ -7,6 +7,7 @@ function islandora_image_annotation_admin() {
   $coptions = islandora_annotation_get_content_models();
   $selected = variable_get('islandora_annotation_mappings', NULL);
   $enforced = variable_get('islandora_annotation_enforce_taxonomy', 0);
+  $optimized = variable_get('islandora_annotation_optimized', 1);
   $chosen = array_keys($selected);
   $pids = array_keys($coptions);
   $alink_options = array(
@@ -72,7 +73,7 @@ function islandora_image_annotation_admin() {
       '#options' => $taxes,
       '#default_value' => isset($selected[$pid]['TAX']) ? $selected[$pid]['TAX'] : '',
     );
-    
+
     $form['content_model_wrapper']['annotation_table']['enabled'] = array(
       '#type' => 'checkboxes',
       '#options' => $options,
@@ -89,6 +90,12 @@ function islandora_image_annotation_admin() {
     '#default_value' => $enforced,
   );
 
+  $form['annotation_colors'] = array(
+    '#type' => 'radios',
+    '#title' => t('Annotation Colors'),
+    '#options' => array(0 => t('User defined (user selects when creating annotation)'), 1 => t("Optimized (Colors are selected randomly.  Recommended for overlapping annotations")),
+    '#default_value' => $optimized,
+  );
   $form['actions'] = array(
     '#type' => 'actions'
   );
@@ -113,6 +120,6 @@ function islandora_image_annotation_admin_submit($form, &$form_state) {
   }
   variable_set('islandora_annotation_mappings', $content_model_mappings);
   variable_set('islandora_annotation_enforce_taxonomy', $form_state['values']['annotation_categories']);
-  
+  variable_set('islandora_annotation_optimized', $form_state['values']['annotation_colors']);
 }
 
