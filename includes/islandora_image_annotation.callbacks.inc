@@ -61,13 +61,13 @@ function islandora_add_annotation($pid) {
   }
   $namespace = substr($pid, 0, strpos($pid, ":"));
   $item = islandora_ingest_get_object('islandora:OACCModel', $pid, 'isMemberOf', $namespace);
-  $item->label = (string)$labels[0];
+  $item->label = (string) $labels[0];
   //relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:imageCModel');
   $item->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:OACCModel');
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targetedBy', $user->name, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targets', $pid);
   $item->relationships->add('http://islandora.ca/ontology/relsext#', 'isAnnotationType', $type, TRUE);
-  $item->relationships->add(ISLANDORA_RELS_EXT_URI,'hasURN', $urn, TRUE);
+  $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasURN', $urn, TRUE);
   //$item->add_datastream_from_string($annotation_xml, 'OAC', 'OAC', 'text/xml', 'X');
   $new_ds = $item->constructDatastream('OAC', 'X');
   $new_ds->label = 'OAC';
@@ -123,11 +123,11 @@ function islandora_shared_transform_annotationList($xml_in, $input_type) {
  */
 function islandora_shared_get_annotation_pids($pid) {
   $query = "select \$id from <#ri> where \$id <http://islandora.ca/ontology/relsext#targets> <info:fedora/$pid";
-  
+
   $item = islandora_object_load($pid);
-  
+
   $objects = $item->repository->ri->itqlQuery($query);
- 
+
   foreach ($objects as $object) {
     $pids[] = $object['id']['value'];
   }
@@ -177,7 +177,7 @@ function islandora_shared_get_annotation($pid) {
  * @param urn $urn
  */
 function islandora_delete_annotation($pid, $urn) {
- // module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  // module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid_to_delete = islandora_canvas_get_pid_from_urn($urn);
   $item = islandora_object_load($pid_to_delete);
   $item->repository->purgeObject($item->id);
@@ -251,13 +251,13 @@ function build_annotationList($pid) {
 function islandora_canvas_get_pid_from_urn($urn) {
   global $user;
   module_load_include('inc', 'islandora', 'includes/tuque');
-  $connection= new IslandoraTuque($user);
+  $connection = new IslandoraTuque($user);
   $query = "select \$id  from <#ri> where \$id <http://islandora.ca/ontology/relsext#hasURN> \$urn
 and \$urn <mulgara:is> 'urn:uuid:$urn'";
-  
+
   $objects = $connection->repository->ri->itqlQuery($query);
   $pid = $objects[0]['id']['value'];
-  
+
   return $pid;
 }
 
@@ -272,17 +272,23 @@ function islandora_canvas_update_annotation() {
   $urn = urldecode($_POST['urn']);
   $title = urldecode($_POST['title']);
   $content = urldecode($_POST['content']);
-  $type = urldecode($_POST['t']);
+  $type = urldecode($_POST['annoType']);
   $pid = islandora_canvas_get_pid_from_urn($urn);
 
-  $item = islandora_object_load($pid);
-  $annotation = $item->get_datastream_dissemination('OAC');
+  $fedora_object = islandora_object_load($pid);
+  $annotation = $fedora_object['OAC']->content;
   $xml = simplexml_load_string($annotation);
 
   // identify Title element and replace content
   $title_node = $xml->xpath("//rdf:Description[@rdf:about = 'urn:uuid:$urn']/dc:title");
   if ($title_node[0][0] != $title) {
     $title_node[0][0] = $title;
+    $changed = TRUE;
+  }
+
+  $type_node = $xml->xpath("//rdf:Description[@rdf:about = 'urn:uuid:$urn']/dc:type");
+  if ($type_node[0][0] != $type) {
+    $type_node[0][0] = $type;
     $changed = TRUE;
   }
 
@@ -298,7 +304,6 @@ function islandora_canvas_update_annotation() {
 
   // persist updated annotation
   if ($changed) {
-    $item['OAC']->content = $xml->asXML();
-    //$item->modify_datastream($xml->asXML(), 'OAC', 'OAC', 'text/plain', FALSE);
+    $fedora_object['OAC']->content = $xml->asXML();
   }
 }

@@ -5,16 +5,19 @@ function init_pb() {
 
 }
 
-function pb_postData(title, data) {
-  data = escape(data);
+function pb_postData(title, data, type) {
+
+  data = encodeURI(data);
   $.ajax({
     type:'POST',
     url:emic_canvas_params.islandora_post_url,
     data: {
       title:title,
-      data:data
+      data:data,
+      type:type
     },
     success: function(data,status,xhr) {
+
       pb_getPaste(data);
     },
     error: function(data,status,xhr) {
@@ -26,7 +29,7 @@ function pb_postData(title, data) {
 function pb_getList() {
   $.ajax({
     type:'GET',
-               
+
     url: emic_canvas_params.get_annotation_list_url,
     success: function(data,status,xhr) {
 
@@ -34,36 +37,40 @@ function pb_getList() {
       if( l != null){
         for (var i=0,info;info=l[i];i++){
           var pid = info;
-				
-				
+
+
           $('#canvases .canvas').each(function() {
             var cnv = $(this).attr('canvas');
-					
+
             pb_getPaste(pid);
-					
+
           });
         }
       }
     },
     error: function(data,status,xhr) {
-      alert('Failed to retrieve List')
+    // alert('Failed to retrieve List')
     }
   });
 }
 
-function pb_getPaste(pid) {
-  
+function pb_getPaste(urn) {
+
   $.ajax({
     type:'GET',
-    url: emic_canvas_params.islandora_get_annotation +pid,
+    url: emic_canvas_params.islandora_get_annotation + urn,
     success: function(data,status,xhr) {
+
       load_commentAnno(data);
     },
     error: function(data,status,xhr) {
       console.dir(data)
     }
   });
+
 }
+
+
 
 function pb_deleteAnno(urn) {
 
@@ -79,10 +86,11 @@ function pb_deleteAnno(urn) {
       $(classSelector).remove();
     },
     error: function(data,status,xhr) {
-      alert('Failed to delete annotation')
+    //   alert('Failed to delete annotation')
     }
   });
 }
+
 
 function pb_update_annotation(urn, title,annoType, content){
   $.ajax({
@@ -104,7 +112,7 @@ function pb_update_annotation(urn, title,annoType, content){
 
       $(selector).next('.comment_text').find('.comment_type').text(annoType);
       $(selector).next('.comment_text').find('.comment_content').text(content);
-     
+
     },
     error: function(data,status,xhr) {
       alert('Failed to update annotation')
