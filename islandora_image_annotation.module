@@ -65,7 +65,7 @@ function islandora_image_annotation_menu() {
     'page callback' => 'islandora_canvas_update_annotation',
     'type' => MENU_CALLBACK,
     'access arguments' => array(ISLANDORA_IMAGE_ANNOTATION_CREATE),
-    'file' => 'includes/islandora_image_annotation_build_streams.inc',
+    'file' => 'includes/islandora_image_annotation.callbacks.inc',
   );
 
   $items['islandora/object/%islandora_object/view/annotation'] = array(

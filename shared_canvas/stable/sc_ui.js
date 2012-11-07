@@ -60,7 +60,7 @@ function populate_jumpMenu(qry) {
     }
     idxl.sort(function(a,b){
       return a-b
-      });
+    });
     for (var x=0,idx; idx=idxl[x];x++) {
       title = idxs[idx];
       jmp.append('<li><span onclick="jumpPage('+idx+')">' + title + '</span></li>')
@@ -146,28 +146,28 @@ function showPages() {
     'audio':{},
     'zone':{},
     'comment':{}
-};
-topinfo['paintedAnnos'] = [];
+  };
+  topinfo['paintedAnnos'] = [];
 
-// Reset URI to correct #fragment info
-topinfo['uriParams']['s'] = topinfo['current'];
-var hsh = makeUriHash();
-$(location).attr('hash',hsh);
+  // Reset URI to correct #fragment info
+  topinfo['uriParams']['s'] = topinfo['current'];
+  var hsh = makeUriHash();
+  $(location).attr('hash',hsh);
 
-// Initialize to first Canvas div
-topinfo['currentCanvas'] = 0;
-// Show canvases
-for (var x=0;x<topinfo['numCanvases'];x++) {
-  topinfo['currentCanvas'] = x;
-  showPage();
-  topinfo['current'] = topinfo['current'] + 1;
-}
+  // Initialize to first Canvas div
+  topinfo['currentCanvas'] = 0;
+  // Show canvases
+  for (var x=0;x<topinfo['numCanvases'];x++) {
+    topinfo['currentCanvas'] = x;
+    showPage();
+    topinfo['current'] = topinfo['current'] + 1;
+  }
 
-// Current is seq index for *first* canvas
-topinfo['current'] = topinfo['current'] - topinfo['numCanvases'];
-repositionCanvases();
+  // Current is seq index for *first* canvas
+  topinfo['current'] = topinfo['current'] - topinfo['numCanvases'];
+  repositionCanvases();
 
-ping_progressBar('finishReqs');
+  ping_progressBar('finishReqs');
 
 }
 
@@ -459,7 +459,7 @@ function paint_imageAnno(anno, canvasId) {
     // Display choice with best default
     anno.body.options.sort(function(a,b){
       return a.id > b.id ? 1 : -1
-      });
+    });
     if (img == null) {
       if (anno.body.defaultOpt != null) {
         img = anno.body.defaultOpt;
@@ -486,7 +486,7 @@ function paint_imageAnno(anno, canvasId) {
     $(".imgSelul li:even").addClass("alt");
     $('.imgSelRadio').click(function() {
       alert($(this).attr('id'))
-      })
+    })
     if ($('#check_view_imgSel').is(':checked')) {
       $('#imgSel').show();
     }
@@ -541,7 +541,7 @@ function paint_imageAnno(anno, canvasId) {
     var zprb = $('#zprb_'+canvasId);
     zprb.click(function() {
       show_zpr(imguri)
-      });
+    });
 
 
     if (!$('#check_view_zpr').is(':checked')) {
@@ -604,7 +604,7 @@ function paint_imageAnno(anno, canvasId) {
       img.offset({
         top:div.position().top - imgofftop,
         left:div.position().left-imgoffleft
-        });
+      });
       img.css('clip', clip);
     }
     img.height(imgh);
@@ -1062,7 +1062,7 @@ function on_audio_currentTime(e) {
   var relv = ct - start;
   l.progressbar({
     value: relv / durn * 100
-    });
+  });
   if (ct > end) {
     $(this).jPlayer('stop');
     $('.audio_button').attr('src', '/imgs/play.png')
@@ -1085,7 +1085,7 @@ function reorder_layers(e) {
   ids = [];
   $('#show_body').children().each(function() {
     ids.push($(this).attr('id'))
-    });
+  });
   // This is the overall order in which annotations should be ordered
   // li_audio, li_comment, ...  first is topmost in list
 
