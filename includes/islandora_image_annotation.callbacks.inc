@@ -75,10 +75,7 @@ function islandora_add_annotation($pid) {
   $new_ds->content = $annotation_xml;
   $item->ingestDatastream($new_ds);
   islandora_ingest_add_object($item);
-  sleep(1);
-  foreach ($parent->attributes('rdf', TRUE) as $key => $value) {
-    echo (string) $value;
-  }
+  echo $item->id;
 }
 
 /**
@@ -194,17 +191,8 @@ function islandora_save_updated_annotations($pid, $rdf) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $item = islandora_object_load($pid);
   $updated_annotationList = $rdf->printRDF();
-  //$flat_pid = str_replace(':', '_', $pid);
-  //$file_path = file_directory_path() . "/$flat_pid";
-  //$file = "$file_path/annotationList.xml";
-  //if (!is_dir($file_path)) {
-  //  mkdir($file_path, 0777, TRUE);
-  //}
-  //file_put_contents($file, $updated_annotationList);
-  //$item->add_or_modify_by_reference("$base_url/$file", 'AnnotationList', "AnnotationList", 'text/plain', FALSE, 'Modified by Islandora API');
-  $item['AnnotationList']->content = $updated_annotationList;
-  //file_delete("$file");
-  //rmdir($file_path);
+   $item['AnnotationList']->content = $updated_annotationList;
+  
 }
 
 function build_annotationList($pid) {
