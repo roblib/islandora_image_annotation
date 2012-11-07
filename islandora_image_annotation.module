@@ -109,7 +109,17 @@ function islandora_image_annotation_access($fedora_object) {
   }
 
   $models = $fedora_object->models;
-  $cmodel_list = islandora_image_annotation_islandora_get_types();
+  /*$models_from_annotation_admin = 
+  foreach ($models_from_annotation_admin as $allowed_model) {
+    in
+    if (isset($models_to_dsids[$model])) {
+      $tmp_dsid = $models_to_dsids[$model]['DSID'];
+      if (isset($item[$tmp_dsid])) {
+        $dsid = $tmp_dsid;
+      }
+    }
+  }*/
+  $cmodel_list = variable_get('islandora_annotation_mappings');
   foreach ($fedora_object->models as $model) {
     if (isset($cmodel_list[$model])) {
       return user_access(ISLANDORA_IMAGE_ANNOTATION_VIEW);
@@ -163,17 +173,3 @@ function islandora_image_annotation_preprocess_islandora_image_annotation_view(&
   // add css
   drupal_add_css($path . '/shared_canvas/css/window_behaviours.css');
 }
-
-/**
- * tells the main module what types of objects we support.  This is used to determine whether or not
- * this module should attempt to respond.
- * @return array 
- *   array of content model pids that this module supports
- */
-function islandora_image_annotation_islandora_get_types() {
-  $types = array();
-  $types['islandora:sp_basic_image'][ISLANDORA_VIEW_HOOK] = variable_get('islandora_basic_image_use_for_default_tab', TRUE);
-  //$types['islandora:sp_basic_image'][ISLANDORA_EDIT_HOOK] = FALSE;
-  return $types;
-}
-
