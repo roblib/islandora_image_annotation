@@ -109,16 +109,6 @@ function islandora_image_annotation_access($fedora_object) {
   }
 
   $models = $fedora_object->models;
-  /*$models_from_annotation_admin = 
-  foreach ($models_from_annotation_admin as $allowed_model) {
-    in
-    if (isset($models_to_dsids[$model])) {
-      $tmp_dsid = $models_to_dsids[$model]['DSID'];
-      if (isset($item[$tmp_dsid])) {
-        $dsid = $tmp_dsid;
-      }
-    }
-  }*/
   $cmodel_list = variable_get('islandora_annotation_mappings');
   foreach ($fedora_object->models as $model) {
     if (isset($cmodel_list[$model])) {
