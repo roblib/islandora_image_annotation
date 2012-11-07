@@ -333,7 +333,7 @@ function get_height_and_width($pid) {
  * @param string $pid
  * @param string $stream
  */
-function islandora_serve($pid, $stream) {
+function islandora_serve($pid, $stream, $width = null, $height = null) {
   global $base_url;
   module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_image_annotation.utils');
   $dsid = islandora_image_annotation_get_dsid_from_model($pid);
@@ -349,6 +349,11 @@ function islandora_serve($pid, $stream) {
   $dimensions = get_height_and_width($pid);
   $height = $dimensions['height'];
   $width = $dimensions['width'];
+   $height = $_POST['height'];
+   $width = $_POST['width'];
+   $height = 20;
+   $width = 10;
+
 
   if ($stream == 'NormalSequence') {
     $sequence = get_normal_sequence($doc_url, $doc_path_url, $pid, $height, $width);

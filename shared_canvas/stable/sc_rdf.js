@@ -13,7 +13,7 @@ function getRemForAggr(uri, qry) {
   // .where('?rem dc:format "text/turtle"')
   .each(function() {
     rem=this.rem.value.toString()
-    });
+  });
 
   // Then n3. XML parser seems faster now?!
   if (rem == '') {
@@ -24,7 +24,7 @@ function getRemForAggr(uri, qry) {
     //.where('?rem dc:format "text/turtle"')
     .each(function() {
       rem=this.rem.value.toString()
-      });
+    });
   }
 	
   if (rem == '') {
@@ -52,17 +52,20 @@ function extract_canvas_size(qry, uri) {
   var h = 0;
   var w = 0;
   var t = ''
+  var height = emic_canvas_params.height;
+  var width = emic_canvas_params.width;
   qry.where('<' + uri + '> exif:height ?height')
   .where('<' + uri + '> exif:width ?width')
   .optional('<' + uri + '> dc:title ?title')
   .each(function() {
     h = this.height.value;
     w = this.width.value;
+
     if (this.title != undefined) {
       t = this.title.value;
     }
   });
-  return [h, w, t]
+  return [height, width, t]
 }
 
 // Top level Manifest of other Aggregations of resources
@@ -179,7 +182,7 @@ function cb_process_manifest(qry, uri) {
   .where('?rng rdf:first ?f')
   .each(function() {
     ranges.push([this.title.value, this.f.value])
-    });
+  });
 
   topinfo['ranges'] = ranges
   topinfo['lists']['text'] = textAnnos;
@@ -203,7 +206,7 @@ function cb_process_manifest(qry, uri) {
       var ttl = this.title != undefined ? this.title.value : '';
       var desc = this.desc != undefined ? this.desc.value : '';
       st.push([this.seq.value, ttl, desc])
-      });
+    });
     show_seqSel(st);
   }
         
@@ -242,7 +245,7 @@ function cb_process_sequence(qry, uri) {
     }
   } catch (e) {
     alert(e)
-    }
+  }
 	
   if (top != null) {
     l = rdf_to_list(qry, top);
@@ -306,7 +309,7 @@ function cb_process_annoList(qry, uri) {
     qry.where('<' + uri + '> ore:describes ?seq')
     .each(function() {
       top = this.seq.value.toString()
-      });
+    });
     if (top != null) {
       var l = rdf_to_list(qry, top);
       zorder = {};

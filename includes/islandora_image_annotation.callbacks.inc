@@ -17,12 +17,13 @@ function islandora_canvas_setup($pid) {
   $cmodel = $rels[0]['object']['value'];
   $mappings = variable_get('islandora_annotation_mappings', array());
   $vid = $mappings[$cmodel]['TAX'];
+  $dsid = $mappings[$cmodel]['DSID'];
   $terms = taxonomy_get_tree($vid,0,1);
   $categories = array();
   foreach($terms as $term){
     $categories[] = $term->name;
   }
-
+  $image_url = "$base_url/islandora/object/$pid/datastream/$dsid";
   $title = $item->label;
   $pages = array();
   $pages[1] = $pid;
@@ -40,6 +41,7 @@ function islandora_canvas_setup($pid) {
   $results['pages'] = $pages;
   $results['no_edit'] = !user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE);
   $results['categories'] = $categories;
+  $results['image_url'] = $image_url;
   $json = json_encode($results);
   echo $json;
 }

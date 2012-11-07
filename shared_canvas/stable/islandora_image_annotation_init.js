@@ -191,129 +191,6 @@ function init_ui() {
 
   }
 
-  // Hide/Show current page's annos on check
-  $('#check_show_text').click(function() {
-    if (!$('#check_show_text').is(':checked')) {
-      $('.text_anno').hide();
-    } else {
-      $('.text_anno').show();
-    }
-  });
-
-  $('#check_show_audio').click(function() {
-    if (!$('#check_show_audio').is(':checked')) {
-      $('.audio_anno').hide();
-    } else {
-      $('.audio_anno').show();
-    }
-  });
-
-  $('#check_show_baseImg').click(function() {
-    if (!$('#check_show_baseImg').is(':checked')) {
-      $('.base_img').hide();
-      $('#imgSel').hide();
-    } else {
-      $('.base_img').show();
-      if ($('.imgSelRadio').length > 0 ) {
-        $('#imgSel').show();
-      }
-    }
-  });
-
-  $('#check_show_detailImg').click(function() {
-    if (!$('#check_show_detailImg').is(':checked')) {
-      $('.img_anno').hide();
-    } else {
-      $('.img_anno').show();
-    }
-  });
-
-  $('#check_show_comment').click(function() {
-    if (!$('#check_show_comment').is(':checked')) {
-      $('#comment_annos').hide();
-    } else {
-      if ($('.comment_title').length > 0 ) {
-        $('#comment_annos').show();
-      }
-    }
-  });
-
-  $('#check_view_imgSel').click(function() {
-    if (!$('#check_view_imgSel').is(':checked')) {
-      $('#imgSel').hide();
-    } else {
-      if ($('.imgSelRadio').length > 0) {
-        $('#imgSel').show();
-      }
-    }
-  });
-
-  $('#check_view_uri').click(function() {
-    if (!$('#check_view_uri').is(':checked')) {
-      $('.canvasUri').hide();
-    } else {
-      $('.canvasUri').show();
-    }
-  });
-
-  $('#check_view_zpr').click(function() {
-    if (!$('#check_view_zpr').is(':checked')) {
-      $('.zoomStart').hide();
-    } else {
-      $('.zoomStart').show();
-    }
-  });
-
-  // Make show menu sortable to manually tweak Z levels
-  $('#show_body').sortable({
-    tolerance:'pointer',
-    items:'.show_sort',
-    stop:reorder_layers
-  });
-
-  // Initialize audio player up front, even if not used
-  // Better than re-building every canvas
-
-
-  $("#slider_volume").slider({
-    value: 80,
-    orientation: "horizontal",
-    range: "min",
-    animate: true,
-    change: function(e, ui) {
-      var jp = $('#jquery_player_1');
-      var ratio = ui.value / 100;
-      try {
-        jp.jPlayer('volume', ratio);
-      } catch (e) {};
-    }
-  });
-
-  $('#slider_folios').slider({
-    value: 0,
-    orientation: "horizontal",
-    range: "min",
-    animate: true,
-    slide: function(e, ui) {
-      var nf = Math.max(1, Math.floor(ui.value / 100 * 16));
-      $('#viewNumCanvas').empty();
-      $('#viewNumCanvas').append(nf);
-    },
-    change: function(e, ui) {
-      var nf = Math.max(1, Math.floor(ui.value / 100 * 16));
-      if (topinfo['numCanvases'] != nf) {
-        topinfo['uriParams']['n'] = nf;
-        topinfo['numCanvases'] = nf;
-        var hsh = makeUriHash();
-        $(location).attr('hash',hsh);
-        initCanvas(topinfo['numCanvases']);
-        showPages();
-      }
-    }
-  });
-
-
-
   // Refresh Canvas if browser is resized
   // We're called as per move... so need wait till finished resizing
   $(window).resize(function() {
@@ -344,57 +221,52 @@ function maybeResize() {
 }
 
 $(function(){
-    $.contextMenu({
-      selector: '.comment_title',
-      callback: function(key, options) {
+  $.contextMenu({
+    selector: '.comment_title',
+    callback: function(key, options) {
      
-        var urn = $(this).attr('id');
-        urn = urn.substring(5,100);
-        var title = $(this).text().substring(2,100);
-        title = title.trim();
+      var urn = $(this).attr('id');
+      urn = urn.substring(5,100);
+      var title = $(this).text().substring(2,100);
+      title = title.trim();
 
-        var comment_text = $(this).next('.comment_text');
-        var anno_type = comment_text.find('.comment_type').text();
+      var comment_text = $(this).next('.comment_text');
+      var anno_type = comment_text.find('.comment_type').text();
    
-        if(key == 'delete'){
-          if (confirm("Permananently Delete Annotation '" + title + "'")) {
-            pb_deleteAnno(urn);
-          }
+      if(key == 'delete'){
+        if (confirm("Permananently Delete Annotation '" + title + "'")) {
+          pb_deleteAnno(urn);
+        }
        
-        }
-
-        if(key == 'edit'){
-          $(this).addClass('annotation-opened').next().show();
-          var annotation = comment_text.find('.comment_content').text();
-          var pm = $(this).find('.comment_showhide');
-          if (pm.text() == '+ ') {
-            pm.empty().append('- ');
-            var id = $(this).attr('id').substring(5,100);
-            var canvas = $(this).attr('canvas');
-            paint_commentAnnoTargets(this, canvas, id);
-          }
-          startEditting(title, annotation, anno_type, urn)
-        }
-      },
-      items: {
-        "edit": {
-          name: "Edit",
-          icon: "edit",
-          accesskey: "e"
-        },
-        "delete": {
-          name: "Delete annotation",
-          icon: "delete"
-        }
-
       }
-    });
+
+      if(key == 'edit'){
+        $(this).addClass('annotation-opened').next().show();
+        var annotation = comment_text.find('.comment_content').text();
+        var pm = $(this).find('.comment_showhide');
+        if (pm.text() == '+ ') {
+          pm.empty().append('- ');
+          var id = $(this).attr('id').substring(5,100);
+          var canvas = $(this).attr('canvas');
+          paint_commentAnnoTargets(this, canvas, id);
+        }
+        startEditting(title, annotation, anno_type, urn)
+      }
+    },
+    items: {
+      "edit": {
+        name: "Edit",
+        icon: "edit",
+        accesskey: "e"
+      },
+      "delete": {
+        name: "Delete annotation",
+        icon: "delete"
+      }
+
+    }
   });
-
-
-
-
-
+});
 
 
 // Let's start it up!
@@ -441,35 +313,23 @@ $(document).ready(function(){
   }
   opts.base = emic_canvas_params.object_base;
 
-  $(function() {
-    var availableTypes = [
-    "Textual Notes",
-    "Explanatory Notes",
-    "Marginalia",
-    "Speculative"
-    ];
-    $( "#anno_classification" ).autocomplete({
-      source: emic_canvas_params.categories
-    });
+ 
+  $( "#anno_classification" ).autocomplete({
+    source: emic_canvas_params.categories
   });
+ 
+  var img = new Image();
+  img.src = emic_canvas_params.image_url;
+  img.onload = function(){
+    emic_canvas_params.width = img.width;
+    emic_canvas_params.height = img.height;
+  }
 
-  // build and populate page choice dropdown
-  $('#canvas_page_selector').html('<select id="canvas_page_choose"></select>');
-  $.each(emic_canvas_params.pages, function(key, value){
-    $('#canvas_page_choose').append('<option  value="' + key + '">Page ' + (key + 1) + '</option>');
-  });  // build and populate page choice dropdown
-  $('#canvas_page_selector').html('<select id="canvas_page_choose"></select>');
-  $.each(emic_canvas_params.pages, function(key, value){
-    $('#canvas_page_choose').append('<option  value="' + key + '">Page ' + (key + 1) + '</option>');
-  });
 
  
   // RDF Initializationc
   var rdfbase = $.rdf(opts);
   topinfo['query'] = rdfbase;
-
-
-
 
   var l = $(location).attr('hash');
   var uriparams = {};
@@ -492,6 +352,7 @@ $(document).ready(function(){
     }
   }
   topinfo['uriParams'] = uriparams
+ 
 
   // Initialize UI
   init_ui();

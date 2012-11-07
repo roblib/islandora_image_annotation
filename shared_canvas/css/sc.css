@@ -381,3 +381,6 @@ A:link {
 	width: 50px;
 }
 
+.comment_type{
+  font-style:italic;
+}
