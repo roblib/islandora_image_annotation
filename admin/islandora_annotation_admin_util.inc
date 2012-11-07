@@ -127,7 +127,7 @@ function islandora_annotation_get_taxonomies() {
   $output = array(t('None') => 'none');
   if (!empty($taxonomies)) {
     foreach ($taxonomies as $tax) {
-      $output[$tax->name] = $tax->name;
+      $output[$tax->vid] = $tax->name;
     }
   }
   return $output;
