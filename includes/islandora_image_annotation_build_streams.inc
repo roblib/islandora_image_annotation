@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Builds initial suite of xml's for Shared Canvas installation
  *
@@ -9,12 +8,13 @@
  *
  */
 function build_manifest($pid) {
-  $dsid = 'OBJ';
+  module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_image_annotation.utils');
+  $dsid = islandora_image_annotation_get_dsid_from_model($pid);
   global $base_url;
   //module_load_include('inc', 'islandora', 'api/fedora_item');
   //$item = new Fedora_Item($pid);
   $item = islandora_object_load($pid);
-  
+
   $title = $item->label;
   $file_array = array();
   $doc_url = "$base_url/islandora/object/$pid/datastream/$dsid/view/";
@@ -36,7 +36,7 @@ function build_manifest($pid) {
   foreach ($file_array as $name => $content) {
     //file_put_contents("$file_path/$name.xml", $content);
     //$item->add_or_modify_by_reference("$base_url/$file_path/$name.xml", $name, $name, 'text/plain', FALSE, 'Modified by Islandora API');
-    $item["$name"]->content=$content;
+    $item["$name"]->content = $content;
     //file_delete("$file_path/$name.xml");
   }
   rmdir($file_path);
@@ -291,23 +291,40 @@ function get_annotationList($doc_url, $doc_path_url) {
  */
 function get_height_and_width($pid) {
   module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_image_annotation.utils');
-  $fedora_prefix = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
-  $djatoka_prefix = variable_get('islandora_image_annotation_djatoka_path', 'http://localhost:8080/adore-djatoka') . '/resolver?url_ver=Z39.88-2004&rft_id=' ;
-  $object = islandora_object_load($pid);
-  $dsid = islandora_image_annotation_get_dsid($pid);
-  if(empty($dsid)){
-    throw Exception ('Could not find a datastream id to load for image height and width');
+  $dsid = islandora_image_annotation_get_dsid_from_model($pid);
+  $height_width_arr = NULL;
+  if (isset($item['TECHMD']) && in_array('islandora:sp_basic_image', $models)) {
+    $content = $item['TECHMD']->content;
+    $sxml = simplexml_load_file($file);
+    $sxml->registerXPathNamespace('fits', "http://hul.harvard.edu/ois/xml/ns/fits/fits_output");
+    $image_height = $sxml->xpath('//fits:imageHeight');
+    $image_height = (string) $image_height[0];
+    $image_width = $sxml->xpath('//fits:imageWidth');
+    $image_width = (string) $image_width[0];
+    $height_width_arr = array(
+      'height' => $image_height,
+      'width' => $image_width,
+    );
   }
-  $filename = $djatoka_prefix . "$fedora_prefix/objects/$pid/datastreams/$dsid/content&svc_id=info:lanl-repo/svc/getMetadata";
-  $pageData = json_decode(file_get_contents($filename));
-  if(empty($pageData)){
-    drupal_set_message(t('There was an error getting the image size.  Djatoka may need to be configured.'),'error');
-  }
+  else {//fall back to djatoka   
+    $fedora_prefix = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
+    $djatoka_prefix = variable_get('islandora_image_annotation_djatoka_path', 'http://localhost:8080/adore-djatoka') . '/resolver?url_ver=Z39.88-2004&rft_id=';
+    $object = islandora_object_load($pid);
+    if (empty($dsid)) {
+      throw Exception('Could not find a datastream id to load for image height and width');
+    }
+    $filename = $djatoka_prefix . "$fedora_prefix/objects/$pid/datastreams/$dsid/content&svc_id=info:lanl-repo/svc/getMetadata";
+    $pageData = json_decode(file_get_contents($filename));
+    if (empty($pageData)) {
+      drupal_set_message(t('There was an error getting the image size.  Djatoka may need to be configured.'), 'error');
+    }
 
-  return array(
-    'height' => $pageData->height,
-    'width' => $pageData->width
-  );
+    $height_width_arr = array(
+      'height' => $pageData->height,
+      'width' => $pageData->width
+    );
+  }
+  return $height_width_arr;
 }
 
 /**
@@ -318,7 +335,8 @@ function get_height_and_width($pid) {
  */
 function islandora_serve($pid, $stream) {
   global $base_url;
-  $dsid = 'OBJ';
+  module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_image_annotation.utils');
+  $dsid = islandora_image_annotation_get_dsid_from_model($pid);
   $doc_url = "$base_url/islandora/object/$pid/datastream/$dsid/view";
   $doc_path_url = "$base_url/emic/serve/$pid";
 
@@ -349,11 +367,6 @@ function islandora_serve($pid, $stream) {
  * @return uuid
  */
 function generate_uuid() {
-  return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-      mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-      mt_rand(0, 0xffff),
-      mt_rand(0, 0x0fff) | 0x4000,
-      mt_rand(0, 0x3fff) | 0x8000,
-      mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+  return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000, mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
   );
 }
