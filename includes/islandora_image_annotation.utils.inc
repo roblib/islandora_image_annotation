@@ -13,3 +13,27 @@ function islandora_image_annotation_get_dsid($pid) {
   }
   return $dsid;
 }
+
+/**
+ * checks our admin table for an allowed datastream
+ * @param string $pid
+ * @return string 
+ */
+function islandora_image_annotation_get_dsid_from_model($pid){
+  $dsid = 'OBJ';//default
+  $item = islandora_object_load($pid);
+  $models = $item->models;
+  if (($key = array_search('fedora-system:FedoraObject-3.0', $models)) !== false) {
+    unset($models[$key]);
+  }
+  $models_to_dsids = variable_get('islandora_annotation_mappings');
+  foreach ($models as $model) {
+    if (isset($models_to_dsids[$model])) {
+      $tmp_dsid = $models_to_dsids[$model]['DSID'];
+      if (isset($item[$tmp_dsid])) {
+        $dsid = $tmp_dsid;
+      }
+    }
+  }
+  return $dsid;
+}
