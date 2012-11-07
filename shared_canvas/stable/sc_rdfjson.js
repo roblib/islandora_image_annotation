@@ -9,7 +9,7 @@ function buildAllAnnos(query, type) {
     var typres = query.where('?anno a ' + type);
   }
   var annos = {};
-  var result = query.where('?anno oac:hasBody ?body')
+  var result = query.where('?anno oa:hasBody ?body')
   .each(function() {
     annos[this.anno.value.toString()]=1;
   });
@@ -45,11 +45,11 @@ function queryToJson(annos, dump) {
     var anno = new jAnno(id);
     anno.extractInfo(dump);
     // Must be exactly one body. Ignore past first
-    var bodid = dump[id][nss['oac']+'hasBody'][0]['value'];
+    var bodid = dump[id][nss['oa']+'hasBody'][0]['value'];
     var bod = new jBodyTarget(bodid);
     bod.extractInfo(dump);
     anno.body = bod;
-    var tgts = dump[id][nss['oac']+'hasTarget'];
+    var tgts = dump[id][nss['oa']+'hasTarget'];
     var uniqtgts = uniqueValueList(tgts);
     for (t in uniqtgts) {
       var tid = uniqtgts[t];
@@ -216,13 +216,13 @@ jBodyTarget.prototype.extractInfo = function(info) {
 
   // Check for constraint
   if (this.partOf == null) {
-    if (me[nss['oac']+'constrains'] != undefined) {
-      var pid = me[nss['oac']+'constrains'][0]['value'];
+    if (me[nss['oa']+'constrains'] != undefined) {
+      var pid = me[nss['oa']+'constrains'][0]['value'];
       var partOf = new jResource(pid);
       partOf.extractInfo(info);
       this.partOf = partOf;
 
-      var cid = me[nss['oac']+'constrainedBy'][0]['value'];
+      var cid = me[nss['oa']+'constrainedBy'][0]['value'];
       var constraint = new jResource(cid);
       constraint.extractInfo(info);
       this.constraint = constraint;

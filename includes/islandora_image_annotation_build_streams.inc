@@ -177,7 +177,7 @@ function get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title) 
   $rdf = new IslandoraRdfBuilder();
   $rdf->root->setAttribute('xmlns:exif', "http://www.w3.org/2003/12/exif/ns#");
   $rdf->root->setAttribute('xmlns:cnt', "http://www.w3.org/2008/content#");
-  $rdf->root->setAttribute('xmlns:oac', "http://www.openannotation.org/ns/");
+  $rdf->root->setAttribute('xmlns:oa', "http://www.w3.org/ns/openannotation/core/");
   $option_uuid = generate_uuid();
   $first_resource = generate_uuid();
   $timestamp = date(DATE_W3C);
@@ -209,9 +209,9 @@ function get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title) 
   $name = "$first_resource";
   $children = array();
   $children[] = $rdf->build_child('rdf:type', array('rdf:resource' => 'http://dms.stanford.edu/ns/ImageAnnotation'));
-  $children[] = $rdf->build_child('rdf:type', array('rdf:resource' => 'http://www.openannotation.org/ns/Annotation'));
-  $children[] = $rdf->build_child('oac:hasBody', array('rdf:resource' => $option_uuid));
-  $children[] = $rdf->build_child('oac:hasTarget', array('rdf:resource' => "$doc_url/Canvas"));
+  $children[] = $rdf->build_child('rdf:type', array('rdf:resource' => 'http://www.w3.org/ns/openannotation/core/Annotation'));
+  $children[] = $rdf->build_child('oa:hasBody', array('rdf:resource' => $option_uuid));
+  $children[] = $rdf->build_child('oa:hasTarget', array('rdf:resource' => "$doc_url/Canvas"));
   $rdf->addDescriptionNode($name, $children);
 
   $name = "urn:uuid:e5c12519-e756-4442-a83d-556848c32714";
@@ -257,7 +257,7 @@ function get_annotationList($doc_url, $doc_path_url) {
   module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_rdf_builder');
   $timestamp = date(DATE_W3C);
   $rdf = new IslandoraRdfBuilder();
-  $rdf->root->setAttribute('xmlns:oac', "http://www.openannotation.org/ns/");
+  $rdf->root->setAttribute('xmlns:oa', "http://www.w3.org/ns/openannotation/core/");
 
   $name = "$doc_url/AnnotationList";
   $children = array();

@@ -243,7 +243,7 @@ function create_rdfAnno() {
 
   if (typ == 'comment') {
     var clss = 'oac:Annotation';
-    var fullclss = nss['oac'] +'Annotation';
+    var fullclss = nss['oa'] +'Annotation';
   } else if (typ == 'transcription' || typ == 'initial' || typ == 'rubric') {
     var clss = 'dms:TextAnnotation';
     var fullclss = nss['dms'] + 'TextAnnotation';
@@ -329,10 +329,10 @@ function create_rdfAnno() {
   if (isResc == true) {
     // XXX Could be constrained resource, eg part of an XML or image
     // So would need to build constraint ... too hard!
-    rdfa += '<b>See:</b> <a rel="oac:hasBody" href="' + content + '">' + content + '</a>';
+    rdfa += '<b>See:</b> <a rel="oa:hasBody" href="' + content + '">' + content + '</a>';
   } else {
     var contUU = new UUID();
-    rdfa += '<a rel="oac:hasBody" href="urn:uuid:' + contUU +'"></a> ';
+    rdfa += '<a rel="oa:hasBody" href="urn:uuid:' + contUU +'"></a> ';
     rdfa += '<div about="urn:uuid:' + contUU + '"> ';
     rdfa += '<a rel="rdf:type" href="http://www.w3.org/2008/content#ContentAsText"></a> ';
     if (bodyFullClass != null) {
@@ -355,7 +355,7 @@ function create_rdfAnno() {
     if(cnv){
       if (tgtsCanvas == true) {
         target = cnv;
-        rdfa += '<a rel="oac:hasTarget" href="' + cnv +'"></a>';
+        rdfa += '<a rel="oa:hasTarget" href="' + cnv +'"></a>';
       } else {
         var r = topinfo['raphaels']['comment'][cnv];
         var bg = r.annotateRect;
@@ -368,14 +368,14 @@ function create_rdfAnno() {
           svgxml = svgxml.replace('>', '&gt;');
           svgxml = svgxml.replace('>', '&gt;');
           var ctuu = new UUID();
-          rdfa += '<a rel="oac:hasTarget" href="urn:uuid:' + ctuu +'"></a>';
+          rdfa += '<a rel="oa:hasTarget" href="urn:uuid:' + ctuu +'"></a>';
           rdfa += '<div about="urn:uuid:' + ctuu +'">';
-          rdfa += '<a rel="rdf:type" href="http://www.openannotation.org/ns/ConstrainedTarget"></a>';
-          rdfa += '<a rel="oac:constrains" href="' + cnv + '"></a>';
+          rdfa += '<a rel="rdf:type" href="http://www.w3.org/ns/openannotation/core/ConstrainedTarget"></a>';
+          rdfa += '<a rel="oa:constrains" href="' + cnv + '"></a>';
           var svguu = new UUID();
-          rdfa += '<a rel="oac:constrainedBy" href="urn:uuid:' + svguu + '"></a>'
+          rdfa += '<a rel="oa:constrainedBy" href="urn:uuid:' + svguu + '"></a>'
           rdfa += '<div about="urn:uuid:' + svguu + '">';
-          rdfa += '<a rel="rdf:type" href="http://www.openannotation.org/ns/SvgConstraint"></a>';
+          rdfa += '<a rel="rdf:type" href="http://www.w3.org/ns/openannotation/core/SvgConstraint"></a>';
           rdfa += '<a rel="rdf:type" href="http://www.w3.org/2008/content#ContentAsText"></a>';
           rdfa += '<span property="cnt:chars" content="' + svgxml + '"></span>';
           rdfa += '<span property="cnt:characterEncoding" content="utf-8"></span>';

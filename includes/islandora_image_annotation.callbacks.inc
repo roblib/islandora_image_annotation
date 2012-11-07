@@ -53,7 +53,8 @@ function islandora_add_annotation($pid) {
   }
   $xml = simplexml_load_string($annotation_xml);
   $labels = $xml->xpath('//dc:title');
-  $annotations = $xml->xpath('//rdf:type[@rdf:resource="http://www.openannotation.org/ns/Annotation"]');
+  $annotations = $xml->xpath('//rdf:type[@rdf:resource="http://www.w3.org/ns/openannotation/core/Annotation"]');
+  //$annotations = $xml->xpath("//rdf:type/@*[namespace-uri()='http://www.w3.org/1999/02/22-rdf-syntax-ns#' and local-name()='resource']");
   $parents = $annotations[0]->xpath("parent::*");
   $parent = $parents[0];
   foreach ($parent->attributes('rdf', TRUE) as $key => $value) {
@@ -281,7 +282,7 @@ function islandora_canvas_update_annotation() {
   }
 
   //indentify URN of body to retrieve chars node to hold new annotation content
-  $body_urn_array = $xml->xpath("//oac:hasBody");
+  $body_urn_array = $xml->xpath("//oa:hasBody");
   $body_urn = (string) $body_urn_array[0]->attributes('rdf', 'about');
   $content_node = $xml->xpath("//rdf:Description[@rdf:about = '$body_urn']//cnt:chars");
   if ((string) $content_node[0][0] != $content) {
