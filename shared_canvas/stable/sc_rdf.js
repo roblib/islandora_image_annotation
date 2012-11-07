@@ -347,7 +347,7 @@ function cb_process_annoList(qry, uri) {
       } else if (typ == nss['dms']+'ZoneAnnotation') {
         mtyp = 'zone';
         break;
-      } else if (typ == nss['oac']+'Annotation') {
+      } else if (typ == nss['oa']+'Annotation') {
         mtyp = 'comment'; // don't break in case multi typed
       }
     }

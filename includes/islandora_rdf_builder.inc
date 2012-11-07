@@ -89,7 +89,7 @@ class IslandoraRdfBuilder {
   function setXPath() {
     $this->xpath = new DOMXPath($this->domDoc);
     $this->xpath->registerNamespace('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-    $this->xpath->registerNamespace('oac', 'http://www.openannotation.org/ns/');
+    $this->xpath->registerNamespace('oa', 'http://www.w3.org/ns/openannotation/core/');
   }
 
   function deleteDescriptionElement($node_id) {
@@ -137,7 +137,7 @@ class IslandoraRdfBuilder {
     if (empty($this->xpath)) {
       $this->setXPath();
     }
-    $candidates = $this->xpath->query('//rdf:Description[@rdf:about="' . $id . '"]/oac:hasBody');
+    $candidates = $this->xpath->query('//rdf:Description[@rdf:about="' . $id . '"]/oa:hasBody');
     foreach ($candidates as $candidate) {
       $resource = $candidate->getAttribute('rdf:resource');
     }
@@ -156,7 +156,7 @@ class IslandoraRdfBuilder {
     if (empty($this->xpath)) {
       $this->setXPath();
     }
-    $candidates = $this->xpath->query('//rdf:Description[@rdf:about="' . $id . '"]/oac:hasTarget');
+    $candidates = $this->xpath->query('//rdf:Description[@rdf:about="' . $id . '"]/oa:hasTarget');
     foreach ($candidates as $candidate) {
       $resource = $candidate->getAttribute('rdf:resource');
     }
@@ -176,7 +176,7 @@ class IslandoraRdfBuilder {
     if (empty($this->xpath)) {
       $this->setXPath();
     }
-    $candidates = $this->xpath->query('//rdf:Description[@rdf:about="' . $id . '"]/oac:constrainedBy');
+    $candidates = $this->xpath->query('//rdf:Description[@rdf:about="' . $id . '"]/oa:constrainedBy');
     foreach ($candidates as $candidate) {
       $resource = $candidate->getAttribute('rdf:resource');
     }
