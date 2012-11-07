@@ -369,7 +369,6 @@ $(function(){
           var pm = $(this).find('.comment_showhide');
           if (pm.text() == '+ ') {
             pm.empty().append('- ');
-            console.log(this);
             var id = $(this).attr('id').substring(5,100);
             var canvas = $(this).attr('canvas');
             paint_commentAnnoTargets(this, canvas, id);
@@ -392,17 +391,7 @@ $(function(){
     });
   });
 
-  $(function() {
-    var availableTypes = [
-    "Textual Notes",
-    "Explanatory Notes",
-    "Marginalia",
-    "Speculative"
-    ];
-    $( "#anno_classification" ).autocomplete({
-      source: availableTypes
-    });
-  });
+
 
 
 
@@ -452,7 +441,17 @@ $(document).ready(function(){
   }
   opts.base = emic_canvas_params.object_base;
 
-
+  $(function() {
+    var availableTypes = [
+    "Textual Notes",
+    "Explanatory Notes",
+    "Marginalia",
+    "Speculative"
+    ];
+    $( "#anno_classification" ).autocomplete({
+      source: emic_canvas_params.categories
+    });
+  });
 
   // build and populate page choice dropdown
   $('#canvas_page_selector').html('<select id="canvas_page_choose"></select>');

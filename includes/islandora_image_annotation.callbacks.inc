@@ -11,9 +11,18 @@ function islandora_canvas_setup($pid) {
   global $user;
 
   module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_rdf_builder');
-  //$books = get_collection_from_pid($pid);
-  $book = $pid; //$books[0];
+  module_load_include('module', 'taxonomy', 'module');
   $item = islandora_object_load($pid);
+  $rels = $item->relationships->get('info:fedora/fedora-system:def/model#', 'hasModel');
+  $cmodel = $rels[0]['object']['value'];
+  $mappings = variable_get('islandora_annotation_mappings', array());
+  $vid = $mappings[$cmodel]['TAX'];
+  $terms = taxonomy_get_tree($vid,0,1);
+  $categories = array();
+  foreach($terms as $term){
+    $categories[] = $term->name;
+  }
+
   $title = $item->label;
   $pages = array();
   $pages[1] = $pid;
@@ -30,6 +39,7 @@ function islandora_canvas_setup($pid) {
   $results['position'] = $position;
   $results['pages'] = $pages;
   $results['no_edit'] = !user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE);
+  $results['categories'] = $categories;
   $json = json_encode($results);
   echo $json;
 }

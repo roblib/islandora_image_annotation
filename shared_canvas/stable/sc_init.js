@@ -407,6 +407,7 @@ $(document).ready(function(){
 	
   // Manifest Initialization
   var manuri = $('#manifest').attr('href');
+
   if (manuri != undefined) {
     fetchTriples(manuri, rdfbase, cb_process_manifest);
   } else {
