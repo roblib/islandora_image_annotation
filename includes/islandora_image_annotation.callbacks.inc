@@ -132,19 +132,20 @@ function islandora_shared_transform_annotationList($xml_in, $input_type) {
  * @param array $pids
  */
 function islandora_shared_get_annotation_pids($pid) {
-  $query = "select \$id from <#ri> where \$id <http://islandora.ca/ontology/relsext#targets> <info:fedora/$pid";
-  $query = "select \$id \$category from <#ri>
+
+  $query = "select \$id \$type from <#ri>
                where \$id <http://islandora.ca/ontology/relsext#targets> <info:fedora/$pid>
-               and \$id <http://islandora.ca/ontology/relsext#isAnnotationType> \$category
-               order by \$category";
+               and \$id <http://islandora.ca/ontology/relsext#isAnnotationType> \$type
+               order by \$type";
 
   $item = islandora_object_load($pid);
-
   $objects = $item->repository->ri->itqlQuery($query);
 
   foreach ($objects as $object) {
-    $pids[] = $object['id']['value'];
+    $pids['pids'][] = $object['id']['value'];
+    $pids['types'][] = $object['type']['value'];
   }
+  $pids['types'] = array_values(array_unique($pids['types']));
   $json = json_encode($pids);
   echo $json;
 }

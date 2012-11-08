@@ -801,48 +801,7 @@ function paint_textAnno(anno, canvasId) {
 
 }
 
-function paint_audioAnno(anno, canvasId) {
 
-  var myid = anno.id.substring(9, 1000);
-  var body = '<img src="/imgs/play.png" class="audio_button" id="audio_button_' +
-  myid + '"/><br/><div id="audio_progress_' +
-  myid + '" class="audio_progress"></div>';
-
-  $("#annotations").append('<div class="audio_anno" id="' + myid + '">'
-    + body + '</div>');
-  var aanno = $('#' + myid)
-  aanno.css('z-index', topinfo['zOrders']['audio'] + anno.zOrder)
-
-  var xywh = getRect(anno.targets[0]);
-  if (xywh != null) {
-    var tx = xywh[0], ty = xywh[1], tw = xywh[2], th = xywh[3];
-    var cvs = $('#' + canvasId).attr('canvas');
-    var cvsw = topinfo['sequenceInfo'][cvs][1];
-    var scale = topinfo['canvasWidth'] / cvsw;
-    var offset = "" + Math.floor(tx*scale) + ' ' + Math.floor(ty*scale);
-    aanno.height(Math.floor(th*scale));
-    aanno.width(Math.floor(tw*scale));
-    aanno.position({
-      'of':'#' +canvasId,
-      'my':'left top',
-      'at':'left top',
-      'collision':'none',
-      'offset': offset
-    });
-  }
-
-  $('#audio_button_' + myid).click(audio_button_click);
-  $('#audio_button_' + myid).attr('canvasId', canvasId);
-  $("#audio_progress_" + myid).progressbar({
-    value: 0
-  }).css({
-    height:10,
-    opacity: 0.0
-  });
-  if (!$('#check_show_audio').is(':checked')) {
-    aanno.hide();
-  }
-}
 
 
 // UI for Comment Annotations
@@ -895,7 +854,7 @@ function paint_commentAnno(anno, canvasId) {
       pm.empty().append('- ');
       var id = $(this).attr('id').substring(5,100);
       var canvas = $(this).attr('canvas');
-      paint_commentAnnoTargets(this, canvas, id);
+      paint_commentAnnoTargets(this, canvas, id, annoType);
     } else {
       $('.svg_' + myid).remove();
       var c = $(this).find('.mycolor');
@@ -914,18 +873,19 @@ function paint_commentAnno(anno, canvasId) {
 
 var svgAreaColors = ['#FF0000', '#FF6600', '#FF9400', '#FEC500', '#FFFF00', '#8CC700', '#0FAD00', '#00A3C7', '#0064B5', '#0010A5', '#6300A5', '#C5007C']
 
-function paint_commentAnnoTargets(ttldiv, canvasId, annoId) {
+function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
+var mappings = new Object();
+  for(var i = 0; i < emic_canvas_params.types.length; i++ ){
+    mappings[emic_canvas_params.types[i]] = svgAreaColors[i];
+  }
 
   var canvas = $('#' + canvasId).attr('canvas');
   var annos = topinfo['annotations']['comment'][canvas];
   for (var a = 0, anno; anno = annos[a]; a++) {
     if (anno.id == 'urn:uuid:' + annoId) {
       // Paint it up
-      if (!svgAreaColors) {
-        var col = '#a0f060';
-      } else {
-        var col = svgAreaColors.splice(0,1)[0];
-      }
+      var col = '#a0f060';
+      col = mappings[annoType];
       $(ttldiv).append('<span color="' + col + '" class="mycolor" style="margin-right: 2px; margin-top: 2px; background: '+col+';float:right;width:15px;height:15px;">&nbsp;</span>');
       for (var t = 0, tgt; tgt = anno.targets[t]; t++) {
         if (tgt.partOf != null) {
@@ -958,7 +918,6 @@ function paint_svgArea(svgc, annoId, col, svg) {
   pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col+';stroke-width:2');
   pthelm.setAttribute('class', 'svg_' + annoId);
   svgc.canvas.appendChild(pthelm);
-
 }
 
 

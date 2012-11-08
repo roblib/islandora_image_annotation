@@ -32,18 +32,15 @@ function pb_getList() {
 
     url: emic_canvas_params.get_annotation_list_url,
     success: function(data,status,xhr) {
-
-      var l = $.parseJSON(data);
-      if( l != null){
-        for (var i=0,info;info=l[i];i++){
+      var listdata = $.parseJSON(data);
+      var pids = listdata.pids;
+      emic_canvas_params.types = listdata.types;
+      if( listdata != null){
+        for (var i=0,info;info=pids[i];i++){
           var pid = info;
-
-
           $('#canvases .canvas').each(function() {
             var cnv = $(this).attr('canvas');
-
             pb_getPaste(pid);
-
           });
         }
       }
@@ -54,20 +51,18 @@ function pb_getList() {
   });
 }
 
-function pb_getPaste(urn) {
-
+function pb_getPaste(pid) {
   $.ajax({
     type:'GET',
-    url: emic_canvas_params.islandora_get_annotation + urn,
+    'async':false,
+    url: emic_canvas_params.islandora_get_annotation + pid,
     success: function(data,status,xhr) {
-
       load_commentAnno(data);
     },
     error: function(data,status,xhr) {
-      console.dir(data)
+    
     }
   });
-
 }
 
 
