@@ -133,6 +133,10 @@ function islandora_shared_transform_annotationList($xml_in, $input_type) {
  */
 function islandora_shared_get_annotation_pids($pid) {
   $query = "select \$id from <#ri> where \$id <http://islandora.ca/ontology/relsext#targets> <info:fedora/$pid";
+  $query = "select \$id \$category from <#ri>
+               where \$id <http://islandora.ca/ontology/relsext#targets> <info:fedora/$pid>
+               and \$id <http://islandora.ca/ontology/relsext#isAnnotationType> \$category
+               order by \$category";
 
   $item = islandora_object_load($pid);
 
