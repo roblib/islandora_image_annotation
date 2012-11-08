@@ -142,7 +142,12 @@ function islandora_shared_get_annotation_pids($pid) {
   $objects = $item->repository->ri->itqlQuery($query);
 
   foreach ($objects as $object) {
-    $pids['pids'][] = $object['id']['value'];
+    $itemdata = array(
+      'id' => $object['id']['value'],
+      'type' => $object['type']['value']
+    );
+
+    $pids['pids'][] = $itemdata;
     $pids['types'][] = $object['type']['value'];
   }
   $pids['types'] = array_values(array_unique($pids['types']));

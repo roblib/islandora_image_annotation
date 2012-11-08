@@ -34,14 +34,23 @@ function pb_getList() {
     success: function(data,status,xhr) {
       var listdata = $.parseJSON(data);
       var pids = listdata.pids;
+      console.dir(listdata)
       emic_canvas_params.types = listdata.types;
+
       if( listdata != null){
-        for (var i=0,info;info=pids[i];i++){
+        for (var i=0,info;info=pids[i]['id'];i++){
+         
           var pid = info;
+          var temp = pids[i]['type'];
+          if(temp != header){
+            header = '<div class="comment_type">' + temp + '</div>';
+            $('#comment_annos_block').append(header);
+          }
           $('#canvases .canvas').each(function() {
             var cnv = $(this).attr('canvas');
             pb_getPaste(pid);
           });
+          var header = temp;
         }
       }
     },

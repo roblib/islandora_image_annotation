@@ -295,7 +295,7 @@ function fetch_annotations(which, canvas) {
 
 
 function cb_process_annoList(qry, uri) {
-
+ 
   ping_progressBar('recv:'+uri);
 	
   var nss = opts.namespaces;
@@ -430,7 +430,7 @@ function cb_process_annoList(qry, uri) {
   // Try to force GC on the query
   delete qry.databank;
   qry = null;
-	
+
   paint_annos();
 	
   // And launch AJAX queries for any external XML docs
@@ -479,7 +479,7 @@ function cb_process_annoList(qry, uri) {
 
 function load_commentAnno(data) {
   // RDFA
-  //  alert(data)
+  
   var lqry = $(data).rdf();
   if (lqry.databank.size() == 0) {
     // Turtle or RDF/XML

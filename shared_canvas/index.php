@@ -5,7 +5,8 @@
     <title></title>
 
     <link type="text/css" rel="stylesheet" href="css/smoothness/jquery-ui-1.8.16.custom.css" />
-
+    <link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
+    <script type="text/javascript" src="js/jquery/colorpicker.js"></script>
 
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <script type="text/javascript" src="js/jquery/jquery-1.7.js"></script>
