@@ -384,3 +384,7 @@ A:link {
 .comment_type{
   font-style:italic;
 }
+
+.islandora_comment_type_title{
+  font-size: larger;
+}

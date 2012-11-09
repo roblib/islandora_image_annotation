@@ -325,7 +325,6 @@ $(document).ready(function(){
     emic_canvas_params.height = img.height;
   }
 
-
  
   // RDF Initializationc
   var rdfbase = $.rdf(opts);

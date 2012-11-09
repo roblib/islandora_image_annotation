@@ -831,13 +831,14 @@ function paint_commentAnno(anno, canvasId) {
 
 
   txt = txt.replace('\n', '<br/>')
-  block = '<div class = "canvas_annotation" ' + 'urn ="' + myid + '" '+ ' >';
+  block = '<div style = "display:none" class = "canvas_annotation" ' + 'urn ="' + myid + '" '+ ' >';
   block += '<div class="comment_title" id="anno_' + myid + '"><span class="comment_showhide">+ </span>' + title + '</div>';
 
   block += '<div class="comment_text">' + '<div class="comment_type">' + annoType + '</div><div class="comment_content">' + txt + '</div></div>';
   block += '</div>';
+  selectBlock = "#islandora_annoType_" + annoType;
 
-  $('#comment_annos_block').append(block);
+  $(selectBlock).append(block);
   $('#anno_' + myid).attr('canvas', canvasId);
 
   $('#delete_anno_'+myid).click(function(e){
@@ -874,18 +875,21 @@ function paint_commentAnno(anno, canvasId) {
 var svgAreaColors = ['#FF0000', '#FF6600', '#FF9400', '#FEC500', '#FFFF00', '#8CC700', '#0FAD00', '#00A3C7', '#0064B5', '#0010A5', '#6300A5', '#C5007C']
 
 function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
-var mappings = new Object();
-  for(var i = 0; i < emic_canvas_params.types.length; i++ ){
-    mappings[emic_canvas_params.types[i]] = svgAreaColors[i];
-  }
+  //  var mappings = new Object();
+  //  for(var i = 0; i < emic_canvas_params.types.length; i++ ){
+  //    mappings[emic_canvas_params.types[i]] = svgAreaColors[i];
+  //  }
 
   var canvas = $('#' + canvasId).attr('canvas');
   var annos = topinfo['annotations']['comment'][canvas];
   for (var a = 0, anno; anno = annos[a]; a++) {
     if (anno.id == 'urn:uuid:' + annoId) {
       // Paint it up
-      var col = '#a0f060';
-      col = mappings[annoType];
+      if (!svgAreaColors) {
+        var col = '#a0f060';
+      } else {
+        var col = svgAreaColors.splice(0,1)[0];
+      }
       $(ttldiv).append('<span color="' + col + '" class="mycolor" style="margin-right: 2px; margin-top: 2px; background: '+col+';float:right;width:15px;height:15px;">&nbsp;</span>');
       for (var t = 0, tgt; tgt = anno.targets[t]; t++) {
         if (tgt.partOf != null) {
