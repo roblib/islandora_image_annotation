@@ -90,7 +90,7 @@ function islandora_image_annotation_permission() {
       'title' => t(ISLANDORA_IMAGE_ANNOTATION_VIEW),
       'description' => t('View image annotations.')
     ),
-    ISLANDORA_IMAGE_ANNOTATIONS_CREATE => array(
+    ISLANDORA_IMAGE_ANNOTATION_CREATE => array(
       'title' => t(ISLANDORA_IMAGE_ANNOTATION_CREATE),
       'description' => t('Create image Annotations')
     ),
