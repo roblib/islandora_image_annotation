@@ -17,22 +17,22 @@ function pb_postData(title, data, type) {
       type:type
     },
     success: function(data,status,xhr) {
-
       pb_getPaste(data);
     },
     error: function(data,status,xhr) {
       alert('Failed to post')
     }
   });
+
 }
 
 // Adds divs for each type
 //
 
 function pb_getList() {
+
   $.ajax({
     type:'GET',
-
     url: emic_canvas_params.get_annotation_list_url,
     success: function(data,status,xhr) {
       var listdata = $.parseJSON(data);
@@ -44,11 +44,17 @@ function pb_getList() {
           info=pids[i]['id'];
           var pid = info;
           var temp = pids[i]['type'];
+          var fixed_cat = temp.replace(' ','');
           if(temp != type){
-            var type_class = "annoType_" + temp;
-            var id = 'islandora_annoType_'+ temp;
-            header = '<div  class = "islandora_comment_type" id = "'+ id + '"><div class = "islandora_comment_type_title">' + temp + '</div></div>';
-            $('#comment_annos_block').append(header);
+
+            var type_class = "annoType_" + fixed_cat;
+            var id = 'islandora_annoType_'+ fixed_cat;
+            var idSelector = '#' + id;
+
+            if($(idSelector).length == 0){
+              header = '<div  class = "islandora_comment_type" id = "'+ id + '"><div class = "islandora_comment_type_title">' + temp + '</div></div>';
+              $('#comment_annos_block').append(header);
+            }
           }
 
           $('#canvases .canvas').each(function() {
@@ -58,10 +64,13 @@ function pb_getList() {
           var type = temp;
         }
       }
-    //  $(".islandora_comment_type_title").siblings('.canvas_annotation').hide();
-      $(".islandora_comment_type_title").on("click", function(){
+
+
+      $(".islandora_comment_type_title").off();
+      $(".islandora_comment_type_title").ready().on("click", function(){
         $(this).siblings('.canvas_annotation').toggle();
       });
+      
     },
     error: function(data,status,xhr) {
     // alert('Failed to retrieve List')
@@ -72,9 +81,10 @@ function pb_getList() {
 }
 
 function pb_getPaste(pid) {
+
   $.ajax({
     type:'GET',
-    'async':false,
+    'async':true,
     url: emic_canvas_params.islandora_get_annotation + pid,
     success: function(data,status,xhr) {
       load_commentAnno(data);

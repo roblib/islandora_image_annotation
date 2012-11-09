@@ -834,9 +834,9 @@ function paint_commentAnno(anno, canvasId) {
   block = '<div style = "display:none" class = "canvas_annotation" ' + 'urn ="' + myid + '" '+ ' >';
   block += '<div class="comment_title" id="anno_' + myid + '"><span class="comment_showhide">+ </span>' + title + '</div>';
 
-  block += '<div class="comment_text">' + '<div class="comment_type">' + annoType + '</div><div class="comment_content">' + txt + '</div></div>';
+  block += '<div class="comment_text">' + '<div class="comment_type">' + annoType.replace(' ','') + '</div><div class="comment_content">' + txt + '</div></div>';
   block += '</div>';
-  selectBlock = "#islandora_annoType_" + annoType;
+  selectBlock = "#islandora_annoType_" + annoType.replace(' ','');
 
   $(selectBlock).append(block);
   $('#anno_' + myid).attr('canvas', canvasId);

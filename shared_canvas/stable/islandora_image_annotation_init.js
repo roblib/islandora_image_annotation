@@ -308,6 +308,10 @@ $(document).ready(function(){
 
   });
 
+  $(".islandora_comment_type_title").on("click", function(){
+    $(this).siblings('.canvas_annotation').toggle();
+  });
+  
   if(emic_canvas_params.no_edit == true){
     $('#create_annotation').hide();
   }
