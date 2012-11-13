@@ -813,6 +813,8 @@ function paint_commentAnno(anno, canvasId) {
 
   var title = anno.title;
   var annoType = anno.annoType;
+  // remove illegal characters
+  var fixed_annotype = annoType.replace(/[^\w]/g,'');
   var txt = anno.body.value;
   var myid = anno.id.substring(9, 100);
   var tgttxt = '';
@@ -834,9 +836,9 @@ function paint_commentAnno(anno, canvasId) {
   block = '<div style = "display:none" class = "canvas_annotation" ' + 'urn ="' + myid + '" '+ ' >';
   block += '<div class="comment_title" id="anno_' + myid + '"><span class="comment_showhide">+ </span>' + title + '</div>';
 
-  block += '<div class="comment_text">' + '<div class="comment_type">' + annoType.replace(' ','') + '</div><div class="comment_content">' + txt + '</div></div>';
+  block += '<div class="comment_text">' + '<div class="comment_type">' + fixed_annotype + '</div><div class="comment_content">' + txt + '</div></div>';
   block += '</div>';
-  selectBlock = "#islandora_annoType_" + annoType.replace(' ','');
+  selectBlock = "#islandora_annoType_" + fixed_annotype;
 
   $(selectBlock).append(block);
   $('#anno_' + myid).attr('canvas', canvasId);

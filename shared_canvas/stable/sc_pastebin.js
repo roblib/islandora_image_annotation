@@ -44,7 +44,7 @@ function pb_getList() {
           info=pids[i]['id'];
           var pid = info;
           var temp = pids[i]['type'];
-          var fixed_cat = temp.replace(' ','');
+          var fixed_cat = temp.replace(/[^\w]/g,'');
           if(temp != type){
 
             var type_class = "annoType_" + fixed_cat;
@@ -54,8 +54,7 @@ function pb_getList() {
             if($(idSelector).length == 0){
               header = '<div  class = "islandora_comment_type" id = "'+ id + '"><div class = "islandora_comment_type_title">' + temp + '</div></div>';
               $('#comment_annos_block').append(header);
-              if(type == 'grok')
-              alert(type)
+
             }
           }
 
