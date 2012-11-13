@@ -79,6 +79,7 @@ function islandora_add_annotation($pid) {
   $item->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:OACCModel');
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targetedBy', $user->name, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targets', $pid);
+  $item->relationships->add(FEDORA_RELS_EXT_URI, 'isAnnotationOf', $pid);
   $item->relationships->add('http://islandora.ca/ontology/relsext#', 'isAnnotationType', $type, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasURN', $urn, TRUE);
   //$item->add_datastream_from_string($annotation_xml, 'OAC', 'OAC', 'text/xml', 'X');
