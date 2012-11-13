@@ -54,6 +54,8 @@ function pb_getList() {
             if($(idSelector).length == 0){
               header = '<div  class = "islandora_comment_type" id = "'+ id + '"><div class = "islandora_comment_type_title">' + temp + '</div></div>';
               $('#comment_annos_block').append(header);
+              if(type == 'grok')
+              alert(type)
             }
           }
 
