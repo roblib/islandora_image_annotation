@@ -286,6 +286,9 @@ function create_rdfAnno() {
     rdfa += '<span property="dc:title" content="' + title + '"></span>';
   }
   var type = $('#anno_classification').val();
+  if(type == ''){
+    type = 'unclassified'
+  }
   if (title != '') {
     rdfa += '<span property="dc:type" content="' + type + '"></span>';
   }

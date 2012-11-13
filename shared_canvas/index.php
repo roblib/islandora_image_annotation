@@ -5,8 +5,6 @@
     <title></title>
 
     <link type="text/css" rel="stylesheet" href="css/smoothness/jquery-ui-1.8.16.custom.css" />
-    <link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
-    <script type="text/javascript" src="js/jquery/colorpicker.js"></script>
 
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <script type="text/javascript" src="js/jquery/jquery-1.7.js"></script>
@@ -49,6 +47,11 @@
     <link type="text/css" rel="stylesheet" href="css/style.css" />
 
 
+    <!-- Color selector -->
+    <script type="text/javascript" src="js/jquery/jquery.miniColors.js"></script>
+    <link type="text/css" rel="stylesheet" href="css/jquery.miniColors.css" />
+
+
   </head>
   <body>
     <!-- Header -->
@@ -69,24 +72,13 @@
         <div class="col2">
           <!-- Tabs -->
           <div id="tabs">
+
             <ul>
               <!--<li><a href="#entities">Entities</a></li>
               <li><a href="#structure">Structure</a></li>-->
               <li id="annotation_tab"><a href="#image-annotations">Image Annotations</a></li>
             </ul>
-            <!-- Entities Panel
-            <div id="entities">
-              <div id="sortBy">
-                <span>Sort By</span>
-                <input type="radio" id="sequence" name="sortBy" checked="checked"><label for="sequence">Sequence</label></input>
-                <input type="radio" id="category" name="sortBy"><label for="category">Category</label></input>
-              </div>
-              <ul></ul>
-            </div>-->
-            <!-- Structure Panel
-            <div id="structure">
-              <div id="tree"></div>
-            </div>-->
+
             <!-- Image Annotations Panel -->
             <div id="image-annotations">
               <div id="comment_annos_block" class="dragBlock"></div>
@@ -95,14 +87,7 @@
         </div>
       </div>
       <div id="colright" class="colright">
-        <!--<div class="col1">-->
-        <!-- Text Annotation
-        <div class="text-annotation-wrapper">
-          <form method="post" action="">
-            <textarea id="editor" name="editor" class="tinymce"></textarea>
-          </form>
-        </div>-->
-        <!--</div>-->
+
         <!-- Column Separator -->
         <!--<div id="column-separator"></div>-->
         <div class="col1">
@@ -195,10 +180,13 @@
         </div>
         <div id="create_annos_block" class="dragBlock">
           <!-- Annotation Title -->
+
           <div class="element-wrap">
             <label for="anno_title">Title:</label>
             <input id="anno_title" type="text" size="28"></input>
           </div>
+
+
           <!-- Annotation Type - to be removed -->
           <span style="float:right" hidden ="true"><select id="anno_type">
               <option value="comment">Commentary</option>
@@ -209,6 +197,14 @@
             <label for="anno_text">Type:</label>
             <input id="anno_classification" type="text" size="28"></input>
           </div>
+
+
+          <div class="element-wrap">
+            <label for="anno_color">Color:</label>
+            <input type="hidden" name="color4" value="#fff666" class="color-picker" size="7" />
+          </div>
+
+
           <div class="element-wrap">
             <label for="anno_text">Annotation:</label>
             <textarea id="anno_text" cols="40" rows="5"></textarea>
