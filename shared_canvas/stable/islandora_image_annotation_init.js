@@ -280,7 +280,7 @@ $(document).ready(function(){
     }
     return results[1] || 0;
   }
-
+ 
   // gets setup information from Islandora
   //determine base of Drupal installation
 
@@ -307,7 +307,7 @@ $(document).ready(function(){
     dataType: 'json'
 
   });
-
+  $('.color-picker').miniColors();
   $(".islandora_comment_type_title").on("click", function(){
     $(this).siblings('.canvas_annotation').toggle();
   });
@@ -360,7 +360,8 @@ $(document).ready(function(){
   // Initialize UI
   init_ui();
   // Setup a basic Canvas with explicit width to scale to from browser width
-  initCanvas(nCanvas)
+  initCanvas(nCanvas);
+   
 
   // Manifest Initialization
   var manuri = emic_canvas_params.manifest_url;
