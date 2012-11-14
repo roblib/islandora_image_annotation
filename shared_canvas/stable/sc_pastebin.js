@@ -84,7 +84,7 @@ function pb_getList() {
     }
 
   });
-  console.dir(emic_canvas_params.mappings)
+ 
 }
 
 
