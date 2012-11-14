@@ -225,11 +225,11 @@ function islandora_image_annotation_preprocess_islandora_image_annotation_solr(&
         $pid = $variables['results'][$key]['PID']['value'];
         $variables['thumbnail_path'][$key] = url('islandora/object/' . $pid . '/datastream/TN');
       }
-      else if ($value["rels.hasModel"]['value'] == 'info:fedora/islandora:OACCModel') {
+      else if (isset($value['rels.hasModel']) && $value["rels.hasModel"]['value'] == 'info:fedora/islandora:OACCModel') {
         $variables['pid_for_url'][$key] = $value['PARENT_pid']['value'];//create link to parent object
-        $variables['anno_category'] = $value['anno_category_s']['value'];
-        $variables['anno_title'] = $value['anno_title_s']['value'];
-        $variables['anno_body'] = $value['anno_body_t']['value'];
+        $variables['anno_category'] = isset($value['anno_category_s']['value']) ? $value['anno_category_s']['value'] : '';
+        $variables['anno_title'] = isset($value['anno_title_s']['value']) ? $value['anno_title_s']['value'] : '';
+        $variables['anno_body'] = isset($value['anno_body_t']['value']) ? $value['anno_body_t']['value'] : '';
         $variables['thumbnail_path'][$key] = url('islandora/object/' . $value['PARENT_pid']['value'] . '/datastream/TN');
       } else {
         $variables['thumbnail_path'][$key] = $path . '/images/defaultimg.png';

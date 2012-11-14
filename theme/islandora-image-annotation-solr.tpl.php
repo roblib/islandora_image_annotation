@@ -32,6 +32,10 @@
           <?php print l($title, 'islandora/object/' . htmlspecialchars($pid_for_url[$row_result], ENT_QUOTES, 'utf-8')); ?>
         </dd>
         <dd class="solr-grid-caption">
+              <?php print l("Annotation Object", 'islandora/object/' . htmlspecialchars($result['PID']['value'], ENT_QUOTES, 'utf-8')); ?>
+       
+        </dd>
+        <dd class="solr-grid-caption">
           <?php $anno_cat = isset($anno_category[$row_result]) ? $anno_category[$row_result] : ''; ?>
           <?php print ($anno_cat); ?>
         </dd>
