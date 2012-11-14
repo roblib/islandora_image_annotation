@@ -16,6 +16,7 @@ function islandora_canvas_setup($pid) {
   $rels = $item->relationships->get('info:fedora/fedora-system:def/model#', 'hasModel');
   $cmodel = $rels[0]['object']['value'];
   $mappings = variable_get('islandora_annotation_mappings', array());
+  $optimized = variable_get('islandora_annotation_optimized', TRUE);
   $vid = $mappings[$cmodel]['TAX'];
   $dsid = $mappings[$cmodel]['DSID'];
   $terms = taxonomy_get_tree($vid, 0, 1);
@@ -42,6 +43,7 @@ function islandora_canvas_setup($pid) {
   $results['no_edit'] = !user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE);
   $results['categories'] = $categories;
   $results['image_url'] = $image_url;
+  $results['can_choose'] = !$optimized;
   $json = json_encode($results);
   echo $json;
 }
@@ -305,11 +307,16 @@ function islandora_canvas_update_annotation() {
   $new_color = urldecode($_POST['color']);
   $pid = islandora_canvas_get_pid_from_urn($urn);
   $fedora_object = islandora_object_load($pid);
-  $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasColor' );
-  $old_color = $rels[0]['object']['value'];
-  if ($old_color != $new_color) {
-    $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'hasColor', $old_color);
-    $fedora_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasColor', $new_color, TRUE);
+
+  //if color picking is allowed, update here
+  
+  if (!$optimized = variable_get('islandora_annotation_optimized', TRUE)) {
+    $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasColor');
+    $old_color = $rels[0]['object']['value'];
+    if ($old_color != $new_color) {
+      $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'hasColor', $old_color);
+      $fedora_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasColor', $new_color, TRUE);
+    }
   }
   $annotation = $fedora_object['OAC']->content;
   $xml = simplexml_load_string($annotation);

@@ -893,7 +893,7 @@ function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
       } else {
         var col = svgAreaColors.splice(0,1)[0];
       }
-      if(islandora_canvas_params.mappings['urn:uuid:' + annoId] != ''){
+      if(islandora_canvas_params.mappings['urn:uuid:' + annoId] != '' && islandora_canvas_params.can_choose){
        col = islandora_canvas_params.mappings[['urn:uuid:' + annoId]];
       }
     

@@ -307,10 +307,14 @@ $(document).ready(function(){
     dataType: 'json'
 
   });
-  $('.color-picker').miniColors();
-  $(".islandora_comment_type_title").on("click", function(){
-    $(this).siblings('.canvas_annotation').toggle();
-  });
+
+  //establish color-picker if allowed
+  if(islandora_canvas_params.can_choose){
+    $('.color-picker').miniColors();
+  }else{
+    $('#color-picker-wrapper').empty();
+
+  }
   
   if(islandora_canvas_params.no_edit == true){
     $('#create_annotation').hide();
