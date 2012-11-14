@@ -56,14 +56,6 @@
   <body>
     <!-- Header -->
     <div id="header">
-      <!--<div id="page_selector">Loading....</div>
-      <div id="header-inner">
-        <div class="header-nav">
-          <a href="" id="page-prev"></a>
-          <a href="" id="page-next"></a>
-        </div>
-        <h1></h1>
-      </div>-->
 
     </div>
     <!-- Body -->
@@ -74,8 +66,7 @@
           <div id="tabs">
 
             <ul>
-              <!--<li><a href="#entities">Entities</a></li>
-              <li><a href="#structure">Structure</a></li>-->
+
               <li id="annotation_tab"><a href="#image-annotations">Image Annotations</a></li>
             </ul>
 
@@ -201,7 +192,7 @@
 
           <div class="element-wrap">
             <label for="anno_color">Color:</label>
-            <input type="hidden" name="color4" value="#fff666" class="color-picker" size="7" />
+            <input id ="anno_color"type="hidden" name="color4" value="#fff666" class="color-picker" size="7" />
           </div>
 
 

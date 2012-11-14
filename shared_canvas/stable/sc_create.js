@@ -177,6 +177,7 @@ function destroyAll(canvas) {
     $(r).remove();
   }
   topinfo['raphaels']['comment'][canvas] = undefined;
+
   pb_getList();
 }
 
@@ -214,6 +215,18 @@ function saveAnnotation() {
   });
   // var data = $(rdfa).rdf().databank.dump({format:'application/rdf+xml',serialize:true});
   var type = $('#anno_classification').val();
+  // add category to annoblock before saving annotation.  Fixes concurrency errors
+
+  var fixed_cat = type.replace(/[^\w]/g,'');
+  var type_class = "annoType_" + fixed_cat;
+  var id = 'islandora_annoType_'+ fixed_cat;
+  var idSelector = '#' + id;
+
+  if($(idSelector).length == 0){
+    header = '<div  class = "islandora_comment_type" id = "'+ id + '"><div class = "islandora_comment_type_title">' + type + '</div></div>';
+    $('#comment_annos_block').append(header);
+
+  }
   pb_postData(tgt, rdfa, type);
 
   return 1;
@@ -282,6 +295,9 @@ function create_rdfAnno() {
   rdfa += '<span property="dcterms:created" content="' + now + '"></span> ';
 
   var title = $('#anno_title').val();
+  var color = $('#anno_color').attr('value');
+  //alert(color)
+ 
   if (title != '') {
     rdfa += '<span property="dc:title" content="' + title + '"></span>';
   }

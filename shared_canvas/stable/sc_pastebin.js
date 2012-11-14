@@ -5,11 +5,15 @@ function init_pb() {
 
 }
 
-function pb_postData(title, data, type) {
 
+//add annotation to fedora
+
+function pb_postData(title, data, type) {
+  
   data = encodeURI(data);
   $.ajax({
     type:'POST',
+    async:false,
     url:emic_canvas_params.islandora_post_url,
     data: {
       title:title,
@@ -33,13 +37,13 @@ function pb_getList() {
 
   $.ajax({
     type:'GET',
+    async:false,
     url: emic_canvas_params.get_annotation_list_url,
     success: function(data,status,xhr) {
       var listdata = $.parseJSON(data);
       var pids = listdata.pids;
       emic_canvas_params.types = listdata.types;
-
-      if( listdata != null){
+      if( pids != null){
         for (var i=0,info;i < pids.length;i++){
           info=pids[i]['id'];
           var pid = info;
@@ -50,8 +54,9 @@ function pb_getList() {
             var type_class = "annoType_" + fixed_cat;
             var id = 'islandora_annoType_'+ fixed_cat;
             var idSelector = '#' + id;
-
+    
             if($(idSelector).length == 0){
+
               header = '<div  class = "islandora_comment_type" id = "'+ id + '"><div class = "islandora_comment_type_title">' + temp + '</div></div>';
               $('#comment_annos_block').append(header);
 
@@ -81,11 +86,13 @@ function pb_getList() {
 
 }
 
+
+// get annotation data from Fedora and send it to load_comment_anno to be displayed
+
 function pb_getPaste(pid) {
 
   $.ajax({
     type:'GET',
-    'async':true,
     url: emic_canvas_params.islandora_get_annotation + pid,
     success: function(data,status,xhr) {
       load_commentAnno(data);
