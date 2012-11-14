@@ -137,11 +137,6 @@ function islandora_shared_transform_annotationList($xml_in, $input_type) {
  */
 function islandora_shared_get_annotation_pids($pid) {
 
-  $query = "select \$id \$type from <#ri>
-               where \$id <http://islandora.ca/ontology/relsext#targets> <info:fedora/$pid>
-               and \$id <http://islandora.ca/ontology/relsext#isAnnotationType> \$type
-               order by \$type";
-
   $query = <<<QUERY
 PREFIX io: <http://islandora.ca/ontology/relsext#>
 PREFIX fm: <info:fedora/fedora-system:def/model#>

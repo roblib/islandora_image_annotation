@@ -883,8 +883,6 @@ var svgAreaColors = ['#FF0000', '#FF6600', '#FF9400', '#FEC500', '#FFFF00', '#8C
 
 function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
 
-
-
   var canvas = $('#' + canvasId).attr('canvas');
   var annos = topinfo['annotations']['comment'][canvas];
   for (var a = 0, anno; anno = annos[a]; a++) {
