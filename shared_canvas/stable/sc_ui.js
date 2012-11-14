@@ -883,6 +883,7 @@ function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
   //    mappings[emic_canvas_params.types[i]] = svgAreaColors[i];
   //  }
 
+  console.dir(ttldiv)
   var canvas = $('#' + canvasId).attr('canvas');
   var annos = topinfo['annotations']['comment'][canvas];
   for (var a = 0, anno; anno = annos[a]; a++) {
