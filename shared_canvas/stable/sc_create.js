@@ -186,9 +186,11 @@ function saveAnnotation() {
   var title = $('#anno_title').val();
   var content = $('#anno_text').val();
   var annoType = $('#anno_classification').val();
+  var color = $('#anno_color').attr('value');
+
   if($('#saveAnno').text() == 'Update Annotation'){
     urn = $('#saveAnno').attr('urn');
-    pb_update_annotation(urn, title, annoType, content);
+    pb_update_annotation(urn, title, annoType, content, color);
     return;
   }
 

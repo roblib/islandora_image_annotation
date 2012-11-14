@@ -75,7 +75,7 @@ function islandora_add_annotation($pid) {
   $namespace = substr($pid, 0, strpos($pid, ":"));
   $item = islandora_ingest_get_object('islandora:OACCModel', $pid, 'isMemberOf', $namespace);
   $item->label = (string) $labels[0];
-  //relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:imageCModel');
+
   $item->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:OACCModel');
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targetedBy', $user->name, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targets', $pid);
@@ -85,7 +85,6 @@ function islandora_add_annotation($pid) {
   $item->relationships->add(FEDORA_RELS_EXT_URI, 'isAnnotationOf', $pid);
   $item->relationships->add('http://islandora.ca/ontology/relsext#', 'isAnnotationType', $type, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasURN', $urn, TRUE);
-  //$item->add_datastream_from_string($annotation_xml, 'OAC', 'OAC', 'text/xml', 'X');
   $new_ds = $item->constructDatastream('OAC', 'X');
   $new_ds->label = 'OAC';
   $new_ds->mimetype = 'text/xml';
@@ -165,7 +164,6 @@ QUERY;
       'type' => $object['type']['value'],
       'color' => $object['color']['value'],
       'urn' => $object['urn']['value'],
-
     );
 
     $pids['pids'][] = $itemdata;
@@ -304,9 +302,15 @@ function islandora_canvas_update_annotation() {
   $title = urldecode($_POST['title']);
   $content = urldecode($_POST['content']);
   $type = urldecode($_POST['annoType']);
+  $new_color = urldecode($_POST['color']);
   $pid = islandora_canvas_get_pid_from_urn($urn);
-
   $fedora_object = islandora_object_load($pid);
+  $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasColor' );
+  $old_color = $rels[0]['object']['value'];
+  if ($old_color != $new_color) {
+    $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'hasColor', $old_color);
+    $fedora_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasColor', $new_color, TRUE);
+  }
   $annotation = $fedora_object['OAC']->content;
   $xml = simplexml_load_string($annotation);
 

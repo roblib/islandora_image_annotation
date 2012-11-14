@@ -2,9 +2,7 @@
 function init_pb() {
   $('#create_body').append('<li id="pasteBinSel">&nbsp; Public: <span style="float:right"><input type="radio" name="blog_radio" checked = "checked" id="pb_pastebin"></span></span></li>');
   $("#create_body li:even").addClass("alt").hide();
-
 }
-
 
 //add annotation to fedora
 
@@ -72,10 +70,16 @@ function pb_getList() {
         }
       }
 
-
       $(".islandora_comment_type_title").off();
+
+      //changed from simple toggle to allow for out of sync elements
+
       $(".islandora_comment_type_title").ready().on("click", function(){
-        $(this).siblings('.canvas_annotation').toggle();
+        if($(this).siblings('.canvas_annotation').is(":visible")){
+          $(this).siblings('.canvas_annotation').hide();
+        } else{
+          $(this).siblings('.canvas_annotation').show();
+        }
       });
       
     },
@@ -106,7 +110,6 @@ function pb_getPaste(pid) {
 }
 
 
-
 function pb_deleteAnno(urn) {
 
   var selector = '#anno_'+urn;
@@ -127,7 +130,7 @@ function pb_deleteAnno(urn) {
 }
 
 
-function pb_update_annotation(urn, title,annoType, content){
+function pb_update_annotation(urn, title,annoType, content, color){
   $.ajax({
     type:'POST',
     url:emic_canvas_params.islandora_update_annotation,
@@ -135,7 +138,8 @@ function pb_update_annotation(urn, title,annoType, content){
       urn:urn,
       title:title,
       annoType:annoType,
-      content:content
+      content:content,
+      color:color
     },
     success: function(data,status,xhr) {
       $('#create_annotation_box').hide();
