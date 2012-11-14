@@ -18,30 +18,41 @@
 <?php if (empty($results)): ?>
   <p class="no-results"><?php print t('Sorry, but your search returned no results.'); ?></p>
 <?php else: ?>
-  <div class="islandora-solr-search-results">
-    <div class="islandora-solr-grid clearfix">
+  <div class="islandora islandora-solr-search-results">
     <?php $row_result = 0; ?>
     <?php foreach($results as $result): ?>
-      <dl class="solr-grid-field">
-        <dt class="solr-grid-thumb">
-          <?php $image = '<img src="' . $thumbnail_path[$row_result] . '" />'; ?>
+    <!-- Search result -->
+    <div class="islandora-solr-search-result clear-block <?php print $row_result % 2 == 0 ? 'odd' : 'even'; ?>">
+      <!-- Thumbnail -->
+      <dl class="solr-thumb">
+        <dt>
+         <?php $image = '<img src="' . $thumbnail_path[$row_result] . '" />'; ?>
           <?php print l($image, 'islandora/object/' . $pid_for_url[$row_result], array('html' => TRUE)); ?>
         </dt>
-        <dd class="solr-grid-caption">
-          <?php $title = isset($result['fgs.label']['value']) ? $result['fgs.label']['value'] : ''; ?>
-          <?php print l($title, 'islandora/object/' . htmlspecialchars($pid_for_url[$row_result], ENT_QUOTES, 'utf-8')); ?>
-        </dd>
-        <dd class="solr-grid-caption">
-              <?php print l("Annotation Object", 'islandora/object/' . htmlspecialchars($result['PID']['value'], ENT_QUOTES, 'utf-8')); ?>
-       
-        </dd>
-        <dd class="solr-grid-caption">
-          <?php $anno_cat = isset($anno_category[$row_result]) ? $anno_category[$row_result] : ''; ?>
-          <?php print ($anno_cat); ?>
-        </dd>
+        <dd></dd>
       </dl>
+      <!-- Metadata -->
+      <dl class="solr-fields islandora-inline-metadata">
+        <?php $row_field = 0; ?>
+        <?php $max_rows = count($results[$row_result]) - 1; ?>
+        <?php foreach($result as $key => $value): ?>
+          <dt class="solr-label <?php print $value['class']; ?><?php print $row_field == 0 ? ' first' : ''; ?><?php print $row_field == $max_rows ? ' last' : ''; ?>">
+            <?php print $value['label']; ?>
+          </dt>
+          <?php if ($key == 'PID'): ?>
+            <?php $value['value'] = l($value['value'], 'islandora/object/' . htmlspecialchars($value['value'], ENT_QUOTES, 'utf-8')); ?>
+          <?php endif; ?>
+          <?php if ($key == 'PARENT_pid'): ?>
+              <?php $value['value'] = l($value['value'], 'islandora/object/' . htmlspecialchars($value['value'], ENT_QUOTES, 'utf-8')); ?>
+          <?php endif; ?>
+          <dd class="solr-value <?php print $value['class']; ?><?php print $row_field == 0 ? ' first' : ''; ?><?php print $row_field == $max_rows ? ' last' : ''; ?>">
+            <?php print $value['value']; ?>
+          </dd>
+          <?php $row_field++; ?>
+        <?php endforeach; ?>
+      </dl>
+    </div>
     <?php $row_result++; ?>
     <?php endforeach; ?>
-    </div>
   </div>
 <?php endif; ?>
