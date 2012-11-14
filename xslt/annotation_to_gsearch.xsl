@@ -27,8 +27,34 @@
     
    
     <xsl:template name = "annotations">
-       <!-- we will rely on a PARENT_pid field that is created in our main xslt.  We will need the parent pid in our results-->
-    
+       <!-- we will rely on a PARENT_pid field that is created in our main xslt.  We will need the parent pid in our results if you do not already have a PARENT_pid uncomment the next commented section-->
+    <!--  get the parent pid
+        <xsl:variable name="memberOf_PID">
+            <xsl:value-of
+                select="foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion[last()]/foxml:xmlContent//rdf:Description/rel:isMemberOf/@rdf:resource | foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion[last()]/foxml:xmlContent//rdf:description/rel:isMemberOf/@rdf:resource"/>
+        </xsl:variable>
+        
+        <xsl:variable name="memberOfCollection_PID">
+            <xsl:value-of
+                select="foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion[last()]/foxml:xmlContent//rdf:Description/rel:isMemberOfCollection/@rdf:resource | foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion[last()]/foxml:xmlContent//rdf:description/rel:isMemberOfCollection/@rdf:resource"/>
+        </xsl:variable>
+        
+        <xsl:variable name = "PARENT_PID">
+            <xsl:choose>
+                <xsl:when test="text() [normalize-space($memberOf_PID)] ">
+                    <xsl:value-of select="$memberOf_PID"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select='$memberOfCollection_PID'/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>        
+        
+        <field>
+            <xsl:attribute name="name">PARENT_pid</xsl:attribute>
+            <xsl:value-of select="substring($PARENT_PID,13)"/>
+        </field>
+    -->
     <xsl:variable name = "HASBODY">
         <xsl:value-of select = "foxml:datastream[@ID='OAC']/foxml:datastreamVersion[last()]/foxml:xmlContent//rdf:Description/oa:hasBody[1]/@rdf:resource"/>
     </xsl:variable>
