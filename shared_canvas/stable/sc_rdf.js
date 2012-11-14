@@ -52,8 +52,8 @@ function extract_canvas_size(qry, uri) {
   var h = 0;
   var w = 0;
   var t = ''
-  var height = emic_canvas_params.height;
-  var width = emic_canvas_params.width;
+  var height = islandora_canvas_params.height;
+  var width = islandora_canvas_params.width;
   qry.where('<' + uri + '> exif:height ?height')
   .where('<' + uri + '> exif:width ?width')
   .optional('<' + uri + '> dc:title ?title')

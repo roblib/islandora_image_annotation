@@ -373,7 +373,7 @@ function create_rdfAnno() {
   var target = null;
   $('#canvases .canvas').each(function() {
     var cnv = $(this).attr('canvas');
-    // var cnv = emic_canvas_params.object_base +'/Canvas';
+    // var cnv = islandora_canvas_params.object_base +'/Canvas';
     if(cnv){
       if (tgtsCanvas == true) {
         target = cnv;

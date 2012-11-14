@@ -893,8 +893,8 @@ function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
       } else {
         var col = svgAreaColors.splice(0,1)[0];
       }
-      if(emic_canvas_params.mappings['urn:uuid:' + annoId] != ''){
-       col = emic_canvas_params.mappings[['urn:uuid:' + annoId]];
+      if(islandora_canvas_params.mappings['urn:uuid:' + annoId] != ''){
+       col = islandora_canvas_params.mappings[['urn:uuid:' + annoId]];
       }
     
       $(ttldiv).append('<span color="' + col + '" class="mycolor" style="margin-right: 2px; margin-top: 2px; background: '+col+';float:right;width:15px;height:15px;">&nbsp;</span>');

@@ -299,7 +299,7 @@ $(document).ready(function(){
     url: base +'/emic/shared/setup/' + PID,
     async:false,
     success: function(data, status, xhr) {
-      emic_canvas_params = data;
+      islandora_canvas_params = data;
     },
     error: function() {
       alert("Please Login to site");
@@ -312,21 +312,21 @@ $(document).ready(function(){
     $(this).siblings('.canvas_annotation').toggle();
   });
   
-  if(emic_canvas_params.no_edit == true){
+  if(islandora_canvas_params.no_edit == true){
     $('#create_annotation').hide();
   }
-  opts.base = emic_canvas_params.object_base;
+  opts.base = islandora_canvas_params.object_base;
 
  
   $( "#anno_classification" ).autocomplete({
-    source: emic_canvas_params.categories
+    source: islandora_canvas_params.categories
   });
  
   var img = new Image();
-  img.src = emic_canvas_params.image_url;
+  img.src = islandora_canvas_params.image_url;
   img.onload = function(){
-    emic_canvas_params.width = img.width;
-    emic_canvas_params.height = img.height;
+    islandora_canvas_params.width = img.width;
+    islandora_canvas_params.height = img.height;
   }
 
  
@@ -364,7 +364,7 @@ $(document).ready(function(){
    
 
   // Manifest Initialization
-  var manuri = emic_canvas_params.manifest_url;
+  var manuri = islandora_canvas_params.manifest_url;
   if (manuri != undefined) {
     fetchTriples(manuri, rdfbase, cb_process_manifest);
   } else {

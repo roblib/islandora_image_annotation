@@ -12,7 +12,7 @@ function pb_postData(title, data, type, color) {
   $.ajax({
     type:'POST',
     async:false,
-    url:emic_canvas_params.islandora_post_url,
+    url:islandora_canvas_params.islandora_post_url,
     data: {
       title:title,
       data:data,
@@ -33,18 +33,18 @@ function pb_postData(title, data, type, color) {
 //
 
 function pb_getList() {
-  emic_canvas_params.mappings = new Array();
+  islandora_canvas_params.mappings = new Array();
   $.ajax({
     type:'GET',
     async:false,
-    url: emic_canvas_params.get_annotation_list_url,
+    url: islandora_canvas_params.get_annotation_list_url,
     success: function(data,status,xhr) {
       var listdata = $.parseJSON(data);
       var pids = listdata.pids;
 
       if( pids != null){
         for (var i=0,info;i < pids.length;i++){
-          emic_canvas_params.mappings[pids[i]['urn']] = pids[i]['color']
+          islandora_canvas_params.mappings[pids[i]['urn']] = pids[i]['color']
 
           info=pids[i]['id'];
           var pid = info;
@@ -98,7 +98,7 @@ function pb_getPaste(pid) {
 
   $.ajax({
     type:'GET',
-    url: emic_canvas_params.islandora_get_annotation + pid,
+    url: islandora_canvas_params.islandora_get_annotation + pid,
     success: function(data,status,xhr) {
    
       load_commentAnno(data);
@@ -116,7 +116,7 @@ function pb_deleteAnno(urn) {
   var classSelector = '.svg_'+urn;
   $.ajax({
     type:'POST',
-    url:emic_canvas_params.islandora_delete_annotation + urn,
+    url:islandora_canvas_params.islandora_delete_annotation + urn,
     data: urn,
     success: function(data,status,xhr) {
       $(selector).next().remove();
@@ -133,7 +133,7 @@ function pb_deleteAnno(urn) {
 function pb_update_annotation(urn, title,annoType, content, color){
   $.ajax({
     type:'POST',
-    url:emic_canvas_params.islandora_update_annotation,
+    url:islandora_canvas_params.islandora_update_annotation,
     data: {
       urn:urn,
       title:title,
