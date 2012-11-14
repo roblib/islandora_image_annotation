@@ -18,9 +18,9 @@ function islandora_canvas_setup($pid) {
   $mappings = variable_get('islandora_annotation_mappings', array());
   $vid = $mappings[$cmodel]['TAX'];
   $dsid = $mappings[$cmodel]['DSID'];
-  $terms = taxonomy_get_tree($vid,0,1);
+  $terms = taxonomy_get_tree($vid, 0, 1);
   $categories = array();
-  foreach($terms as $term){
+  foreach ($terms as $term) {
     $categories[] = $term->name;
   }
   $image_url = "$base_url/islandora/object/$pid/datastream/$dsid";
@@ -59,6 +59,7 @@ function islandora_add_annotation($pid) {
   module_load_include('inc', 'emic_canvas', 'build_sharedcanvas_streams');
   module_load_include('inc', 'islandora', 'includes/islandora.ingest');
   $annotation_xml = islandora_shared_transform_annotationList(urldecode($_POST['data']), 'html');
+  $color = $_POST['color'];
   $type = $_POST['type'];
   if (!$type) {
     $type = 'unclassified';
@@ -78,6 +79,9 @@ function islandora_add_annotation($pid) {
   $item->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:OACCModel');
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targetedBy', $user->name, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targets', $pid);
+  if ($color) {
+    $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasColor', $color, TRUE);
+  }
   $item->relationships->add(FEDORA_RELS_EXT_URI, 'isAnnotationOf', $pid);
   $item->relationships->add('http://islandora.ca/ontology/relsext#', 'isAnnotationType', $type, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasURN', $urn, TRUE);
@@ -214,8 +218,7 @@ function islandora_save_updated_annotations($pid, $rdf) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $item = islandora_object_load($pid);
   $updated_annotationList = $rdf->printRDF();
-   $item['AnnotationList']->content = $updated_annotationList;
-  
+  $item['AnnotationList']->content = $updated_annotationList;
 }
 
 function build_annotationList($pid) {

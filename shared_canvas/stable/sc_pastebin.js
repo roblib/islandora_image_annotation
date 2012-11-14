@@ -8,7 +8,7 @@ function init_pb() {
 
 //add annotation to fedora
 
-function pb_postData(title, data, type) {
+function pb_postData(title, data, type, color) {
   
   data = encodeURI(data);
   $.ajax({
@@ -18,7 +18,8 @@ function pb_postData(title, data, type) {
     data: {
       title:title,
       data:data,
-      type:type
+      type:type,
+      color:color
     },
     success: function(data,status,xhr) {
       pb_getPaste(data);
@@ -56,15 +57,14 @@ function pb_getList() {
             var idSelector = '#' + id;
     
             if($(idSelector).length == 0){
-
               header = '<div  class = "islandora_comment_type" id = "'+ id + '"><div class = "islandora_comment_type_title">' + temp + '</div></div>';
               $('#comment_annos_block').append(header);
-
             }
           }
 
           $('#canvases .canvas').each(function() {
             var cnv = $(this).attr('canvas');
+
             pb_getPaste(pid);
           });
           var type = temp;

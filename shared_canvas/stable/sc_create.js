@@ -201,7 +201,8 @@ function saveAnnotation() {
   var rinfo = create_rdfAnno();
   var rdfa = rinfo[0];
   var tgt = rinfo[1];
-	
+  //added for Islandora
+  var color = rinfo[2];
   if (tgt == null) {
     alert('You must draw a shape around the target.');
     return 0;
@@ -227,7 +228,7 @@ function saveAnnotation() {
     $('#comment_annos_block').append(header);
 
   }
-  pb_postData(tgt, rdfa, type);
+  pb_postData(tgt, rdfa, type, color);
 
   return 1;
 }
@@ -382,6 +383,7 @@ function create_rdfAnno() {
         for (s in stuff) {
           target = cnv;
           var svgxml = nodeToXml(stuff[s].node);
+          svgxml = svgxml.replace("stroke='#000000'" , "stroke='" + color +  "'")
           svgxml = svgxml.replace('<', '&lt;');
           svgxml = svgxml.replace('<', '&lt;');
           svgxml = svgxml.replace('>', '&gt;');
@@ -406,7 +408,7 @@ function create_rdfAnno() {
   });
   rdfa += "</div>"; // Close Annotation
   rdfa += "</div>"; // Close wrapper
-  return [rdfa, target];
+  return [rdfa, target, color];
 }
 
 switchDown = function(x,y) {

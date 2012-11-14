@@ -840,7 +840,11 @@ function paint_commentAnno(anno, canvasId) {
   block += '<div class="comment_text">' + '<div class="comment_type">' + annoType + '</div><div class="comment_content">' + txt + '</div></div>';
   block += '</div>';
   selectBlock = "#islandora_annoType_" + fixed_annotype;
-
+  if($(selectBlock).length == 0){
+    header = '<div  class = "islandora_comment_type" id = "'+ 'islandora_annoType_'+  fixed_annotype + '"><div class = "islandora_comment_type_title">' + annoType + '</div></div>';
+    $('#comment_annos_block').append(header);
+  }
+ 
   $(selectBlock).append(block);
   $('#anno_' + myid).attr('canvas', canvasId);
 

@@ -346,9 +346,7 @@ function islandora_serve($pid, $stream, $width = null, $height = null) {
     return;
   }
 
-  $dimensions = get_height_and_width($pid);
-  $height = $dimensions['height'];
-  $width = $dimensions['width'];
+
    $height = $_POST['height'];
    $width = $_POST['width'];
    $height = 20;
