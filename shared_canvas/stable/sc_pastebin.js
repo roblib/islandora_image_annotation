@@ -35,7 +35,7 @@ function pb_postData(title, data, type, color) {
 //
 
 function pb_getList() {
-
+  emic_canvas_params.mappings = new Array();
   $.ajax({
     type:'GET',
     async:false,
@@ -43,9 +43,11 @@ function pb_getList() {
     success: function(data,status,xhr) {
       var listdata = $.parseJSON(data);
       var pids = listdata.pids;
-      emic_canvas_params.types = listdata.types;
+
       if( pids != null){
         for (var i=0,info;i < pids.length;i++){
+          emic_canvas_params.mappings[pids[i]['urn']] = pids[i]['color']
+
           info=pids[i]['id'];
           var pid = info;
           var temp = pids[i]['type'];
@@ -64,7 +66,6 @@ function pb_getList() {
 
           $('#canvases .canvas').each(function() {
             var cnv = $(this).attr('canvas');
-
             pb_getPaste(pid);
           });
           var type = temp;
@@ -83,7 +84,7 @@ function pb_getList() {
     }
 
   });
-
+  console.dir(emic_canvas_params.mappings)
 }
 
 
@@ -95,6 +96,7 @@ function pb_getPaste(pid) {
     type:'GET',
     url: emic_canvas_params.islandora_get_annotation + pid,
     success: function(data,status,xhr) {
+   
       load_commentAnno(data);
     },
     error: function(data,status,xhr) {

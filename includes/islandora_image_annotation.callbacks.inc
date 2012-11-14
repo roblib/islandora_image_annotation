@@ -142,13 +142,35 @@ function islandora_shared_get_annotation_pids($pid) {
                and \$id <http://islandora.ca/ontology/relsext#isAnnotationType> \$type
                order by \$type";
 
+  $query = <<<QUERY
+PREFIX io: <http://islandora.ca/ontology/relsext#>
+PREFIX fm: <info:fedora/fedora-system:def/model#>
+
+
+SELECT ?id ?type ?color ?urn from <#ri>
+WHERE {
+        ?id io:targets <info:fedora/islandora:1574> ;
+            io:hasURN ?urn;
+            io:isAnnotationType ?type;
+            fm:state fm:Active ;
+
+            OPTIONAL{
+            ?id io:hasColor ?color
+            }
+}
+ORDER BY ASC(?type)
+QUERY;
+
   $item = islandora_object_load($pid);
-  $objects = $item->repository->ri->itqlQuery($query);
+  $objects = $item->repository->ri->sparqlQuery($query);
 
   foreach ($objects as $object) {
     $itemdata = array(
       'id' => $object['id']['value'],
-      'type' => $object['type']['value']
+      'type' => $object['type']['value'],
+      'color' => $object['color']['value'],
+      'urn' => $object['urn']['value'],
+
     );
 
     $pids['pids'][] = $itemdata;

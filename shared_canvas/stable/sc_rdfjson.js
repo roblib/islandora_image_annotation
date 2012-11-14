@@ -73,12 +73,11 @@ function jAnno(id) {
   this.zOrder = 0;
   this.finished = 1;
   this.painted = 0;
-  this.annoType = 'Marginalia';
+  this.annoType = '';
 }
 
 
 jAnno.prototype.extractInfo = function(info) {
-
   var nss = opts.namespaces;
   var me = info[this.id];
   var typs = me[nss['rdf']+'type'];
