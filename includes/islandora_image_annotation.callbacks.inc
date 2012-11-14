@@ -144,7 +144,7 @@ PREFIX fm: <info:fedora/fedora-system:def/model#>
 
 SELECT ?id ?type ?color ?urn from <#ri>
 WHERE {
-        ?id io:targets <info:fedora/islandora:1574> ;
+        ?id io:targets <info:fedora/$pid> ;
             io:hasURN ?urn;
             io:isAnnotationType ?type;
             fm:state fm:Active ;
