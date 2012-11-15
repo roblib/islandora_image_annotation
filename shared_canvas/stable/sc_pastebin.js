@@ -1,12 +1,12 @@
 
-function init_pb() {
-  $('#create_body').append('<li id="pasteBinSel">&nbsp; Public: <span style="float:right"><input type="radio" name="blog_radio" checked = "checked" id="pb_pastebin"></span></span></li>');
-  $("#create_body li:even").addClass("alt").hide();
-}
+//function islandora_init() {
+//  $('#create_body').append('<li id="pasteBinSel">&nbsp; Public: <span style="float:right"><input type="radio" name="blog_radio" checked = "checked" id="pb_pastebin"></span></span></li>');
+//  $("#create_body li:even").addClass("alt").hide();
+//}
 
 //add annotation to fedora
 
-function pb_postData(title, data, type, color) {
+function islandora_postData(title, data, type, color) {
   
   data = encodeURI(data);
   $.ajax({
@@ -20,7 +20,7 @@ function pb_postData(title, data, type, color) {
       color:color
     },
     success: function(data,status,xhr) {
-      pb_getPaste(data);
+      islandora_getAnnotation(data);
     },
     error: function(data,status,xhr) {
       alert('Failed to post')
@@ -32,7 +32,7 @@ function pb_postData(title, data, type, color) {
 // Adds divs for each type
 //
 
-function pb_getList() {
+function islandora_getList() {
   islandora_canvas_params.mappings = new Array();
   $.ajax({
     type:'GET',
@@ -68,7 +68,7 @@ function pb_getList() {
 
           $('#canvases .canvas').each(function() {
             var cnv = $(this).attr('canvas');
-            pb_getPaste(pid);
+            islandora_getAnnotation(pid);
           });
           var type = temp;
         }
@@ -91,7 +91,7 @@ function pb_getList() {
 
 // get annotation data from Fedora and send it to load_comment_anno to be displayed
 
-function pb_getPaste(pid) {
+function islandora_getAnnotation(pid) {
 
   $.ajax({
     type:'GET',
@@ -107,7 +107,7 @@ function pb_getPaste(pid) {
 }
 
 
-function pb_deleteAnno(urn) {
+function islandora_deleteAnno(urn) {
 
   var selector = '#anno_'+urn;
   var classSelector = '.svg_'+urn;
@@ -127,7 +127,7 @@ function pb_deleteAnno(urn) {
 }
 
 
-function pb_update_annotation(urn, title,annoType, content, color){
+function islandora_updateAnno(urn, title,annoType, content, color){
   $.ajax({
     type:'POST',
     url:islandora_canvas_params.islandora_update_annotation,

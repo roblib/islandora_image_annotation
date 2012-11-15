@@ -235,7 +235,7 @@ $(function(){
    
       if(key == 'delete'){
         if (confirm("Permananently Delete Annotation '" + title + "'")) {
-          pb_deleteAnno(urn);
+          islandora_deleteAnno(urn);
         }
        
       }

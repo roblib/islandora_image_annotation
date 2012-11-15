@@ -19,7 +19,7 @@ var insideStyle = {
 };
 
 function fetch_comment_annotations() {
-  pb_getList();
+  islandora_getList();
 	
 }
 
@@ -43,7 +43,7 @@ function maybe_config_create_annotation() {
   topinfo['svgAnnoShape'] = shp.attr('id').substr(10,5);
 	
   // Install PasteBin
-  init_pb();
+  //islandora_init();
 
 }
 
@@ -178,7 +178,7 @@ function destroyAll(canvas) {
   }
   topinfo['raphaels']['comment'][canvas] = undefined;
 
-  pb_getList();
+  islandora_getList();
 }
 
 function saveAnnotation() {
@@ -193,7 +193,7 @@ function saveAnnotation() {
   
   if($('#saveAnno').text() == 'Update Annotation'){
     urn = $('#saveAnno').attr('urn');
-    pb_update_annotation(urn, title, annoType, content, color);
+    islandora_updateAnno(urn, title, annoType, content, color);
     return;
   }
 
@@ -241,8 +241,15 @@ function saveAnnotation() {
     $('#comment_annos_block').append(header);
   }
 
-
-  pb_postData(tgt, rdfa, type, color);
+  if($.inArray(type, islandora_canvas_params.categories) == -1){
+    islandora_canvas_params.categories.push(type);
+    $( "#anno_classification" ).autocomplete({
+      source: islandora_canvas_params.categories
+    });
+  }
+    
+  
+  islandora_postData(tgt, rdfa, type, color);
 
   return 1;
 }

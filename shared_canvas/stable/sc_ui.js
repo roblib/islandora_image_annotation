@@ -851,7 +851,7 @@ function paint_commentAnno(anno, canvasId) {
 
   $('#delete_anno_'+myid).click(function(e){
     if (confirm("Permananently Delete This Annotation?")) {
-      pb_deleteAnno(myid);
+      islandora_deleteAnno(myid);
     }
     e.preventDefault();
   });
