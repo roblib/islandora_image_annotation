@@ -134,7 +134,7 @@ function islandora_image_annotation_theme($existing, $type, $theme, $path) {
     ),
     'islandora_image_annotation_solr' => array(
       'template' => 'theme/islandora-image-annotation-solr',
-      'variables' => array('results' => NULL, 'elements' => array()),
+      'variables' => array('results' => NULL, 'elements' => array(), 'key_fields' => array()),
     ),
   );
 }
@@ -179,7 +179,6 @@ function islandora_image_annotation_islandora_solr_primary_display() {
   );
 }
 
-
 /**
  * hook_preprocess function 
  *
@@ -217,21 +216,22 @@ function islandora_image_annotation_preprocess_islandora_image_annotation_solr(&
     $variables[$key] = $value;
   }
 
-  foreach($variables['results'] as $key => $value) {
+  foreach ($variables['results'] as $key => $value) {
     $object = islandora_object_load($value['PID']['value']);
-    $variables['pid_for_url'][$key] = $value['PID']['value'];// we may want to return to the parent not the object
+    $variables['pid_for_url'][$key] = $value['PID']['value']; // we may want to return to the parent not the object
+    $pid = $value['PID']['value'];
     if ($object) {
       if (isset($object['TN'])) {
-        $pid = $variables['results'][$key]['PID']['value'];
         $variables['thumbnail_path'][$key] = url('islandora/object/' . $pid . '/datastream/TN');
       }
-      else if (isset($value['rels.hasModel']) && $value["rels.hasModel"]['value'] == 'info:fedora/islandora:OACCModel') {
-        $variables['pid_for_url'][$key] = $value['PARENT_pid']['value'];//create link to parent object
-        $variables['anno_category'] = isset($value['anno_category_s']['value']) ? $value['anno_category_s']['value'] : '';
-        $variables['anno_title'] = isset($value['anno_title_s']['value']) ? $value['anno_title_s']['value'] : '';
-        $variables['anno_body'] = isset($value['anno_body_t']['value']) ? $value['anno_body_t']['value'] : '';
-        $variables['thumbnail_path'][$key] = url('islandora/object/' . $value['PARENT_pid']['value'] . '/datastream/TN');
-      } else {
+      if (isset($variables['key_fields']['rels.hasModel'][$pid]) && $variables['key_fields']['rels.hasModel'][$pid] == 'info:fedora/islandora:OACCModel') {
+        $variables['pid_for_url'][$key] = $variables['key_fields']['PARENT_pid'][$pid]; //create link to parent object
+        $variables['anno_category'][$key] = isset($value['anno_category_s']['value']) ? $value['anno_category_s']['value'] : '';
+        $variables['anno_title'][$key] = isset($value['anno_title_s']['value']) ? $value['anno_title_s']['value'] : '';
+        $variables['anno_body'][$key] = isset($value['anno_body_t']['value']) ? $value['anno_body_t']['value'] : '';
+        $variables['thumbnail_path'][$key] = url('islandora/object/' . $variables['key_fields']['PARENT_pid'][$pid] . '/datastream/TN');
+      }
+      else {
         $variables['thumbnail_path'][$key] = $path . '/images/defaultimg.png';
       }
     }
