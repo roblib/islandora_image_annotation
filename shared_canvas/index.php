@@ -183,9 +183,9 @@
               <option value="comment">Commentary</option>
               <option value="transcription">Transcription</option>
             </select></span>
-          <!-- Annotation textarea -->
-          <div class="element-wrap">
-            <label for="anno_text">Type:</label>
+          
+          <div id ="islandora_classification"class="element-wrap">
+            <label for="anno_type">Type:</label>
             <input id="anno_classification" type="text" size="28"></input>
           </div>
 
