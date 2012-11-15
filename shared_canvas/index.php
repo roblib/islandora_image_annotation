@@ -192,7 +192,8 @@
 
           <div id ="color-picker-wrapper" class="element-wrap">
             <label for="anno_color">Color:</label>
-            <input id ="anno_color"type="hidden" name="color4" value="#91843c" class="color-picker" size="7" />
+            <input id ="anno_color" type="hidden" name="color4" value="#91843c" class="color-picker" size="7" />
+            <input id ="anno_color_value" type="hidden" value ="" size="7" />
           </div>
 
 

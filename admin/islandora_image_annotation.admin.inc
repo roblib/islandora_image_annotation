@@ -95,7 +95,7 @@ function islandora_image_annotation_admin() {
     '#type' => 'radios',
     '#title' => t('Annotation Categories'),
     '#options' => array(0 => t('User defined'), 1 => t("Administrator defined")),
-    '#description' => t('Allows administrators to select predefined taxonomies to predefine annotation categorization terminology'),
+    '#description' => t('Allows administrators to select predefined taxonomies to determine annotation categorization terminology'),
     '#default_value' => $enforced,
   );
 
