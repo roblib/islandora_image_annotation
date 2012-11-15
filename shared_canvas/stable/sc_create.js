@@ -227,15 +227,21 @@ function saveAnnotation() {
   // add category to annoblock before saving annotation.  Fixes concurrency errors
 
   var fixed_cat = type.replace(/[^\w]/g,'');
+
   var type_class = "annoType_" + fixed_cat;
-  var id = 'islandora_annoType_'+ fixed_cat;
-  var idSelector = '#' + id;
-
+  var blockId = 'islandora_annoType_'+ fixed_cat;
+  var contentId = 'islandora_annoType_content_'+ fixed_cat;
+  var idSelector = '#' + blockId;
+    
   if($(idSelector).length == 0){
-    header = '<div  class = "islandora_comment_type" id = "'+ id + '"><div class = "islandora_comment_type_title">' + type + '</div></div>';
+    header =  '<div class = "islandora_comment_type" id = "'+ blockId + '">';
+    header += '<div class = "islandora_comment_type_title">' + type + '</div>';
+    header += '<div class = "islandora_comment_type_content" style = "display:none" id = "'+ contentId + '"></div>';
+    header += '</div>';
     $('#comment_annos_block').append(header);
-
   }
+
+
   pb_postData(tgt, rdfa, type, color);
 
   return 1;

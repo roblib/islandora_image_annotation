@@ -53,11 +53,15 @@ function pb_getList() {
           if(temp != type){
 
             var type_class = "annoType_" + fixed_cat;
-            var id = 'islandora_annoType_'+ fixed_cat;
-            var idSelector = '#' + id;
+            var blockId = 'islandora_annoType_'+ fixed_cat;
+            var contentId = 'islandora_annoType_content_'+ fixed_cat;
+            var idSelector = '#' + blockId;
     
             if($(idSelector).length == 0){
-              header = '<div  class = "islandora_comment_type" id = "'+ id + '"><div class = "islandora_comment_type_title">' + temp + '</div></div>';
+              header =  '<div class = "islandora_comment_type" id = "'+ blockId + '">';
+              header += '<div class = "islandora_comment_type_title">' + temp + '</div>';
+              header += '<div class = "islandora_comment_type_content" style = "display:none" id = "'+ contentId + '"></div>';
+              header += '</div>';
               $('#comment_annos_block').append(header);
             }
           }
@@ -72,16 +76,9 @@ function pb_getList() {
 
       $(".islandora_comment_type_title").off();
 
-      //changed from simple toggle to allow for out of sync elements
-
       $(".islandora_comment_type_title").ready().on("click", function(){
-        if($(this).siblings('.canvas_annotation').is(":visible")){
-          $(this).siblings('.canvas_annotation').hide();
-        } else{
-          $(this).siblings('.canvas_annotation').show();
-        }
+        $(this).siblings('.islandora_comment_type_content').toggle();
       });
-      
     },
     error: function(data,status,xhr) {
     // alert('Failed to retrieve List')

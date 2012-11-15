@@ -831,19 +831,20 @@ function paint_commentAnno(anno, canvasId) {
       tgttxt = 'all of ' + tgtttl;
     }
   }
-
-
   txt = txt.replace('\n', '<br/>')
-  block = '<div style = "display:none" class = "canvas_annotation" ' + 'urn ="' + myid + '" '+ ' >';
-  block += '<div class="comment_title" id="anno_' + myid + '"><span class="comment_showhide">+ </span>' + title + '</div>';
 
+  //block contains complete annotation
+  block = '<div class = "canvas_annotation" ' + 'urn ="' + myid + '" '+ ' >';
+  block += '<div class="comment_title" id="anno_' + myid + '"><span class="comment_showhide">+ </span>' + title + '</div>';
   block += '<div class="comment_text">' + '<div class="comment_type">' + annoType + '</div><div class="comment_content">' + txt + '</div></div>';
   block += '</div>';
-  selectBlock = "#islandora_annoType_" + fixed_annotype;
-  if($(selectBlock).length == 0){
-    header = '<div  class = "islandora_comment_type" id = "'+ 'islandora_annoType_'+  fixed_annotype + '"><div class = "islandora_comment_type_title">' + annoType + '</div></div>';
-    $('#comment_annos_block').append(header);
-  }
+  
+
+  selectBlock = "#islandora_annoType_content_" + fixed_annotype;
+//  if($(selectBlock).length == 0){
+//    header = '<div  class = "islandora_comment_type" id = "'+ 'islandora_annoType_'+  fixed_annotype + '"><div class = "islandora_comment_type_title">' + annoType + '</div></div>';
+//    $('#comment_annos_block').append(header);
+//  }
  
   $(selectBlock).append(block);
   $('#anno_' + myid).attr('canvas', canvasId);
