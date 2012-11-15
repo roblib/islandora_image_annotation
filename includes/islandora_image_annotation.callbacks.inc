@@ -16,11 +16,12 @@ function islandora_canvas_setup($pid) {
   $rels = $item->relationships->get('info:fedora/fedora-system:def/model#', 'hasModel');
   $cmodel = $rels[0]['object']['value'];
   $mappings = variable_get('islandora_annotation_mappings', array());
+  $optimized = variable_get('islandora_annotation_optimized', TRUE);
   $vid = $mappings[$cmodel]['TAX'];
   $dsid = $mappings[$cmodel]['DSID'];
-  $terms = taxonomy_get_tree($vid,0,1);
+  $terms = taxonomy_get_tree($vid, 0, 1);
   $categories = array();
-  foreach($terms as $term){
+  foreach ($terms as $term) {
     $categories[] = $term->name;
   }
   $image_url = "$base_url/islandora/object/$pid/datastream/$dsid";
@@ -42,6 +43,7 @@ function islandora_canvas_setup($pid) {
   $results['no_edit'] = !user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE);
   $results['categories'] = $categories;
   $results['image_url'] = $image_url;
+  $results['can_choose'] = !$optimized;
   $json = json_encode($results);
   echo $json;
 }
@@ -59,6 +61,7 @@ function islandora_add_annotation($pid) {
   module_load_include('inc', 'emic_canvas', 'build_sharedcanvas_streams');
   module_load_include('inc', 'islandora', 'includes/islandora.ingest');
   $annotation_xml = islandora_shared_transform_annotationList(urldecode($_POST['data']), 'html');
+  $color = $_POST['color'];
   $type = $_POST['type'];
   if (!$type) {
     $type = 'unclassified';
@@ -74,14 +77,16 @@ function islandora_add_annotation($pid) {
   $namespace = substr($pid, 0, strpos($pid, ":"));
   $item = islandora_ingest_get_object('islandora:OACCModel', $pid, 'isMemberOf', $namespace);
   $item->label = (string) $labels[0];
-  //relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:imageCModel');
+
   $item->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:OACCModel');
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targetedBy', $user->name, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targets', $pid);
+  if ($color) {
+    $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasColor', $color, TRUE);
+  }
   $item->relationships->add(FEDORA_RELS_EXT_URI, 'isAnnotationOf', $pid);
   $item->relationships->add('http://islandora.ca/ontology/relsext#', 'isAnnotationType', $type, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasURN', $urn, TRUE);
-  //$item->add_datastream_from_string($annotation_xml, 'OAC', 'OAC', 'text/xml', 'X');
   $new_ds = $item->constructDatastream('OAC', 'X');
   $new_ds->label = 'OAC';
   $new_ds->mimetype = 'text/xml';
@@ -133,18 +138,34 @@ function islandora_shared_transform_annotationList($xml_in, $input_type) {
  */
 function islandora_shared_get_annotation_pids($pid) {
 
-  $query = "select \$id \$type from <#ri>
-               where \$id <http://islandora.ca/ontology/relsext#targets> <info:fedora/$pid>
-               and \$id <http://islandora.ca/ontology/relsext#isAnnotationType> \$type
-               order by \$type";
+  $query = <<<QUERY
+PREFIX io: <http://islandora.ca/ontology/relsext#>
+PREFIX fm: <info:fedora/fedora-system:def/model#>
+
+
+SELECT ?id ?type ?color ?urn from <#ri>
+WHERE {
+        ?id io:targets <info:fedora/$pid> ;
+            io:hasURN ?urn;
+            io:isAnnotationType ?type;
+            fm:state fm:Active ;
+
+            OPTIONAL{
+            ?id io:hasColor ?color
+            }
+}
+ORDER BY ASC(?type)
+QUERY;
 
   $item = islandora_object_load($pid);
-  $objects = $item->repository->ri->itqlQuery($query);
+  $objects = $item->repository->ri->sparqlQuery($query);
 
   foreach ($objects as $object) {
     $itemdata = array(
       'id' => $object['id']['value'],
-      'type' => $object['type']['value']
+      'type' => $object['type']['value'],
+      'color' => $object['color']['value'],
+      'urn' => $object['urn']['value'],
     );
 
     $pids['pids'][] = $itemdata;
@@ -214,8 +235,7 @@ function islandora_save_updated_annotations($pid, $rdf) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $item = islandora_object_load($pid);
   $updated_annotationList = $rdf->printRDF();
-   $item['AnnotationList']->content = $updated_annotationList;
-  
+  $item['AnnotationList']->content = $updated_annotationList;
 }
 
 function build_annotationList($pid) {
@@ -284,9 +304,20 @@ function islandora_canvas_update_annotation() {
   $title = urldecode($_POST['title']);
   $content = urldecode($_POST['content']);
   $type = urldecode($_POST['annoType']);
+  $new_color = urldecode($_POST['color']);
   $pid = islandora_canvas_get_pid_from_urn($urn);
-
   $fedora_object = islandora_object_load($pid);
+
+  //if color picking is allowed, update here
+  
+  if (!$optimized = variable_get('islandora_annotation_optimized', TRUE)) {
+    $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasColor');
+    $old_color = $rels[0]['object']['value'];
+    if ($old_color != $new_color) {
+      $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'hasColor', $old_color);
+      $fedora_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasColor', $new_color, TRUE);
+    }
+  }
   $annotation = $fedora_object['OAC']->content;
   $xml = simplexml_load_string($annotation);
 

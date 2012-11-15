@@ -96,8 +96,8 @@ function fetchTriples(uri, qry, fn) {
   $.ajax({
     type:'POST',
     data:{
-      height: emic_canvas_params.height,
-      width : emic_canvas_params.width
+      height: islandora_canvas_params.height,
+      width : islandora_canvas_params.width
     },
     url: uri,
     // + '?' + new Date().toString(),

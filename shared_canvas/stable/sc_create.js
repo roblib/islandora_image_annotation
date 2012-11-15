@@ -48,7 +48,7 @@ function maybe_config_create_annotation() {
 }
 
 function startAnnotating() {
-	
+  $('#anno_color_activated').attr('value', '');
   if ($('#create_annotation').text() == 'Annotating') {
     return;
   }
@@ -70,7 +70,7 @@ function startAnnotating() {
 }
 
 function startEditting(title, annotation, annoType, urn) {
-
+  $('#anno_color_activated').attr('value', '');
   if ($('#create_annotation').text() == 'Annotating') {
     return;
   }
@@ -186,9 +186,14 @@ function saveAnnotation() {
   var title = $('#anno_title').val();
   var content = $('#anno_text').val();
   var annoType = $('#anno_classification').val();
+  var color = '';
+  if($('#anno_color_activated').attr('value') == 'active'){
+    color = $('#anno_color').attr('value');
+  }
+  
   if($('#saveAnno').text() == 'Update Annotation'){
     urn = $('#saveAnno').attr('urn');
-    pb_update_annotation(urn, title, annoType, content);
+    pb_update_annotation(urn, title, annoType, content, color);
     return;
   }
 
@@ -201,7 +206,11 @@ function saveAnnotation() {
   var rinfo = create_rdfAnno();
   var rdfa = rinfo[0];
   var tgt = rinfo[1];
-	
+  //added for Islandora
+  if($('#anno_color_activated').attr('value') == 'active'){
+    color = $('#anno_color').attr('value');
+  }
+
   if (tgt == null) {
     alert('You must draw a shape around the target.');
     return 0;
@@ -218,16 +227,22 @@ function saveAnnotation() {
   // add category to annoblock before saving annotation.  Fixes concurrency errors
 
   var fixed_cat = type.replace(/[^\w]/g,'');
+
   var type_class = "annoType_" + fixed_cat;
-  var id = 'islandora_annoType_'+ fixed_cat;
-  var idSelector = '#' + id;
-
+  var blockId = 'islandora_annoType_'+ fixed_cat;
+  var contentId = 'islandora_annoType_content_'+ fixed_cat;
+  var idSelector = '#' + blockId;
+    
   if($(idSelector).length == 0){
-    header = '<div  class = "islandora_comment_type" id = "'+ id + '"><div class = "islandora_comment_type_title">' + type + '</div></div>';
+    header =  '<div class = "islandora_comment_type" id = "'+ blockId + '">';
+    header += '<div class = "islandora_comment_type_title">' + type + '</div>';
+    header += '<div class = "islandora_comment_type_content" style = "display:none" id = "'+ contentId + '"></div>';
+    header += '</div>';
     $('#comment_annos_block').append(header);
-
   }
-  pb_postData(tgt, rdfa, type);
+
+
+  pb_postData(tgt, rdfa, type, color);
 
   return 1;
 }
@@ -370,7 +385,7 @@ function create_rdfAnno() {
   var target = null;
   $('#canvases .canvas').each(function() {
     var cnv = $(this).attr('canvas');
-    // var cnv = emic_canvas_params.object_base +'/Canvas';
+    // var cnv = islandora_canvas_params.object_base +'/Canvas';
     if(cnv){
       if (tgtsCanvas == true) {
         target = cnv;
@@ -382,6 +397,7 @@ function create_rdfAnno() {
         for (s in stuff) {
           target = cnv;
           var svgxml = nodeToXml(stuff[s].node);
+          svgxml = svgxml.replace("stroke='#000000'" , "stroke='" + color +  "'")
           svgxml = svgxml.replace('<', '&lt;');
           svgxml = svgxml.replace('<', '&lt;');
           svgxml = svgxml.replace('>', '&gt;');
@@ -406,7 +422,7 @@ function create_rdfAnno() {
   });
   rdfa += "</div>"; // Close Annotation
   rdfa += "</div>"; // Close wrapper
-  return [rdfa, target];
+  return [rdfa, target, color];
 }
 
 switchDown = function(x,y) {

@@ -485,7 +485,7 @@ function paint_imageAnno(anno, canvasId) {
     $('#imgSel_block').append(html);
     $(".imgSelul li:even").addClass("alt");
     $('.imgSelRadio').click(function() {
-      alert($(this).attr('id'))
+    
     })
     if ($('#check_view_imgSel').is(':checked')) {
       $('#imgSel').show();
@@ -831,16 +831,21 @@ function paint_commentAnno(anno, canvasId) {
       tgttxt = 'all of ' + tgtttl;
     }
   }
-
-
   txt = txt.replace('\n', '<br/>')
-  block = '<div style = "display:none" class = "canvas_annotation" ' + 'urn ="' + myid + '" '+ ' >';
-  block += '<div class="comment_title" id="anno_' + myid + '"><span class="comment_showhide">+ </span>' + title + '</div>';
 
+  //block contains complete annotation
+  block = '<div class = "canvas_annotation" ' + 'urn ="' + myid + '" '+ ' >';
+  block += '<div class="comment_title" id="anno_' + myid + '"><span class="comment_showhide">+ </span>' + title + '</div>';
   block += '<div class="comment_text">' + '<div class="comment_type">' + annoType + '</div><div class="comment_content">' + txt + '</div></div>';
   block += '</div>';
-  selectBlock = "#islandora_annoType_" + fixed_annotype;
+  
 
+  selectBlock = "#islandora_annoType_content_" + fixed_annotype;
+//  if($(selectBlock).length == 0){
+//    header = '<div  class = "islandora_comment_type" id = "'+ 'islandora_annoType_'+  fixed_annotype + '"><div class = "islandora_comment_type_title">' + annoType + '</div></div>';
+//    $('#comment_annos_block').append(header);
+//  }
+ 
   $(selectBlock).append(block);
   $('#anno_' + myid).attr('canvas', canvasId);
 
@@ -878,12 +883,7 @@ function paint_commentAnno(anno, canvasId) {
 var svgAreaColors = ['#FF0000', '#FF6600', '#FF9400', '#FEC500', '#FFFF00', '#8CC700', '#0FAD00', '#00A3C7', '#0064B5', '#0010A5', '#6300A5', '#C5007C']
 
 function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
-  //  var mappings = new Object();
-  //  for(var i = 0; i < emic_canvas_params.types.length; i++ ){
-  //    mappings[emic_canvas_params.types[i]] = svgAreaColors[i];
-  //  }
 
-  console.dir(ttldiv)
   var canvas = $('#' + canvasId).attr('canvas');
   var annos = topinfo['annotations']['comment'][canvas];
   for (var a = 0, anno; anno = annos[a]; a++) {
@@ -894,6 +894,10 @@ function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
       } else {
         var col = svgAreaColors.splice(0,1)[0];
       }
+      if(islandora_canvas_params.mappings['urn:uuid:' + annoId] != '' && islandora_canvas_params.can_choose){
+       col = islandora_canvas_params.mappings[['urn:uuid:' + annoId]];
+      }
+    
       $(ttldiv).append('<span color="' + col + '" class="mycolor" style="margin-right: 2px; margin-top: 2px; background: '+col+';float:right;width:15px;height:15px;">&nbsp;</span>');
       for (var t = 0, tgt; tgt = anno.targets[t]; t++) {
         if (tgt.partOf != null) {
