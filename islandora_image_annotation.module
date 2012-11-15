@@ -224,7 +224,7 @@ function islandora_image_annotation_preprocess_islandora_image_annotation_solr(&
       if (isset($object['TN'])) {
         $variables['thumbnail_path'][$key] = url('islandora/object/' . $pid . '/datastream/TN');
       }
-      if (isset($variables['key_fields']['rels.hasModel'][$pid]) && $variables['key_fields']['rels.hasModel'][$pid] == 'info:fedora/islandora:OACCModel') {
+      else if (isset($variables['key_fields']['rels.hasModel'][$pid]) && $variables['key_fields']['rels.hasModel'][$pid] == 'info:fedora/islandora:OACCModel') {
         $variables['pid_for_url'][$key] = $variables['key_fields']['PARENT_pid'][$pid]; //create link to parent object
         $variables['anno_category'][$key] = isset($value['anno_category_s']['value']) ? $value['anno_category_s']['value'] : '';
         $variables['anno_title'][$key] = isset($value['anno_title_s']['value']) ? $value['anno_title_s']['value'] : '';
