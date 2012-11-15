@@ -310,6 +310,9 @@ $(document).ready(function(){
 
   //establish color-picker if allowed
   if(islandora_canvas_params.can_choose){
+    $('#color-picker-wrapper').click(function(){
+      $('#anno_color_activated').attr('value', 'active');
+    });
     $('.color-picker').miniColors();
   }else{
     $('#color-picker-wrapper').empty();

@@ -48,7 +48,7 @@ function maybe_config_create_annotation() {
 }
 
 function startAnnotating() {
-	
+  $('#anno_color_activated').attr('value', '');
   if ($('#create_annotation').text() == 'Annotating') {
     return;
   }
@@ -70,7 +70,7 @@ function startAnnotating() {
 }
 
 function startEditting(title, annotation, annoType, urn) {
-
+  $('#anno_color_activated').attr('value', '');
   if ($('#create_annotation').text() == 'Annotating') {
     return;
   }
@@ -186,8 +186,11 @@ function saveAnnotation() {
   var title = $('#anno_title').val();
   var content = $('#anno_text').val();
   var annoType = $('#anno_classification').val();
-  var color = $('#anno_color').attr('value');
-
+  var color = '';
+  if($('#anno_color_activated').attr('value') == 'active'){
+    color = $('#anno_color').attr('value');
+  }
+  
   if($('#saveAnno').text() == 'Update Annotation'){
     urn = $('#saveAnno').attr('urn');
     pb_update_annotation(urn, title, annoType, content, color);
@@ -204,7 +207,10 @@ function saveAnnotation() {
   var rdfa = rinfo[0];
   var tgt = rinfo[1];
   //added for Islandora
-  var color = rinfo[2];
+  if($('#anno_color_activated').attr('value') == 'active'){
+    color = $('#anno_color').attr('value');
+  }
+
   if (tgt == null) {
     alert('You must draw a shape around the target.');
     return 0;
