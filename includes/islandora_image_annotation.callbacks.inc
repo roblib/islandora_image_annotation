@@ -17,6 +17,7 @@ function islandora_canvas_setup($pid) {
   $cmodel = $rels[0]['object']['value'];
   $mappings = variable_get('islandora_annotation_mappings', array());
   $optimized = variable_get('islandora_annotation_optimized', TRUE);
+  $dropdown = variable_get('islandora_annotation_enforce_taxonomy', TRUE);
   $vid = $mappings[$cmodel]['TAX'];
   $dsid = $mappings[$cmodel]['DSID'];
   $terms = taxonomy_get_tree($vid, 0, 1);
@@ -44,6 +45,7 @@ function islandora_canvas_setup($pid) {
   $results['categories'] = $categories;
   $results['image_url'] = $image_url;
   $results['can_choose'] = !$optimized;
+  $results['use_dropdown'] = $dropdown;
   $json = json_encode($results);
   echo $json;
 }

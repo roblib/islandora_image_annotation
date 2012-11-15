@@ -324,18 +324,20 @@ $(document).ready(function(){
   }
   opts.base = islandora_canvas_params.object_base;
 
- 
-  //  $( "#anno_classification" ).autocomplete({
-  //    source: islandora_canvas_params.categories
-  //  });
+  if(islandora_canvas_params.use_dropdown == 1){
+    $('#islandora_classification').empty();
+    var sel = $('<select  id="anno_classification">').appendTo('#islandora_classification');
+    $(islandora_canvas_params.categories).each(function() {
+      value = this.toString();
+      sel.append($("<option>").attr('value',value).text(value));
+    });
+  }else{
+    $( "#anno_classification" ).autocomplete({
+      source: islandora_canvas_params.categories
+    });
+  }
 
-  $('#islandora_classification').empty();
 
-  var sel = $('<select  id="anno_classification">').appendTo('#islandora_classification');
-  $(islandora_canvas_params.categories).each(function() {
-    value = this.toString();
-    sel.append($("<option>").attr('value',value).text(value));
-  });
 
  
   var img = new Image();
