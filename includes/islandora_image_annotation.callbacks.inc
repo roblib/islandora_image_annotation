@@ -20,11 +20,17 @@ function islandora_canvas_setup($pid) {
   $dropdown = variable_get('islandora_annotation_enforce_taxonomy', TRUE);
   $vid = $mappings[$cmodel]['TAX'];
   $dsid = $mappings[$cmodel]['DSID'];
-  $terms = taxonomy_get_tree($vid, 0, 1);
-  $categories = array();
-  foreach ($terms as $term) {
-    $categories[] = $term->name;
+  if ($dropdown) {
+    $terms = taxonomy_get_tree($vid, 0, 1);
+    $categories = array();
+    foreach ($terms as $term) {
+      $categories[] = $term->name;
+    }
   }
+  else {
+    $categories = islandora_annotations_get_solr_terms();
+  }
+
   $image_url = "$base_url/islandora/object/$pid/datastream/$dsid";
   $title = $item->label;
   $pages = array();
@@ -311,7 +317,7 @@ function islandora_canvas_update_annotation() {
   $fedora_object = islandora_object_load($pid);
 
   //if color picking is allowed, update here
-  
+
   if (!$optimized = variable_get('islandora_annotation_optimized', TRUE)) {
     $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasColor');
     $old_color = $rels[0]['object']['value'];
@@ -350,4 +356,17 @@ function islandora_canvas_update_annotation() {
   if ($changed) {
     $fedora_object['OAC']->content = $xml->asXML();
   }
+}
+
+function islandora_annotations_get_solr_terms() {
+  $solr = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
+  $solr = 'codesprint-centos.islandora.ca:8080/solr';
+  $url = "http://$solr/select?indent=on&version=2.2&q=rels.hasModel:islandora\:OACCModel&fl=anno_category_s&fq=&start=0&rows=10000&fl=PID&qt=standard&wt=json";
+  $results = json_decode(file_get_contents($url), TRUE);
+  $docs = $results['response']['docs'];
+
+  foreach ($docs as $doc) {
+    $terms[$doc['anno_category_s'][0]] = 1;
+  }
+  return array_keys($terms);
 }
