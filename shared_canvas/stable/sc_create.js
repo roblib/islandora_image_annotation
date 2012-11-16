@@ -9,7 +9,7 @@
 var outsideStyle = {
   fill: 'none',
   opacity: 0.7,
-  'stroke-width': 2,
+  'stroke-width': '1%',
   stroke: 'black'
 };
 var insideStyle = {
