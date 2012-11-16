@@ -28,7 +28,7 @@ function islandora_postData(title, data, type, color) {
 //
 
 function islandora_getList() {
- delete $('#comment_annos_block').children();
+  delete $('#comment_annos_block').children();
 
   islandora_canvas_params.mappings = new Array();
   $.ajax({
@@ -65,7 +65,7 @@ function islandora_getList() {
           }
 
           $('#canvases .canvas').each(function() {
-           // console.log(temp + " " + pid)
+            // console.log(temp + " " + pid)
             var cnv = $(this).attr('canvas');
             islandora_getAnnotation(pid);
           });
@@ -151,11 +151,16 @@ function islandora_updateAnno(urn, title,annoType, content, color){
       var text = $(selector).text().trim().substring(2,100);
       old_title = $(selector).html();
       new_title = old_title.replace(text, title);
-      $(selector).html(new_title);
 
+      $(selector).html(new_title);
       $(selector).next('.comment_text').find('.comment_type').text(annoType);
       $(selector).next('.comment_text').find('.comment_content').text(content);
+      var fixed_cat = annoType.replace(/[^\w]/g,'');
 
+      $annotation = $(selector).closest('.canvas_annotation');
+      $destination = $('#islandora_annoType_content_' + fixed_cat);
+      $annotation.appendTo($destination);
+     
     },
     error: function(data,status,xhr) {
       alert('Failed to update annotation')
