@@ -928,7 +928,7 @@ function paint_svgArea(svgc, annoId, col, svg) {
   }
   pthelm = npth;
   //changed by UPEI
-  pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col+';stroke-width:4');
+  pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col+';stroke-width:1%');
   pthelm.setAttribute('class', 'svg_' + annoId);
   svgc.canvas.appendChild(pthelm);
 }
