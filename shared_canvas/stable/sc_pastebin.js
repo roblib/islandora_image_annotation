@@ -1,9 +1,4 @@
 
-//function islandora_init() {
-//  $('#create_body').append('<li id="pasteBinSel">&nbsp; Public: <span style="float:right"><input type="radio" name="blog_radio" checked = "checked" id="pb_pastebin"></span></span></li>');
-//  $("#create_body li:even").addClass("alt").hide();
-//}
-
 //add annotation to fedora
 
 function islandora_postData(title, data, type, color) {
@@ -33,6 +28,8 @@ function islandora_postData(title, data, type, color) {
 //
 
 function islandora_getList() {
+ delete $('#comment_annos_block').children();
+
   islandora_canvas_params.mappings = new Array();
   $.ajax({
     type:'GET',
@@ -58,6 +55,7 @@ function islandora_getList() {
             var idSelector = '#' + blockId;
     
             if($(idSelector).length == 0){
+
               header =  '<div class = "islandora_comment_type" id = "'+ blockId + '">';
               header += '<div class = "islandora_comment_type_title">' + temp + '</div>';
               header += '<div class = "islandora_comment_type_content" style = "display:none" id = "'+ contentId + '"></div>';
@@ -67,6 +65,7 @@ function islandora_getList() {
           }
 
           $('#canvases .canvas').each(function() {
+           // console.log(temp + " " + pid)
             var cnv = $(this).attr('canvas');
             islandora_getAnnotation(pid);
           });
@@ -110,6 +109,13 @@ function islandora_getAnnotation(pid) {
 function islandora_deleteAnno(urn) {
 
   var selector = '#anno_'+urn;
+  $parent = $(selector).closest('.islandora_comment_type');
+  length = $parent.find('.canvas_annotation').length;
+
+  if (length ==1){
+    $parent.remove();
+  }
+
   var classSelector = '.svg_'+urn;
   $.ajax({
     type:'POST',
@@ -119,6 +125,7 @@ function islandora_deleteAnno(urn) {
       $(selector).next().remove();
       $(selector).remove();
       $(classSelector).remove();
+
     },
     error: function(data,status,xhr) {
     //   alert('Failed to delete annotation')

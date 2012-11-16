@@ -4,6 +4,7 @@ var MAX_TXT_SIZE = 18;
 
 function ping_progressBar(flag) {
   var pb = $('#loadprogress')
+ 
   var c = pb.progressbar('value')
 
   if (flag == 'manifest') {
@@ -525,9 +526,9 @@ function paint_imageAnno(anno, canvasId) {
     div.height(sh);
     div.css('z-index', topinfo['zOrders']['image']);
 
-//    if (!$('#check_show_baseImg').is(':checked')) {
-//      div.hide();
-//    }
+    //    if (!$('#check_show_baseImg').is(':checked')) {
+    //      div.hide();
+    //    }
 
     var zpr = '<div id="zpr_'+canvasId+'" style="position:absolute;"><button id="zprb_'+canvasId+'">zoom</button></div>';
     $('#annotations').append(zpr);
@@ -843,11 +844,6 @@ function paint_commentAnno(anno, canvasId) {
   
 
   selectBlock = "#islandora_annoType_content_" + fixed_annotype;
-  //  if($(selectBlock).length == 0){
-  //    header = '<div  class = "islandora_comment_type" id = "'+ 'islandora_annoType_'+  fixed_annotype + '"><div class = "islandora_comment_type_title">' + annoType + '</div></div>';
-  //    $('#comment_annos_block').append(header);
-  //  }
- 
   $(selectBlock).append(block);
   $('#anno_' + myid).attr('canvas', canvasId);
 
