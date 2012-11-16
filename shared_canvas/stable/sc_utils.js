@@ -92,17 +92,10 @@ function fetchTriples(uri, qry, fn) {
   } else {
     furi = uri;
   }
-  if(uri.indexOf('manifest') >12){
-    while(islandora_canvas_params.height == undefined){
 
-    }
-  }
   $.ajax({
     type:'POST',
-    data:{
-      height: islandora_canvas_params.height,
-      width : islandora_canvas_params.width
-    },
+
     url: uri,
     // + '?' + new Date().toString(),
     // accepts: "application/rdf+xml",

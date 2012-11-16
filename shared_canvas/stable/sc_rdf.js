@@ -52,8 +52,6 @@ function extract_canvas_size(qry, uri) {
   var h = 0;
   var w = 0;
   var t = ''
-  var height = islandora_canvas_params.height;
-  var width = islandora_canvas_params.width;
   qry.where('<' + uri + '> exif:height ?height')
   .where('<' + uri + '> exif:width ?width')
   .optional('<' + uri + '> dc:title ?title')
@@ -65,7 +63,8 @@ function extract_canvas_size(qry, uri) {
       t = this.title.value;
     }
   });
-  return [height, width, t]
+  
+  return [h, w, t]
 }
 
 // Top level Manifest of other Aggregations of resources

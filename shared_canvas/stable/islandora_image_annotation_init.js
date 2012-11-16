@@ -342,12 +342,7 @@ $(document).ready(function(){
 
 
  
-  var img = new Image();
-  img.src = islandora_canvas_params.image_url;
-  img.onload = function(){
-    islandora_canvas_params.width = img.width;
-    islandora_canvas_params.height = img.height;
-  }
+
 
  
   // RDF Initializationc
