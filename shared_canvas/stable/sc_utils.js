@@ -92,7 +92,9 @@ function fetchTriples(uri, qry, fn) {
   } else {
     furi = uri;
   }
+  while(islandora_canvas_params.height < 1){
 
+  }
   $.ajax({
     type:'POST',
     data:{

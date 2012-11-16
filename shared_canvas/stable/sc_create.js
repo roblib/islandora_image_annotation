@@ -184,11 +184,14 @@ function destroyAll(canvas) {
 }
 
 function saveAnnotation() {
+ 
   // Basic Sanity Check
   var title = $('#anno_title').val();
   var content = $('#anno_text').val();
   var annoType = $('#anno_classification').val();
   var color = '';
+
+  //check to see if color box has been activated
   if($('#anno_color_activated').attr('value') == 'active'){
     color = $('#anno_color').attr('value');
   }
@@ -242,7 +245,7 @@ function saveAnnotation() {
     header += '</div>';
     $('#comment_annos_block').append(header);
   }
-
+  // add new categories to typeahead if necessary
   if($.inArray(type, islandora_canvas_params.categories) == -1){
     islandora_canvas_params.categories.push(type);
     $( "#anno_classification" ).autocomplete({

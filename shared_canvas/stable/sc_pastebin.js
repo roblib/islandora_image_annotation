@@ -2,7 +2,7 @@
 //add annotation to fedora
 
 function islandora_postData(title, data, type, color) {
-  
+
   data = encodeURI(data);
   $.ajax({
     type:'POST',
@@ -28,8 +28,7 @@ function islandora_postData(title, data, type, color) {
 //
 
 function islandora_getList() {
-  delete $('#comment_annos_block').children();
-
+ 
   islandora_canvas_params.mappings = new Array();
   $.ajax({
     type:'GET',
@@ -96,11 +95,9 @@ function islandora_getAnnotation(pid) {
     type:'GET',
     url: islandora_canvas_params.islandora_get_annotation + pid,
     success: function(data,status,xhr) {
-   
       load_commentAnno(data);
     },
     error: function(data,status,xhr) {
-    
     }
   });
 }
