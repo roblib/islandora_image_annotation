@@ -4,6 +4,7 @@ var MAX_TXT_SIZE = 18;
 
 function ping_progressBar(flag) {
   var pb = $('#loadprogress')
+ 
   var c = pb.progressbar('value')
 
   if (flag == 'manifest') {
@@ -486,11 +487,13 @@ function paint_imageAnno(anno, canvasId) {
     $(".imgSelul li:even").addClass("alt");
     $('.imgSelRadio').click(function() {
     
-    })
+      })
     if ($('#check_view_imgSel').is(':checked')) {
+      alert("Its checked")
       $('#imgSel').show();
     }
   } else {
+    alert('abnno body')
     img = anno.body;
   }
 
@@ -523,9 +526,9 @@ function paint_imageAnno(anno, canvasId) {
     div.height(sh);
     div.css('z-index', topinfo['zOrders']['image']);
 
-    if (!$('#check_show_baseImg').is(':checked')) {
-      div.hide();
-    }
+    //    if (!$('#check_show_baseImg').is(':checked')) {
+    //      div.hide();
+    //    }
 
     var zpr = '<div id="zpr_'+canvasId+'" style="position:absolute;"><button id="zprb_'+canvasId+'">zoom</button></div>';
     $('#annotations').append(zpr);
@@ -841,11 +844,6 @@ function paint_commentAnno(anno, canvasId) {
   
 
   selectBlock = "#islandora_annoType_content_" + fixed_annotype;
-//  if($(selectBlock).length == 0){
-//    header = '<div  class = "islandora_comment_type" id = "'+ 'islandora_annoType_'+  fixed_annotype + '"><div class = "islandora_comment_type_title">' + annoType + '</div></div>';
-//    $('#comment_annos_block').append(header);
-//  }
- 
   $(selectBlock).append(block);
   $('#anno_' + myid).attr('canvas', canvasId);
 
@@ -874,9 +872,8 @@ function paint_commentAnno(anno, canvasId) {
     return false;
   }).next().hide();
 
-  if ($('#check_show_comment').is(':checked')) {
-    $('#comment_annos').show();
-  }
+  $('#comment_annos').show();
+
 }
 
 
@@ -895,7 +892,7 @@ function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
         var col = svgAreaColors.splice(0,1)[0];
       }
       if(islandora_canvas_params.mappings['urn:uuid:' + annoId] != '' && islandora_canvas_params.can_choose){
-       col = islandora_canvas_params.mappings[['urn:uuid:' + annoId]];
+        col = islandora_canvas_params.mappings[['urn:uuid:' + annoId]];
       }
     
       $(ttldiv).append('<span color="' + col + '" class="mycolor" style="margin-right: 2px; margin-top: 2px; background: '+col+';float:right;width:15px;height:15px;">&nbsp;</span>');
@@ -927,125 +924,15 @@ function paint_svgArea(svgc, annoId, col, svg) {
   }
   pthelm = npth;
   //changed by UPEI
-  pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col+';stroke-width:2');
+  pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col+';stroke-width:1%');
   pthelm.setAttribute('class', 'svg_' + annoId);
   svgc.canvas.appendChild(pthelm);
 }
 
 
-// UI Callbacks: Audio
 
-function audio_button_click(e) {
-  var jp = $('#jquery_jplayer_1');
-  var aid = $(this).attr('id');
-  var canvasId = $(this).attr('canvasId');
-  var canvas = $('#'+canvasId).attr('canvas');
 
-  // 'audio_button_uuid' + n
-  var aidn = aid.substr(13,100);
-  var auri = 'urn:uuid:' + aidn;
 
-  var annos = topinfo['annotations']['audio'][canvas];
-  var myanno = null;
-  for (var a=0,anno;anno=annos[a];a++) {
-    if (anno.id == auri) {
-      myanno = anno;
-      break;
-    }
-  }
-
-  if (myanno == null) {
-    // :(
-    alert('splat!')
-    return;
-  }
-
-  // Set volume here before playing
-  var vol = $('#slider_volume').slider('value') / 100;
-  jp.jPlayer('volume', vol)
-
-  var img = $(this).attr('src');
-  if (img == '/imgs/play.png') {
-    var curr = topinfo['audioAnno'];
-    if (curr != null) {
-      var pb = $('#audio_progress_' + curr.id.substring(9,1000));
-      pb.progressbar({
-        value:0
-      }).css({
-        'opacity':0.0
-      });
-    }
-    $('.audio_button').attr('src', '/imgs/play.png')
-    $(this).attr('src', '/imgs/stop.png');
-
-    topinfo['audioAnno'] = anno;
-    var pb = $('#audio_progress_' + aidn);
-    pb.css({
-      'opacity':0.6
-    });
-
-    if (anno.body.fragmentType == 'audio') {
-      var start = anno.body.fragmentInfo[0];
-      var mp3 = anno.body.partOf.id;
-    } else {
-      var start = 0;
-      var mp3 = anno.body.id;
-    }
-    jp.jPlayer("setMedia", {
-      'mp3': mp3
-    });
-    jp.jPlayer('play', start);
-
-  } else {
-    var c = topinfo['audioAnno'];
-    $(this).attr('src', '/imgs/play.png');
-    var pb = $('#audio_progress_' + aidn);
-    pb.progressbar({
-      value:0
-    }).css({
-      'opacity':0.0
-    });
-    topinfo['audioAnno'] = null;
-    jp.jPlayer('stop');
-  }
-}
-
-function on_audio_currentTime(e) {
-  var anno = topinfo['audioAnno'];
-  if (anno == null) {
-    // Get ct of 0 before playing
-    return;
-  }
-  var annoid = anno.id.substring(9, 1000);
-  var ct = e.jPlayer.status.currentTime;
-  var l = $('#audio_progress_' + annoid);
-
-  if (anno.body.fragmentType == 'audio') {
-    var start = anno.body.fragmentInfo[0];
-    var end = anno.body.fragmentInfo[1];
-    var mp3 = anno.body.partOf.id;
-  } else {
-    var start = 0;
-    var end = anno.body.extent;
-    var mp3 = anno.body.id;
-  }
-
-  var durn = end - start;
-  var relv = ct - start;
-  l.progressbar({
-    value: relv / durn * 100
-  });
-  if (ct > end) {
-    $(this).jPlayer('stop');
-    $('.audio_button').attr('src', '/imgs/play.png')
-    l.progressbar({
-      value:0
-    });
-    l.css({
-      opacity:0.0
-    });
-  }
-}
 
 // UI Callbacks:  Navigation
 
