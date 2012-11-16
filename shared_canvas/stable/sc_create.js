@@ -4,16 +4,18 @@
 // Plus other XXXs (!)
 
 // Raphael overwrites CSS with defaults :(
+
+
 var outsideStyle = {
-  fill: '#fff',
+  fill: 'none',
   opacity: 0.7,
   'stroke-width': 2,
   stroke: 'black'
 };
 var insideStyle = {
   fill: '#FFFFFF',
-  opacity: 0.3,
-  'stroke-width': 2,
+  opacity: 0.1,
+  'stroke-width': 'none',
   stroke: 'black',
   'stroke-dasharray': '- '
 };
