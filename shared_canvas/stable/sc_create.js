@@ -42,8 +42,8 @@ function maybe_config_create_annotation() {
   shp.css('border', '1px solid black');
   topinfo['svgAnnoShape'] = shp.attr('id').substr(10,5);
 	
-  // Install PasteBin
-  //islandora_init();
+// Install PasteBin
+//islandora_init();
 
 }
 
@@ -274,33 +274,17 @@ function create_rdfAnno() {
   var typ = null;
   $('#anno_type :selected').each(function() {
     typ = this.value;
+
   });
 
-  if (typ == 'comment') {
-    var clss = 'oac:Annotation';
-    var fullclss = nss['oa'] +'Annotation';
-  } else if (typ == 'transcription' || typ == 'initial' || typ == 'rubric') {
-    var clss = 'dms:TextAnnotation';
-    var fullclss = nss['dms'] + 'TextAnnotation';
-  } else if (typ == 'image') {
-    var clss = 'dms:ImageAnnotation';
-    var fullclss = nss['dms']+'ImageAnnotation';
-  } else if (typ == 'audio') {
-    var clss = 'dms:AudioAnnotation';
-    var fullclss = nss['dms']+'AudioAnnotation';
-  }
-	
-  if (typ == 'initial') {
-    var bodyClass = 'dms:InitialBody';
-    var bodyFullClass = nss['dms']+'InitialBody';
-  } else if (typ == 'rubric') {
-    var bodyClass = 'dms:RubricBody';
-    var bodyFullClass = nss['dms']+'RubricBody';
-  } else {
-    var bodyClass = null;
-    var bodyFullClass = null;
-  }
-		
+
+  var clss = 'oac:Annotation';
+  var fullclss = nss['oa'] +'Annotation';
+  var bodyClass = null;
+  var bodyFullClass = null;
+
+  var clss = 'oac:Annotation';
+  var fullclss = nss['oa'] +'Annotation';
   var now = isodate(new Date());
   // Generate namespaces from RDF options
   var xmlns = '';

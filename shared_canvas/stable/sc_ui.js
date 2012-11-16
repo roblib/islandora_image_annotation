@@ -486,11 +486,13 @@ function paint_imageAnno(anno, canvasId) {
     $(".imgSelul li:even").addClass("alt");
     $('.imgSelRadio').click(function() {
     
-    })
+      })
     if ($('#check_view_imgSel').is(':checked')) {
+      alert("Its checked")
       $('#imgSel').show();
     }
   } else {
+    alert('abnno body')
     img = anno.body;
   }
 
@@ -523,9 +525,9 @@ function paint_imageAnno(anno, canvasId) {
     div.height(sh);
     div.css('z-index', topinfo['zOrders']['image']);
 
-    if (!$('#check_show_baseImg').is(':checked')) {
-      div.hide();
-    }
+//    if (!$('#check_show_baseImg').is(':checked')) {
+//      div.hide();
+//    }
 
     var zpr = '<div id="zpr_'+canvasId+'" style="position:absolute;"><button id="zprb_'+canvasId+'">zoom</button></div>';
     $('#annotations').append(zpr);
@@ -841,10 +843,10 @@ function paint_commentAnno(anno, canvasId) {
   
 
   selectBlock = "#islandora_annoType_content_" + fixed_annotype;
-//  if($(selectBlock).length == 0){
-//    header = '<div  class = "islandora_comment_type" id = "'+ 'islandora_annoType_'+  fixed_annotype + '"><div class = "islandora_comment_type_title">' + annoType + '</div></div>';
-//    $('#comment_annos_block').append(header);
-//  }
+  //  if($(selectBlock).length == 0){
+  //    header = '<div  class = "islandora_comment_type" id = "'+ 'islandora_annoType_'+  fixed_annotype + '"><div class = "islandora_comment_type_title">' + annoType + '</div></div>';
+  //    $('#comment_annos_block').append(header);
+  //  }
  
   $(selectBlock).append(block);
   $('#anno_' + myid).attr('canvas', canvasId);
@@ -874,9 +876,8 @@ function paint_commentAnno(anno, canvasId) {
     return false;
   }).next().hide();
 
-  if ($('#check_show_comment').is(':checked')) {
-    $('#comment_annos').show();
-  }
+  $('#comment_annos').show();
+
 }
 
 
@@ -895,7 +896,7 @@ function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
         var col = svgAreaColors.splice(0,1)[0];
       }
       if(islandora_canvas_params.mappings['urn:uuid:' + annoId] != '' && islandora_canvas_params.can_choose){
-       col = islandora_canvas_params.mappings[['urn:uuid:' + annoId]];
+        col = islandora_canvas_params.mappings[['urn:uuid:' + annoId]];
       }
     
       $(ttldiv).append('<span color="' + col + '" class="mycolor" style="margin-right: 2px; margin-top: 2px; background: '+col+';float:right;width:15px;height:15px;">&nbsp;</span>');
