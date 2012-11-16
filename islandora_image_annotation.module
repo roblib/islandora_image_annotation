@@ -98,7 +98,7 @@ function islandora_image_annotation_permission() {
 }
 
 /**
- * determines whether or not to show this modules view tab
+ * determines whether or not to show this modules tab
  * @global object $user
  * @param FedoraObject $fedora_object
  * @return boolean
@@ -140,9 +140,9 @@ function islandora_image_annotation_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * /**
+ * 
  * the image annotation view 
- * /
+ * 
  * @param FedoraObject $object
  * @return string 
  */
@@ -151,6 +151,11 @@ function islandora_image_annotation_view($object) {
   return $output;
 }
 
+/**
+ * proprocess hook
+ * @global string $base_url
+ * @param array $variables 
+ */
 function islandora_image_annotation_preprocess_islandora_image_annotation_view(&$variables) {
   global $base_url;
   $islandora_object = $variables['islandora_object'];
@@ -166,6 +171,12 @@ function islandora_image_annotation_preprocess_islandora_image_annotation_view(&
   drupal_add_css($path . '/shared_canvas/css/window_behaviours.css');
 }
 
+/**
+ * implements a hook called by the solr client module, adds our search results to the list of available results
+ * in the solr config.
+ * @return array 
+ *    defining our new search implementation
+ */
 function islandora_image_annotation_islandora_solr_primary_display() {
   return array(
     'annotation' => array(
@@ -188,6 +199,8 @@ function islandora_image_annotation_islandora_solr_primary_display() {
  *   An associative array containing:
  *   - results: array of returned Solr documents
  *   - elements: (optional) additional elements to include in the template file
+ *   - key_fields: fields that we need use in urls and make decisions with, we add them here in case
+ *                 users remove them in the solr client config section (PID, hasModel, PARENT_pid)
  *
  * 
  * 
@@ -239,4 +252,34 @@ function islandora_image_annotation_preprocess_islandora_image_annotation_solr(&
       $variables['thumbnail_path'][$key] = $path . '/images/defaultimg.png';
     }
   }
+}
+
+/**
+ * Implements hook_islandora_required_objects().
+ */
+function islandora_image_annotation_islandora_required_objects() {
+  // module path
+  $module_path = drupal_get_path('module', 'islandora_image_annotation');
+
+  return array(
+    'islandora_image_annotation' => array(
+      'title' => 'Islandora image annotations',
+      'objects' => array(
+        array(
+          'pid' => 'islandora:OACCModel',
+          'label' => 'Islandora Annotation CModel',
+          'cmodel' => 'fedora-system:ContentModel-3.0',
+          'datastreams' => array(
+            array(
+              'dsid' => 'DS-COMPOSITE-MODEL',
+              'label' => 'DS-COMPOSITE-MODEL',
+              'mimetype' => 'text/xml',
+              'control_group' => 'X',
+              'datastream_file' => "$module_path/xml/islandora_image_annotation_ds_composite_model.xml",
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
