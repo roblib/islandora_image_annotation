@@ -92,8 +92,10 @@ function fetchTriples(uri, qry, fn) {
   } else {
     furi = uri;
   }
-  while(islandora_canvas_params.height < 1){
+  if(uri.indexOf('manifest') >12){
+    while(islandora_canvas_params.height == undefined){
 
+    }
   }
   $.ajax({
     type:'POST',
