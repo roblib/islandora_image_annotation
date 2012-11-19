@@ -421,7 +421,6 @@ XML;
     $description->appendChild($height);
     $rdf->appendChild($description);
     $xml = $doc->saveXML();
-    //$dom->registerXPathNamespace('islandora-relsint', 'http://islandora.ca/ontology/relsint#');
     $item['RELS-INT']->content = $xml;
   }
 }

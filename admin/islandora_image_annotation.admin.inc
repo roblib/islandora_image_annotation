@@ -121,12 +121,12 @@ function islandora_image_annotation_admin() {
 
 function islandora_image_annotation_admin_submit($form, &$form_state) {
   $enabled = array_filter($form_state['values']['annotation_table']['enabled']);
-
   $content_model_mappings = array();
   foreach ($enabled as $label => $pid) {
     $content_model_mappings[$pid]['DSID'] = $form_state['values']['annotation_table']['DSID'][$pid];
     $content_model_mappings[$pid]['TAX'] = $form_state['values']['annotation_table']['TAX'][$pid];
   }
+  variable_set('islandora_image_annotation_djatoka_path',$form_state['values']['islandora_image_annotation_djatoka_path']);
   variable_set('islandora_annotation_mappings', $content_model_mappings);
   variable_set('islandora_annotation_enforce_taxonomy', $form_state['values']['annotation_categories']);
   variable_set('islandora_annotation_optimized', $form_state['values']['annotation_colors']);
