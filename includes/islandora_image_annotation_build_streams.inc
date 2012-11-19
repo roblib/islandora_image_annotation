@@ -316,7 +316,7 @@ function get_height_and_width($pid) {
     }
     //we could have a rels-int without a height and width for our object
     if (!$image_height || !$image_width) {
-      $height_width_arr = get_image_dimenions_djatoka($pid, $dsid, TRUE);
+      $height_width_arr = get_image_dimenions_drupal($pid, $dsid, TRUE);
     }
     else {
       $image_height = (string) $image_height[0];
@@ -328,7 +328,7 @@ function get_height_and_width($pid) {
     }
   }
   else {//fall back to djatoka  
-    return get_image_dimenions_djatoka($pid, $dsid, TRUE);
+    return get_image_dimenions_drupal($pid, $dsid, TRUE);
   }
   return $height_width_arr;
 }
@@ -343,27 +343,26 @@ function get_height_and_width($pid) {
  * @throws Exception 
  *   if the target datastream does not exist 
  */
-function get_image_dimenions_djatoka($pid, $dsid, $update = FALSE) {
-  $fedora_prefix = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
-  $djatoka_prefix = variable_get('islandora_image_annotation_djatoka_path', 'http://localhost:8080/adore-djatoka') . '/resolver?url_ver=Z39.88-2004&rft_id=';
-  //$object = islandora_object_load($pid);
+function get_image_dimenions_drupal($pid, $dsid, $update = FALSE) {
+  
   if (empty($dsid)) {
     throw Exception('Could not find a datastream id to load for image height and width');
   }
-  $filename = $djatoka_prefix . "$fedora_prefix/objects/$pid/datastreams/$dsid/content&svc_id=info:lanl-repo/svc/getMetadata";
-  $pageData = json_decode(file_get_contents($filename));
-  if (empty($pageData)) {
-    drupal_set_message(t('There was an error getting the image size.  Djatoka may need to be configured.'), 'error');
+  $object = islandora_object_load($pid);
+  $image_file = file_save_data($object[$dsid]->content, 'temporary://');
+  //$image_file->filemime = $object[$dsid]->mimetype;
+  $real_path = drupal_realpath($image_file->uri);
+  $info = image_get_info($real_path);
+  if (empty($info)) {
+    drupal_set_message(t('There was an error getting the image size. '), 'error');
     return NULL;
   }
-  $height_width_arr = array(
-    'height' => $pageData->height,
-    'width' => $pageData->width
-  );
+  
   if ($update) {
-    update_or_create_relsint($pid, $dsid, $height_width_arr);
+    update_or_create_relsint($pid, $dsid, $info);
   }
-  return $height_width_arr;
+  file_delete($image_file);
+  return $info;//$height_width_arr;
 }
 
 /**
