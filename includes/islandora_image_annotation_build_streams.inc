@@ -284,7 +284,8 @@ function get_annotationList($doc_url, $doc_path_url) {
 }
 
 /**
- * Retrieves exif data from supplied image
+ * Retrieves height and width from the RELS-INT  if its there
+ * falls back to djatoka if it's not there.  
  * @param pid $pid
  * @return array
  * Array has two values - height and width
@@ -292,39 +293,137 @@ function get_annotationList($doc_url, $doc_path_url) {
 function get_height_and_width($pid) {
   module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_image_annotation.utils');
   $dsid = islandora_image_annotation_get_dsid_from_model($pid);
+  $item = islandora_object_load($pid);
   $height_width_arr = NULL;
-  if (isset($item['TECHMD']) && in_array('islandora:sp_basic_image', $models)) {
-    $content = $item['TECHMD']->content;
-    $sxml = simplexml_load_file($file);
+  if (isset($item['RELS-INT'])) {
+    $content = $item['RELS-INT']->content;
+    $sxml = simplexml_load_string($content);
+    $sxml->registerXPathNamespace('islandora-page', "info:islandora/islandora-system:def/pageinfo#");
+    $sxml->registerXPathNamespace('islandora-relsint', 'http://islandora.ca/ontology/relsint#');
+    $sxml->registerXPathNamespace('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
     $sxml->registerXPathNamespace('fits', "http://hul.harvard.edu/ois/xml/ns/fits/fits_output");
-    $image_height = $sxml->xpath('//fits:imageHeight');
-    $image_height = (string) $image_height[0];
-    $image_width = $sxml->xpath('//fits:imageWidth');
-    $image_width = (string) $image_width[0];
-    $height_width_arr = array(
-      'height' => $image_height,
-      'width' => $image_width,
-    );
+    $image_height = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/islandora-relsint:height');
+    $image_width = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/islandora-relsint:width');
+    if (!$image_height || !$image_width) {
+      //we maybe looking at a page of a book which might have a different namespace
+      $image_height = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/islandora-page:height');
+      $image_width = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/islandora-page:width');
+    }
+    if (!$image_height || !$image_width) {
+      //have seen fits:imageHeight fits:imageWidth in the wild
+      $image_height = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/fits:imageHeight');
+      $image_width = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/fits:imageWidth');
+    }
+    //we could have a rels-int without a height and width for our object
+    if (!$image_height || !$image_width) {
+      $height_width_arr = get_image_dimenions_djatoka($pid, $dsid, TRUE);
+    }
+    else {
+      $image_height = (string) $image_height[0];
+      $image_width = (string) $image_width[0];
+      $height_width_arr = array(
+        'height' => $image_height,
+        'width' => $image_width,
+      );
+    }
   }
-  else {//fall back to djatoka   
-    $fedora_prefix = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
-    $djatoka_prefix = variable_get('islandora_image_annotation_djatoka_path', 'http://localhost:8080/adore-djatoka') . '/resolver?url_ver=Z39.88-2004&rft_id=';
-    $object = islandora_object_load($pid);
-    if (empty($dsid)) {
-      throw Exception('Could not find a datastream id to load for image height and width');
-    }
-    $filename = $djatoka_prefix . "$fedora_prefix/objects/$pid/datastreams/$dsid/content&svc_id=info:lanl-repo/svc/getMetadata";
-    $pageData = json_decode(file_get_contents($filename));
-    if (empty($pageData)) {
-      drupal_set_message(t('There was an error getting the image size.  Djatoka may need to be configured.'), 'error');
-    }
-
-    $height_width_arr = array(
-      'height' => $pageData->height,
-      'width' => $pageData->width
-    );
+  else {//fall back to djatoka  
+    return get_image_dimenions_djatoka($pid, $dsid, TRUE);
   }
   return $height_width_arr;
+}
+
+/**
+ *
+ * @param string $pid
+ * @param string $dsid
+ * @param boolean $update
+ *  if true we will call another function to update the RELS-INT with the height and width
+ * @return array
+ * @throws Exception 
+ *   if the target datastream does not exist 
+ */
+function get_image_dimenions_djatoka($pid, $dsid, $update = FALSE) {
+  $fedora_prefix = variable_get('islandora_base_url', 'http://localhost:8080/fedora');
+  $djatoka_prefix = variable_get('islandora_image_annotation_djatoka_path', 'http://localhost:8080/adore-djatoka') . '/resolver?url_ver=Z39.88-2004&rft_id=';
+  //$object = islandora_object_load($pid);
+  if (empty($dsid)) {
+    throw Exception('Could not find a datastream id to load for image height and width');
+  }
+  $filename = $djatoka_prefix . "$fedora_prefix/objects/$pid/datastreams/$dsid/content&svc_id=info:lanl-repo/svc/getMetadata";
+  $pageData = json_decode(file_get_contents($filename));
+  if (empty($pageData)) {
+    drupal_set_message(t('There was an error getting the image size.  Djatoka may need to be configured.'), 'error');
+    return NULL;
+  }
+  $height_width_arr = array(
+    'height' => $pageData->height,
+    'width' => $pageData->width
+  );
+  if ($update) {
+    update_or_create_relsint($pid, $dsid, $height_width_arr);
+  }
+  return $height_width_arr;
+}
+
+/**
+ * update the object so the RELS-INT datastream contains the height and width of the 
+ * selected datastream.  We are using the standard islandora RELS-INT namespace
+ * @param string $pid
+ * @param string $dsid
+ * @param array $height_width_arr 
+ */
+function update_or_create_relsint($pid, $dsid, $height_width_arr) {
+  if(!isset($height_width_arr['width']) || !isset($height_width_arr['height'])){
+    watchdog('islandora', t('Error adding RELS-INT stream for object %pid. no height or width specified', array('pid%' => $pid)));
+  }
+  $rels_int_str = <<<XML
+    <rdf:RDF xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about="info:fedora/XPID/XTIFF">
+    <width xmlns="http://islandora.ca/ontology/relsint#">XWIDTH</width>
+    <height xmlns="http://islandora.ca/ontology/relsint#">XHEIGHT</height>
+  </rdf:Description>
+</rdf:RDF>
+XML;
+  $item = islandora_object_load($pid);
+  if (!isset($item[$dsid])) {
+    //no datastream to create a rels-int for
+    return FALSE;
+  }
+  if (!isset($item['RELS-INT'])) {
+    $to_replace = array('XPID', 'XWIDTH', 'XHEIGHT', 'XTIFF');
+    $replace_with = array($pid, $height_width_arr['width'], $height_width_arr['height'], $dsid);
+    $rels_int_str = str_replace($to_replace, $replace_with, $rels_int_str);
+    try {
+      $rels_int_ds = $item->constructDatastream('RELS-INT', 'X');
+      $rels_int_ds->mimetype = 'text/xml';
+      $rels_int_ds->label = 'RELS-INT';
+      $rels_int_ds->content = $rels_int_str;
+      $item->ingestDatastream($rels_int_ds); //create rels-int
+    } catch (Exception $e) {
+      watchdog('islandora', t('Error adding RELS-INT stream for object %pid', array('pid%' => $pid)));
+    }
+  }
+  else {
+    //we are assuming our entries do not exist as we have just tried to load this info
+    $rels_ds = $item['RELS-INT'];
+    $doc = DomDocument::loadXML($rels_ds->content);
+    $rdf = $doc->documentElement;
+    $description = $doc->createElement('rdf:Description');
+    $about = $doc->createAttribute('rdf:about');
+    $about->value = "info:fedora/$pid/$dsid";
+    $description->appendChild($about);
+    $width = $doc->createElement('width', $height_width_arr['width']);
+    $height = $doc->createElement('height', $height_width_arr['width']);
+    $width->setAttribute('xmlns', "http://islandora.ca/ontology/relsint#");
+    $height->setAttribute('xmlns', "http://islandora.ca/ontology/relsint#");
+    $description->appendChild($width);
+    $description->appendChild($height);
+    $rdf->appendChild($description);
+    $xml = $doc->saveXML();
+    //$dom->registerXPathNamespace('islandora-relsint', 'http://islandora.ca/ontology/relsint#');
+    $item['RELS-INT']->content = $xml;
+  }
 }
 
 /**
