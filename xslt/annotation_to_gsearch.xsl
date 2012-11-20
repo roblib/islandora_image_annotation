@@ -55,6 +55,20 @@
             <xsl:value-of select="substring($PARENT_PID,13)"/>
         </field>
     -->
+    
+    <xsl:for-each
+            select="foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion[last()]/foxml:xmlContent//rdf:Description/fedora-model:hasModel"> 
+           <!-- to generalize this we could query for the contentmodel objects title instead of hard
+           coded values.  For the vdp project types are limited to annos and images so this will do for now-->
+           <field>
+                <xsl:attribute name="name">rdf_type_s</xsl:attribute>
+                <xsl:choose>
+                <xsl:when test="@rdf:resource='info:fedora/islandora:OACCModel'">Annotation</xsl:when>
+                <xsl:when test="@rdf:resource='info:fedora/islandora:sp_basic_image'">Image</xsl:when>
+                <xsl:otherwise>Other</xsl:otherwise>
+                </xsl:choose>
+            </field>           
+        </xsl:for-each>
     <xsl:variable name = "HASBODY">
         <xsl:value-of select = "foxml:datastream[@ID='OAC']/foxml:datastreamVersion[last()]/foxml:xmlContent//rdf:Description/oa:hasBody[1]/@rdf:resource"/>
     </xsl:variable>
