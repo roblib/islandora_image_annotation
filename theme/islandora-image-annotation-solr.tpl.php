@@ -40,7 +40,7 @@
             <?php print $value['label']; ?>
           </dt>
           <?php if ($key == 'PID'): ?>
-            <?php $value['value'] = l($value['value'], 'islandora/object/' . htmlspecialchars($value['value'], ENT_QUOTES, 'utf-8')); ?>
+            <?php $value['value'] = l($value['value'], 'islandora/object/' . htmlspecialchars($pid_for_url[$row_result], ENT_QUOTES, 'utf-8')); ?>
           <?php endif; ?>
           <?php if ($key == 'PARENT_pid'): ?>
               <?php $value['value'] = l($value['value'], 'islandora/object/' . htmlspecialchars($value['value'], ENT_QUOTES, 'utf-8')); ?>

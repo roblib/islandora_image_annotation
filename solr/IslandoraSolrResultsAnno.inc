@@ -50,13 +50,13 @@ class IslandoraSolrResultsAnno extends IslandoraSolrResults {
       $snippet = NULL; // @TODO: how is this suposed to work if the $snippet always is set to NULL ?
       $this->add_key_field($key_fields, 'rels.hasModel', $doc);
       $this->add_key_field($key_fields, 'PARENT_pid', $doc);
-      if (isset($doc['rels.hasModel'])) {
-        foreach ($doc['rels.hasModel'] as $model) {
-          if ($model == 'info:fedora/islandora:OACCModel') {
-            $doc['PID'] = $doc['PARENT_pid'];
-          }
-        }
-      }
+      //if (isset($doc['rels.hasModel'])) {
+      //  foreach ($doc['rels.hasModel'] as $model) {
+       //   if ($model == 'info:fedora/islandora:OACCModel') {
+       //     $doc['PID'] = $doc['PARENT_pid'];
+       //   }
+       // }
+      //}
       // loop over individual results to process fields
       foreach ($doc as $field => $value) {
         if ($field == 'PID') {
