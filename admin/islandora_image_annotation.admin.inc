@@ -20,14 +20,14 @@ function islandora_image_annotation_admin() {
     $coptions = array($key => $label) + $coptions;
   }
 
-  $form['islandora_image_annotation_djatoka_path'] = array(
+ /* $form['islandora_image_annotation_djatoka_path'] = array(
     '#type' => 'textfield',
     '#title' => t('Provide the djatoka url'),
     '#default_value' => variable_get('islandora_image_annotation_djatoka_path', 'http://localhost:8080/adore-djatoka'),
     '#description' => t('Image annotation uses djatoka to get file sizes for images. If you have the large image
        solution pack or book solution pack enabled you should be able to use the same path to djatoka here'),
     '#weight' => -10
-  );
+  );*/
 
   $form['content_model_wrapper'] = array(
     '#type' => 'fieldset',
@@ -126,7 +126,7 @@ function islandora_image_annotation_admin_submit($form, &$form_state) {
     $content_model_mappings[$pid]['DSID'] = $form_state['values']['annotation_table']['DSID'][$pid];
     $content_model_mappings[$pid]['TAX'] = $form_state['values']['annotation_table']['TAX'][$pid];
   }
-  variable_set('islandora_image_annotation_djatoka_path',$form_state['values']['islandora_image_annotation_djatoka_path']);
+ // variable_set('islandora_image_annotation_djatoka_path',$form_state['values']['islandora_image_annotation_djatoka_path']);
   variable_set('islandora_annotation_mappings', $content_model_mappings);
   variable_set('islandora_annotation_enforce_taxonomy', $form_state['values']['annotation_categories']);
   variable_set('islandora_annotation_optimized', $form_state['values']['annotation_colors']);
