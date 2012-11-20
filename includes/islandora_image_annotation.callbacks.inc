@@ -37,14 +37,14 @@ function islandora_canvas_setup($pid) {
   $pages[1] = $pid;
   $position = array_search($pid, $pages);
   $results = array();
-  $results['manifest_url'] = "$base_url/emic/serve/$pid/Manifest/manifest.xml";
+  $results['manifest_url'] = "$base_url/islandora/anno/serve/$pid/Manifest/manifest.xml";
   $results['page_title'] = $item->label;
   $results['object_base'] = "$base_url/islandora/object/$pid";
-  $results['islandora_post_url'] = "$base_url/emic/shared/add_annotation/$pid";
-  $results['islandora_get_annotation'] = "$base_url/emic/get_annotation/";
-  $results['islandora_delete_annotation'] = "$base_url/emic/delete_annotation/$pid/";
-  $results['get_annotation_list_url'] = "$base_url/emic/get_urns/$pid";
-  $results['islandora_update_annotation'] = "$base_url/emic/update_annotation/";
+  $results['islandora_post_url'] = "$base_url/islandora/anno/add_annotation/$pid";
+  $results['islandora_get_annotation'] = "$base_url/islandora/anno/get_annotation/";
+  $results['islandora_delete_annotation'] = "$base_url/islandora/anno/delete_annotation/$pid/";
+  $results['get_annotation_list_url'] = "$base_url/islandora/anno/get_urns/$pid";
+  $results['islandora_update_annotation'] = "$base_url/islandora/anno/update_annotation/";
   $results['position'] = $position;
   $results['pages'] = $pages;
   $results['no_edit'] = !user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE);
@@ -64,9 +64,6 @@ function islandora_canvas_setup($pid) {
 function islandora_add_annotation($pid) {
   global $user;
   global $base_url;
-  //module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-  module_load_include('inc', 'emic_canvas', 'islandora_rdf_builder');
-  module_load_include('inc', 'emic_canvas', 'build_sharedcanvas_streams');
   module_load_include('inc', 'islandora', 'includes/islandora.ingest');
   $annotation_xml = islandora_shared_transform_annotationList(urldecode($_POST['data']), 'html');
   $color = $_POST['color'];
@@ -140,7 +137,7 @@ function islandora_shared_transform_annotationList($xml_in, $input_type) {
 
 /**
  * Gets individual annotation pids from resource index
- * called with emic/get_urns
+ * called with islandora/anno/get_urns
  * @global url $base_url
  * @param array $pids
  */
@@ -204,7 +201,7 @@ function islandora_get_annotation_data($pid) {
 
 /**
  * Retrieves transforms annotation data for the editor
- * Called with /emic/get_annotation/
+ * Called with /islandora/anno/get_annotation/
  * Doctype declarations are removed
  * @param string $pid
  * @param urn $urn
@@ -249,10 +246,7 @@ function islandora_save_updated_annotations($pid, $rdf) {
 function build_annotationList($pid) {
   global $base_url;
   $doc_url = "$base_url/islandora/object/$pid";
-  $doc_path_url = "$base_url/emic/serve/$pid";
-  // module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-  module_load_include('inc', 'emic_canvas', 'build_sharedcanvas_streams');
-  module_load_include('inc', 'emic_canvas', 'islandora_rdf_builder');
+  $doc_path_url = "$base_url/islandora/anno/serve/$pid";
   $item = islandora_object_load($pid);
 
   $annotationList = get_annotationList($doc_url, $doc_path_url);

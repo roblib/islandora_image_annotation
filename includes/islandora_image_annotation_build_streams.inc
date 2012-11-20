@@ -19,7 +19,7 @@ function build_manifest($pid) {
   $file_array = array();
   $doc_url = "$base_url/islandora/object/$pid/datastream/$dsid/view/";
   //xml datastreams used by Shared Canvas must be echoed though ajax.
-  $doc_path_url = "$base_url/emic/serve/$pid";
+  $doc_path_url = "$base_url/islandora/anno/serve/$pid";
   $dimensions = get_height_and_width($pid);
 
   $height = $dimensions['height'];
@@ -435,7 +435,7 @@ function islandora_serve($pid, $stream, $width = null, $height = null) {
   module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_image_annotation.utils');
   $dsid = islandora_image_annotation_get_dsid_from_model($pid);
   $doc_url = "$base_url/islandora/object/$pid/datastream/$dsid/view";
-  $doc_path_url = "$base_url/emic/serve/$pid";
+  $doc_path_url = "$base_url/islandora/anno/serve/$pid";
 
   if ($stream == 'Manifest') {
     $manifest = get_manifest($doc_url, $doc_path_url);

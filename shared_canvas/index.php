@@ -40,7 +40,7 @@
 
     <!-- Canvas css -->
     <link rel="stylesheet" href="css/sc.css" type="text/css" />
-    <link rel="stylesheet" href="css/emic_canvas.css" type="text/css" />
+    <link rel="stylesheet" href="css/islandora_canvas.css" type="text/css" />
 
     <!-- CWRC stylesheets -->
     <link type="text/css" rel="stylesheet" href="css/screen.css" />

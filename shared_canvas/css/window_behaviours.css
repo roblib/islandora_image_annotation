@@ -7,7 +7,7 @@
 }
 
 
-.cwrc-fullwindow
+.islandora-anno-fullwindow
 {
   position: fixed;
   bottom: 0px;
@@ -19,13 +19,13 @@
   background: #fff;
 }
 
-.admin-menu .cwrc-fullwindow
+.admin-menu .islandora-anno-fullwindow
 {
   top: 0px;
 }
 
 
-.cwrc-fullwindow .cwrc-iframe-wrapper
+.islandora-anno-fullwindow .islandora-anno-iframe-wrapper
 {
   position: absolute;
   bottom: 0px;
@@ -39,7 +39,7 @@
   background: #fff;
 }
 
-.cwrc-fullwindow .cwrc-iframe-wrapper iframe
+.islandora-anno-fullwindow .islandora-anno-iframe-wrapper iframe
 {
   position: absolute;
   width: 100%;

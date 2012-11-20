@@ -250,7 +250,7 @@ $(document).ready(function(){
   PID = $.urlParam('PID');
  
   $.ajax({
-    url: base +'/emic/shared/setup/' + PID,
+    url: base +'/islandora/anno/setup/' + PID,
     async:false,
     success: function(data, status, xhr) {
       islandora_canvas_params = data;

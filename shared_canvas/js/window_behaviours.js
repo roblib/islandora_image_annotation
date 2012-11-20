@@ -1,21 +1,10 @@
 
-Drupal.behaviors.emic = function(context){
-  $('.cwrc_submit').hide();
-  $(".jumpmenu").change(function() {
-    var val = ($('.jumpmenu :selected').attr('value'));
-    if (val != '') {
-      //location.href=val;
-      window.open(val);
-    }
-  });
-};
-
 // toggle full window
 (function ($) {
-  Drupal.behaviors.emicCwrcFullWindow = { attach: function (context, settings){
+  Drupal.behaviors.islandorAnnoFullWindow = { attach: function (context, settings){
        $('#full-window-button').click(function() {
      
-    $('.emic-cwrc-wrapper').toggleClass('cwrc-fullwindow');
+    $('.islandora-anno-wrapper').toggleClass('islandora-anno-fullwindow');
   
     if ($(this).val() == Drupal.t('Full Window')) {
       $(this).val(Drupal.t('Exit Full Window'));
