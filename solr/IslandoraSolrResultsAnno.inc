@@ -49,7 +49,14 @@ class IslandoraSolrResultsAnno extends IslandoraSolrResults {
       $row = 0; // keeping $row in there for now until the snippet issue is cleared out
       $snippet = NULL; // @TODO: how is this suposed to work if the $snippet always is set to NULL ?
       $this->add_key_field($key_fields, 'rels.hasModel', $doc);
-      $this->add_key_field($key_fields, 'PARENT_pid', $doc);      
+      $this->add_key_field($key_fields, 'PARENT_pid', $doc);
+      if (isset($doc['rels.hasModel'])) {
+        foreach ($doc['rels.hasModel'] as $model) {
+          if ($model == 'info:fedora/islandora:OACCModel') {
+            $doc['PID'] = $doc['PARENT_pid'];
+          }
+        }
+      }
       // loop over individual results to process fields
       foreach ($doc as $field => $value) {
         if ($field == 'PID') {
@@ -95,7 +102,11 @@ class IslandoraSolrResultsAnno extends IslandoraSolrResults {
   }
 
   /**
-   * 
+   * key_fileds are feilds used for logic but not display
+   * in the solr clienn users can specify what fields to return, if they don't 
+   * specify PID or cModel we can't use them in links or for logic.  We add them
+   * to a key_fields array in case the user doesn't want them displayed.  These 
+   * probably should be single valued fields
    * @param array $key_fields
    * @param string $field
    * @param array $doc 
