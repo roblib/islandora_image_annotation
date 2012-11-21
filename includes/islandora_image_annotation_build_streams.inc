@@ -298,16 +298,23 @@ function get_height_and_width($pid) {
   if (isset($item['RELS-INT'])) {
     $content = $item['RELS-INT']->content;
     $sxml = simplexml_load_string($content);
+    $sxml->registerXPathNamespace('islandora-page', "info:islandora/islandora-system:def/pageinfo#");
+    $sxml->registerXPathNamespace('islandora-relsint', 'http://islandora.ca/ontology/relsint#');
     $sxml->registerXPathNamespace('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
     $sxml->registerXPathNamespace('fits', "http://hul.harvard.edu/ois/xml/ns/fits/fits_output");
-    $image_height = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/height');
-    $image_width = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/width');
+    $image_height = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/islandora-relsint:height');
+    $image_width = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/islandora-relsint:width');
+    if (!$image_height || !$image_width) {
+      //we maybe looking at a page of a book which might have a different namespace
+      $image_height = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/islandora-page:height');
+      $image_width = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/islandora-page:width');
+    }
     if (!$image_height || !$image_width) {
       //have seen fits:imageHeight fits:imageWidth in the wild
       $image_height = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/fits:imageHeight');
       $image_width = $sxml->xpath('//rdf:Description[@rdf:about="info:fedora/' . $pid . '/' . $dsid . '"]/fits:imageWidth');
     }
-    //we could have a rels-int without a height and width for our datastream
+    //we could have a rels-int without a height and width for our object
     if (!$image_height || !$image_width) {
       $height_width_arr = get_image_dimenions_drupal($pid, $dsid, TRUE);
     }
