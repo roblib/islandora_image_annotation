@@ -354,7 +354,6 @@ function islandora_canvas_update_annotation() {
 
 function islandora_annotations_get_solr_terms() {
   $solr = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
-  $solr = 'codesprint-centos.islandora.ca:8080/solr';
   $url = "http://$solr/select?indent=on&version=2.2&q=rels.hasModel:islandora\:OACCModel&fl=anno_category_s&fq=&start=0&rows=10000&fl=PID&qt=standard&wt=json";
   $results = json_decode(file_get_contents($url), TRUE);
   $docs = $results['response']['docs'];
