@@ -320,6 +320,14 @@ function islandora_canvas_update_annotation() {
       $fedora_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasColor', $new_color, TRUE);
     }
   }
+
+  //update the rels if the category has changed
+  $anno_type = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'isAnnotationType');
+  $anno_type_value = $annot_type['object']['value'];
+  if ($type != $anno_type_value) {
+    $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'isAnnotationType', $annot_type_value);
+    $fedora_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'isAnnotationType', $type, TRUE);
+  }
   $annotation = $fedora_object['OAC']->content;
   $xml = simplexml_load_string($annotation);
 
