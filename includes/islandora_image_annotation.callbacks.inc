@@ -45,6 +45,7 @@ function islandora_canvas_setup($pid) {
   $results['islandora_delete_annotation'] = "$base_url/islandora/anno/delete_annotation/$pid/";
   $results['get_annotation_list_url'] = "$base_url/islandora/anno/get_urns/$pid";
   $results['islandora_update_annotation'] = "$base_url/islandora/anno/update_annotation/";
+  $results['islandora_base_url'] = "$base_url/";
   $results['position'] = $position;
   $results['pages'] = $pages;
   $results['no_edit'] = !user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE);
@@ -80,10 +81,14 @@ function islandora_add_annotation($pid) {
     $urn = (string) $value;
   }
   $namespace = substr($pid, 0, strpos($pid, ":"));
-  $item = islandora_ingest_get_object('islandora:OACCModel', $pid, 'isMemberOf', $namespace);
+  //$item = islandora_ingest_get_object('islandora:OACCModel', $pid, 'isMemberOf', $namespace);
+  $relationship = array();
+  $relationship['relationship'] = 'isMemberOf';
+  $relationship['pid'] = $pid;
+  $item = islandora_prepare_new_object($namespace, $labels[0], $datastreams = array(), array('islandora:OACCModel'), array($relationship) ); 
   $item->label = (string) $labels[0];
 
-  $item->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:OACCModel');
+  //$item->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:OACCModel');
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targetedBy', $user->name, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'targets', $pid);
   if ($color) {
@@ -370,4 +375,47 @@ function islandora_annotations_get_solr_terms() {
     $terms[$doc['anno_category_s'][0]] = 1;
   }
   return array_keys($terms);
+}
+
+
+/**
+ * return each solr doc found
+ * 
+ * @type string
+ *   the mads genre to search for
+ * @return string
+ *   json string
+ */
+function islandora_annotations_get_vdp_terms($type) {
+  $solr = variable_get('islandora_solr_url', 'localhost:8080/solr');
+  $url = "http://$solr/select/?q=mads_genre_it:$type&version=2.2&start=0&rows=1000&indent=on&fl=mads_topic_s,PID&wt=json";
+  $results = json_decode(file_get_contents($url), TRUE);
+  $docs = $results['response']['docs'];
+  //asort($docs);
+  echo json_encode($docs);
+  exit();
+}
+
+function islandora_annotations_get_mads_as_json($pid){
+  $object = islandora_object_load($pid);
+  if(!isset($object) || !isset($object['MADS'])){
+    echo 'error loading MADS datastream';
+    exit();
+  }
+  $mads = $object['MADS']->content;
+  $doc = new DomDocument();
+  $doc->loadXML($mads);
+  $elements = $doc->getElementsByTagName('related');
+  $arr = array();
+  $str = "";
+  foreach($elements as $element){
+    $attr = $element->getAttribute('otherType');
+    if(!empty($attr)){
+      $arr[$attr] = trim($element->nodeValue);
+      //$str .= $attr .': '. trim($element->nodeValue). '<br />';
+    }
+  }
+  echo json_encode($arr);
+  //echo $str;
+  exit();
 }

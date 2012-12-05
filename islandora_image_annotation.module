@@ -67,6 +67,22 @@ function islandora_image_annotation_menu() {
     'access arguments' => array(ISLANDORA_IMAGE_ANNOTATION_CREATE),
     'file' => 'includes/islandora_image_annotation.callbacks.inc',
   );
+  
+  $items['islandora/anno/solr/terms/%'] = array(
+    'page callback' => 'islandora_annotations_get_vdp_terms',
+    'page arguments' => array(4),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array(ISLANDORA_IMAGE_ANNOTATION_CREATE),
+    'file' => 'includes/islandora_image_annotation.callbacks.inc',
+  );
+  
+  $items['islandora/anno/mads/%'] = array(
+    'page callback' => 'islandora_annotations_get_mads_as_json',
+    'page arguments' => array(3),
+    'type' => MENU_CALLBACK,
+    'access arguments' => array(ISLANDORA_IMAGE_ANNOTATION_CREATE),
+    'file' => 'includes/islandora_image_annotation.callbacks.inc',
+  );
 
   $items['islandora/object/%islandora_object/view/annotation'] = array(
     'title' => 'Image Annotation',

@@ -129,17 +129,17 @@
           <hr style="margin: 0px; padding: 0px; height: 1px;"/>
         </div>
         <div id="create_annos_block" class="dragBlock">
-          <!-- Annotation Title -->
-
-          <div class="element-wrap">
-            <label for="anno_title">Title:</label>
-            <input id="anno_title" type="text" size="28"></input>
-          </div>
-
           
+          <!--Annotation Classification -->
           <div id ="islandora_classification"class="element-wrap">
             <label for="anno_type">Type:</label>
             <input id="anno_classification" type="text" size="28"></input>
+          </div>
+          
+          <!-- Annotation Title -->
+          <div class="element-wrap" id ="islandora_titles">
+            <label for="anno_title">Title:</label>
+            <input id="anno_title" type="text" size="28"></input>
           </div>
 
 
