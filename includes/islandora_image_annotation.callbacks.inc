@@ -65,7 +65,7 @@ function islandora_canvas_setup($pid) {
 function islandora_add_annotation($pid) {
   global $user;
   global $base_url;
-  module_load_include('inc', 'islandora', 'includes/islandora.ingest');
+  module_load_include('inc', 'islandora', 'includes/utilities');
   $annotation_xml = islandora_shared_transform_annotationList(urldecode($_POST['data']), 'html');
   $color = $_POST['color'];
   $type = $_POST['type'];
