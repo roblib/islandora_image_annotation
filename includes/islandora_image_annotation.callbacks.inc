@@ -101,11 +101,29 @@ function islandora_add_annotation($pid) {
   $new_ds->label = 'OAC';
   $new_ds->mimetype = 'text/xml';
   $new_ds->content = $annotation_xml;
-  $item->ingestDatastream($new_ds);
-  islandora_ingest_add_object($item);
+  $item->ingestDatastream($new_ds);  
+  //islandora_ingest_add_object($item);
+  $item->repository->ingestObject($item);
+  foreach (islandora_build_hook_list(ISLANDORA_POST_INGEST_HOOK, $object->models) as $hook) {
+    module_invoke_all($hook, $item);
+  }
   echo $item->id;
 }
 
+
+function islandora_ingest_add_object(&$object) {
+  drupal_alter('islandora_pre_ingest', $object);
+
+  $object->repository->ingestObject($object);
+
+  module_load_include('inc', 'islandora', 'includes/utilities');
+
+  foreach (islandora_build_hook_list(ISLANDORA_POST_INGEST_HOOK, $object->models) as $hook) {
+    module_invoke_all($hook, $object);
+  }
+
+  return $object;
+}
 /**
  * transforms input from SharedCanvas to AnnotationList
  * @param string $xml_in
