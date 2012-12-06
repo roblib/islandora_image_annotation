@@ -405,8 +405,9 @@ function islandora_annotations_get_solr_terms() {
  *   json string
  */
 function islandora_annotations_get_vdp_terms($type) {
+  $title_field = variable_get('islandora_anno_title_field', 'mads_topic_sv');
   $solr = variable_get('islandora_solr_url', 'localhost:8080/solr');
-  $url = "http://$solr/select/?q=mads_genre_it:$type&version=2.2&start=0&rows=1000&indent=on&fl=mads_topic_s,PID&wt=json";
+  $url = "http://$solr/select/?q=mads_genre_it:$type&version=2.2&start=0&rows=1000&indent=on&fl=$title_field,PID&wt=json&sort=$title_field%20asc";
   $results = json_decode(file_get_contents($url), TRUE);
   $docs = $results['response']['docs'];
   //asort($docs);
