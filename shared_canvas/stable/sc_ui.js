@@ -924,7 +924,8 @@ function paint_svgArea(svgc, annoId, col, svg) {
   }
   pthelm = npth;
   //changed by UPEI
-  pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col+';stroke-width:1%');
+  pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col+
+      ';stroke-width:'+islandora_canvas_params.islandora_anno_stroke_width+'%');
   pthelm.setAttribute('class', 'svg_' + annoId);
   svgc.canvas.appendChild(pthelm);
 }

@@ -47,6 +47,7 @@ function islandora_canvas_setup($pid) {
   $results['islandora_update_annotation'] = "$base_url/islandora/anno/update_annotation/";
   $results['islandora_base_url'] = "$base_url/";
   $results['islandora_anno_use_title_vocab']  = variable_get('annotation_use_title_vocabulary', FALSE);
+  $results['islandora_anno_stroke_width'] = variable_get('annotation_stroke_width',1);
   $results['position'] = $position;
   $results['pages'] = $pages;
   $results['no_edit'] = !user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE);

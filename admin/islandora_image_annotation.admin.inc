@@ -122,6 +122,14 @@ function islandora_image_annotation_admin() {
     '#options' => array(0 => t('User defined (user selects when creating annotation)'), 1 => t("Optimized (Colors are selected randomly.  Recommended for overlapping annotations")),
     '#default_value' => $optimized,
   );
+  $form['annotation_colors_fs']['annotation_stroke_width'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Annotation Stroke Width'),
+    '#default_value' => variable_get('annotation_stroke_width',1),
+    '#description' => t('The width of the lines to use when drawing the annotations. Must be a number, 
+      can include a decimal.  For instance .5 is valid'),
+    '#required' => TRUE,
+  );
   $form['annotation_controlled_titles'] = array(
     '#title' => 'Controlled Vocabulary for Titles',
     '#type' => 'fieldset',
@@ -161,6 +169,11 @@ function islandora_image_annotation_admin() {
   return($form);
 }
 
+/**
+ * NEED VALIDATION 
+ * @param type $form
+ * @param type $form_state 
+ */
 function islandora_image_annotation_admin_submit($form, &$form_state) {
   $enabled = array_filter($form_state['values']['annotation_table']['enabled']);
   $content_model_mappings = array();
@@ -175,5 +188,6 @@ function islandora_image_annotation_admin_submit($form, &$form_state) {
   variable_set('annotation_title_search_field', $form_state['values']['annotation_title_search_field']);
   variable_set('annotation_use_title_vocabulary', $form_state['values']['annotation_use_title_vocabulary']);
   variable_set('annotation_type_search_field', $form_state['values']['annotation_type_search_field']);
+  variable_set('annotation_stroke_width', $form_state['values']['annotation_stroke_width']);
 }
 
