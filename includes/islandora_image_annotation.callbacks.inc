@@ -28,7 +28,7 @@ function islandora_canvas_setup($pid) {
     }
   }
   else {
-    $categories = islandora_annotations_get_solr_terms();
+    $categories = islandora_annotations_get_type_terms();
   }
 
   $image_url = "$base_url/islandora/object/$pid/datastream/$dsid";
@@ -46,6 +46,7 @@ function islandora_canvas_setup($pid) {
   $results['get_annotation_list_url'] = "$base_url/islandora/anno/get_urns/$pid";
   $results['islandora_update_annotation'] = "$base_url/islandora/anno/update_annotation/";
   $results['islandora_base_url'] = "$base_url/";
+  $results['islandora_anno_use_title_vocab']  = variable_get('annotation_use_title_vocabulary', FALSE);
   $results['position'] = $position;
   $results['pages'] = $pages;
   $results['no_edit'] = !user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE);
@@ -383,8 +384,9 @@ function islandora_canvas_update_annotation() {
   }
 }
 
-function islandora_annotations_get_solr_terms() {
-  $solr = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
+function islandora_annotations_get_type_terms() {
+  $type_field = variable_get('annotation_type_search_field', 'anno_category_s');
+  $solr = variable_get('islandora_solr_url', 'localhost:8080/solr');
   $url = "http://$solr/select?indent=on&version=2.2&q=rels.hasModel:islandora\:OACCModel&fl=anno_category_s&fq=&start=0&rows=10000&fl=PID&qt=standard&wt=json";
   $results = json_decode(file_get_contents($url), TRUE);
   $docs = $results['response']['docs'];
@@ -404,8 +406,8 @@ function islandora_annotations_get_solr_terms() {
  * @return string
  *   json string
  */
-function islandora_annotations_get_vdp_terms($type) {
-  $title_field = variable_get('islandora_anno_title_field', 'mads_titles_sv');
+function islandora_annotations_get_title_terms($type) {
+  $title_field = variable_get('annotation_title_search_field', 'mads_titles_sv');
   $solr = variable_get('islandora_solr_url', 'localhost:8080/solr');
   $url = "http://$solr/select/?q=mads_genre_it:$type&version=2.2&start=0&rows=1000&indent=on&fl=$title_field,PID&wt=json&sort=$title_field%20asc";
   $results = json_decode(file_get_contents($url), TRUE);

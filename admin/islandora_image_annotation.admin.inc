@@ -90,20 +90,62 @@ function islandora_image_annotation_admin() {
     );
   }
 
-
-  $form['annotation_categories'] = array(
+  $form['annotation_categories_fs'] = array(
+    '#title' => 'Annotation Categories',
+    '#type' => 'fieldset',
+    '#collapsed' => FALSE,
+  );
+  $form['annotation_categories_fs']['annotation_categories'] = array(
     '#type' => 'radios',
     '#title' => t('Annotation Categories'),
     '#options' => array(0 => t('User defined'), 1 => t("Administrator defined")),
     '#description' => t('Allows administrators to select predefined taxonomies to determine annotation categorization terminology'),
     '#default_value' => $enforced,
   );
-
-  $form['annotation_colors'] = array(
+  
+  $form['annotation_categories_fs']['annotation_type_search_field'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Annotation Type Search Field'),
+    '#description' => t('If Annotation Categories is set to User Defined and you want to do auto complete enter a solr field.
+        this field\'s contents will be used to populate the auto complete.'),
+    '#default_value' => variable_get('annotation_type_search_field','mads_categories_s'),
+    '#weight' => 3,
+  );
+  $form['annotation_colors_fs'] = array(
+    '#title' => 'Annotation Colors',
+    '#type' => 'fieldset',
+    '#collapsed' => FALSE,
+  );
+  $form['annotation_colors_fs']['annotation_colors'] = array(
     '#type' => 'radios',
     '#title' => t('Annotation Colors'),
     '#options' => array(0 => t('User defined (user selects when creating annotation)'), 1 => t("Optimized (Colors are selected randomly.  Recommended for overlapping annotations")),
     '#default_value' => $optimized,
+  );
+  $form['annotation_controlled_titles'] = array(
+    '#title' => 'Controlled Vocabulary for Titles',
+    '#type' => 'fieldset',
+    '#collapsed' => FALSE,
+  );
+  $form['annotation_controlled_titles']['annotation_title_search_field'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Annotation Title Search Field'),
+    '#description' => t('This must be a single valued solr field.'),
+    '#default_value' => variable_get('annotation_title_search_field','mads_titles_sv'),
+  );
+  $form['annotation_controlled_titles']['annotation_use_title_vocabulary'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use a Controlled Vocabulary for Annotation Titles'),
+    '#default_value' => variable_get('annotation_use_title_vocabulary',FALSE),
+    '#weight' => -5,
+    '#description' => t('If checked you must configure a Solr Field to retrieve the titles from.')
+  );
+  $form['annotation_controlled_titles']['annotation_title_search_field'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Annotation Title Search Field'),
+    '#description' => t('This must be a single valued solr field.'),
+    '#default_value' => variable_get('annotation_title_search_field','mads_titles_sv'),
+    '#weight' => 3,
   );
   $form['actions'] = array(
     '#type' => 'actions'
@@ -130,5 +172,8 @@ function islandora_image_annotation_admin_submit($form, &$form_state) {
   variable_set('islandora_annotation_mappings', $content_model_mappings);
   variable_set('islandora_annotation_enforce_taxonomy', $form_state['values']['annotation_categories']);
   variable_set('islandora_annotation_optimized', $form_state['values']['annotation_colors']);
+  variable_set('annotation_title_search_field', $form_state['values']['annotation_title_search_field']);
+  variable_set('annotation_use_title_vocabulary', $form_state['values']['annotation_use_title_vocabulary']);
+  variable_set('annotation_type_search_field', $form_state['values']['annotation_type_search_field']);
 }
 

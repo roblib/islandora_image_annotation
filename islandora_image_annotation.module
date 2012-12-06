@@ -68,9 +68,9 @@ function islandora_image_annotation_menu() {
     'file' => 'includes/islandora_image_annotation.callbacks.inc',
   );
   
-  $items['islandora/anno/solr/terms/%'] = array(
-    'page callback' => 'islandora_annotations_get_vdp_terms',
-    'page arguments' => array(4),
+  $items['islandora/anno/solr/title/terms/%'] = array(
+    'page callback' => 'islandora_annotations_get_title_terms',
+    'page arguments' => array(5),
     'type' => MENU_CALLBACK,
     'access arguments' => array(ISLANDORA_IMAGE_ANNOTATION_CREATE),
     'file' => 'includes/islandora_image_annotation.callbacks.inc',
