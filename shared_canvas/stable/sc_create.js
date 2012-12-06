@@ -187,6 +187,10 @@ function saveAnnotation() {
  
   // Basic Sanity Check
   var title = $('#anno_title').val();
+  if($("#anno_title").get(0).tagName == 'SELECT'){
+      //if title is a select box we want the title not the pid
+      title = $('#anno_title option:selected').text();
+  }
   var content = $('#anno_text').val();
   var annoType = $('#anno_classification').val();
   var color = '';
@@ -306,6 +310,10 @@ function create_rdfAnno() {
   rdfa += '<span property="dcterms:created" content="' + now + '"></span> ';
 
   var title = $('#anno_title').val();
+  if($("#anno_title").get(0).tagName == 'SELECT'){
+      //if title is a select box we want the title not the pid
+      title = $('#anno_title option:selected').text();
+  }
   var color = $('#anno_color').attr('value');
   //alert(color)
  

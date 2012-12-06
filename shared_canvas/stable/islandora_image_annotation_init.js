@@ -353,7 +353,7 @@ $(document).ready(function(){
             var id=$(this).val();   
            var base_url = islandora_canvas_params.islandora_base_url+'islandora/anno/solr/terms/';
            $.getJSON(base_url+id,{id: $(this).val(), ajax: 'true'}, function(j){
-               var options = '<option value="nothing">--Choose a ' + id +'--</option>';
+               var options = '<option value="nothing">--Select from ' + id +'--</option>';
                for (var i = 0; i < j.length; i++){
                    options += '<option value="'+j[i].PID + '">' + j[i].mads_topic_s[0] + '</option>';
                }
@@ -376,7 +376,7 @@ $(document).ready(function(){
                    mads_text += i +': ' +val + '\n\n';
                    
                 });
-               $('#anno_text').text(mads_text);
+               $('#anno_text').val(mads_text);
            });
            
            });  
