@@ -350,12 +350,13 @@ $(document).ready(function(){
    
    $("#anno_classification").change(function()  
           {  
+          var fieldName = "mads_titles_sv";    
             var id=$(this).val();   
            var base_url = islandora_canvas_params.islandora_base_url+'islandora/anno/solr/terms/';
            $.getJSON(base_url+id,{id: $(this).val(), ajax: 'true'}, function(j){
                var options = '<option value="nothing">--Select from ' + id +'--</option>';
                for (var i = 0; i < j.length; i++){
-                   options += '<option value="'+j[i].PID + '">' + j[i].mads_topic_s[0] + '</option>';
+                   options += '<option value="'+j[i].PID + '">' + j[i].mads_titles_sv + '</option>';
                }
                $('#anno_title').html(options);
            });
