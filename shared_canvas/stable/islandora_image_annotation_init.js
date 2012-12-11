@@ -341,17 +341,22 @@ $(document).ready(function(){
             source: islandora_canvas_params.categories
         });
     }
-    if(islandora_canvas_params.islandora_anno_use_title_vocab == 1){
-        $('#islandora_titles').empty();
-        $('<label for="anno_title">Title:</label>').appendTo('#islandora_titles');
-        var titles = $('<select  id="anno_title">').appendTo('#islandora_titles');  
-        titles.append($("<option>").attr('value','--Choose a type--').text('--Choose a type above to populate--'));
-    }
+    //if(islandora_canvas_params.islandora_anno_use_title_vocab == 1){
+    //    $('#islandora_titles').empty();
+    //    $('<label for="anno_title">Title:</label>').appendTo('#islandora_titles');
+    //    var titles = $('<select  id="anno_title">').appendTo('#islandora_titles');  
+    //    titles.append($("<option>").attr('value','--Choose a type--').text('--Choose a type above to populate--'));
+    //}
     
    
     $("#anno_classification").change(function()  
     {    
+       
         if(islandora_canvas_params.islandora_anno_use_title_vocab == 1){
+               $('#islandora_titles').empty();
+            $('<label for="anno_title">Title:</label>').appendTo('#islandora_titles');
+            var titles = $('<select  id="anno_title">').appendTo('#islandora_titles');  
+            titles.append($("<option>").attr('value','--Choose a type--').text('--Choose a type above to populate--'));
             var id=$(this).val();   
             var base_url = islandora_canvas_params.islandora_base_url+'islandora/anno/solr/title/terms/';
             $.getJSON(base_url+id,{
@@ -370,33 +375,41 @@ $(document).ready(function(){
                     });
                     options += '<option value="'+ objectPid + '">' + fieldName + '</option>';
                 }
-                $('#anno_title').html(options);
+                if(j.length == 0){
+                    $('#islandora_titles').empty();
+                    $('#islandora_titles').append('<label for"anno_title">Title:</label>');
+                    $('#islandora_titles').append('<input id="anno_title" type="text" size="28"/>');
+                    
+                } else {
+                    $('#anno_title').html(options);
+                    $("#anno_title").change(function()  
+                    {  
+              
+                        var id=$(this).val();  
+           
+                        var mads_url = islandora_canvas_params.islandora_base_url+'islandora/anno/mads/';
+           
+                        $.getJSON(mads_url+id,{
+                            id: $(this).val(), 
+                            ajax: 'true'
+                        }, function(mads){
+               
+                            var mads_text = "";
+                            $.each(mads, function(i, val) {
+                                mads_text += i +': ' +val + '\n\n';
+                   
+                            });
+                            $('#anno_text').val(mads_text);
+                        });
+           
+                    });  
+                }
             });
         }
            
     });  
            
-    $("#anno_title").change(function()  
-    {  
-              
-        var id=$(this).val();  
-           
-        var mads_url = islandora_canvas_params.islandora_base_url+'islandora/anno/mads/';
-           
-        $.getJSON(mads_url+id,{
-            id: $(this).val(), 
-            ajax: 'true'
-        }, function(mads){
-               
-            var mads_text = "";
-            $.each(mads, function(i, val) {
-                mads_text += i +': ' +val + '\n\n';
-                   
-            });
-            $('#anno_text').val(mads_text);
-        });
-           
-    });  
+   
 
  
 

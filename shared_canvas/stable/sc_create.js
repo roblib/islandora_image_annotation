@@ -9,8 +9,8 @@
 var outsideStyle = {
   fill: 'none',
   opacity: 0.7,
-  //'stroke-width': '1%',
-  'stroke-width' : islandora_canvas_params.islandora_anno_stroke_width+'%',
+  'stroke-width': '.3%',
+  //'stroke-width' : islandora_canvas_params.islandora_anno_stroke_width+'%',
   stroke: 'black'
 };
 var insideStyle = {
