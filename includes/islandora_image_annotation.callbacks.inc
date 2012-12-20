@@ -46,8 +46,8 @@ function islandora_canvas_setup($pid) {
   $results['get_annotation_list_url'] = "$base_url/islandora/anno/get_urns/$pid";
   $results['islandora_update_annotation'] = "$base_url/islandora/anno/update_annotation/";
   $results['islandora_base_url'] = "$base_url/";
-  $results['islandora_anno_use_title_vocab']  = variable_get('annotation_use_title_vocabulary', FALSE);
-  $results['islandora_anno_stroke_width'] = variable_get('annotation_stroke_width',1);
+  $results['islandora_anno_use_title_vocab'] = variable_get('annotation_use_title_vocabulary', FALSE);
+  $results['islandora_anno_stroke_width'] = variable_get('annotation_stroke_width', 1);
   $results['position'] = $position;
   $results['pages'] = $pages;
   $results['no_edit'] = !user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE);
@@ -87,7 +87,7 @@ function islandora_add_annotation($pid) {
   $relationship = array();
   $relationship['relationship'] = 'isMemberOf';
   $relationship['pid'] = $pid;
-  $item = islandora_prepare_new_object($namespace, $labels[0], $datastreams = array(), array('islandora:OACCModel'), array($relationship) ); 
+  $item = islandora_prepare_new_object($namespace, $labels[0], $datastreams = array(), array('islandora:OACCModel'), array($relationship));
   $item->label = (string) $labels[0];
 
   //$item->relationships->add(FEDORA_MODEL_URI, 'hasModel', 'islandora:OACCModel');
@@ -103,7 +103,7 @@ function islandora_add_annotation($pid) {
   $new_ds->label = 'OAC';
   $new_ds->mimetype = 'text/xml';
   $new_ds->content = $annotation_xml;
-  $item->ingestDatastream($new_ds);  
+  $item->ingestDatastream($new_ds);
   //islandora_ingest_add_object($item);
   $item->repository->ingestObject($item);
   foreach (islandora_build_hook_list(ISLANDORA_POST_INGEST_HOOK, $object->models) as $hook) {
@@ -111,7 +111,6 @@ function islandora_add_annotation($pid) {
   }
   echo $item->id;
 }
-
 
 function islandora_ingest_add_object(&$object) {
   drupal_alter('islandora_pre_ingest', $object);
@@ -126,6 +125,7 @@ function islandora_ingest_add_object(&$object) {
 
   return $object;
 }
+
 /**
  * transforms input from SharedCanvas to AnnotationList
  * @param string $xml_in
@@ -398,7 +398,6 @@ function islandora_annotations_get_type_terms() {
   return array_keys($terms);
 }
 
-
 /**
  * return each solr doc found
  * 
@@ -418,9 +417,9 @@ function islandora_annotations_get_title_terms($type) {
   exit();
 }
 
-function islandora_annotations_get_mads_as_json($pid){
+function islandora_annotations_get_mads_as_json($pid) {
   $object = islandora_object_load($pid);
-  if(!isset($object) || !isset($object['MADS'])){
+  if (!isset($object) || !isset($object['MADS'])) {
     echo 'error loading MADS datastream';
     exit();
   }
@@ -430,10 +429,12 @@ function islandora_annotations_get_mads_as_json($pid){
   $elements = $doc->getElementsByTagName('related');
   $arr = array();
   $str = "";
-  foreach($elements as $element){
+  foreach ($elements as $element) {
     $attr = $element->getAttribute('otherType');
-    if(!empty($attr)){
-      $arr[$attr] = trim($element->nodeValue);
+    if (!empty($attr)) {
+      $str = ucfirst(trim($attr));
+      $str = str_replace('_', ' ', $str);
+      $arr[$str] = trim($element->nodeValue);
       //$str .= $attr .': '. trim($element->nodeValue). '<br />';
     }
   }
