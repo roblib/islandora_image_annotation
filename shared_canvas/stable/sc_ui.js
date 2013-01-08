@@ -834,7 +834,7 @@ function paint_commentAnno(anno, canvasId) {
       tgttxt = 'all of ' + tgtttl;
     }
   }
-  txt = txt.replace('\n', '<br/>')
+  txt = txt.replace(/\n/g, '<br/>');
 
   //block contains complete annotation
   block = '<div class = "canvas_annotation" ' + 'urn ="' + myid + '" '+ ' >';
