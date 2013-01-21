@@ -132,7 +132,7 @@
           
           <!--Annotation Classification -->
           <div id ="islandora_classification"class="element-wrap">
-            <label for="anno_type">Type:</label>
+            <label for="anno_classification">Type:</label>
             <input id="anno_classification" type="text" size="28"></input>
           </div>
           
@@ -147,6 +147,11 @@
             <label for="anno_color">Color:</label>
             <input id ="anno_color" type="hidden" name="color4" value="#91843c" class="color-picker" size="7" />
             <input id ="anno_color_activated" type="hidden" value ="" size="7" />
+          </div>
+          
+          <div id ="stroke-width-wrapper" class="element-wrap">
+            <label for="stroke_width">Stroke Width:</label>
+            <input id="stroke_width" type="text" size="5" value=".3"></input>
           </div>
 
 

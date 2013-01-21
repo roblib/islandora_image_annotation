@@ -894,6 +894,11 @@ function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
       if(islandora_canvas_params.mappings['urn:uuid:' + annoId] != '' && islandora_canvas_params.can_choose){
         col = islandora_canvas_params.mappings[['urn:uuid:' + annoId]];
       }
+      if(islandora_canvas_params.strokeWidth['urn:uuid:' + annoId] != ''){
+        strokeWidth = islandora_canvas_params.strokeWidth[['urn:uuid:' + annoId]];
+      } else {
+        strokeWidth = islandora_canvas_params.islandora_anno_stroke_width;
+      }
     
       $(ttldiv).append('<span color="' + col + '" class="mycolor" style="margin-right: 2px; margin-top: 2px; background: '+col+';float:right;width:15px;height:15px;">&nbsp;</span>');
       for (var t = 0, tgt; tgt = anno.targets[t]; t++) {
@@ -901,7 +906,7 @@ function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
           if (tgt.constraint != null) {
             // paint SVG
             svgc = mk_raphael('comment', canvas, canvasId);
-            paint_svgArea(svgc, anno.id.substring(9, 100), col, tgt.constraint.value);
+            paint_svgArea(svgc, anno.id.substring(9, 100), col, tgt.constraint.value, strokeWidth);
           } else if (tgt.fragmentInfo == 'rect') {
         // paint html box
         }
@@ -912,7 +917,7 @@ function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
   }
 }
 
-function paint_svgArea(svgc, annoId, col, svg) {
+function paint_svgArea(svgc, annoId, col, svg, strokeWidth) {
   var pth = $.parseXML(svg)
   var doc = $(pth)
   var pthelm = doc.children()[0];
@@ -925,7 +930,9 @@ function paint_svgArea(svgc, annoId, col, svg) {
   pthelm = npth;
   //changed by UPEI
   pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col+
-      ';stroke-width:'+islandora_canvas_params.islandora_anno_stroke_width+'%');
+      ';stroke-width:'+strokeWidth+'%');
+  //pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col);
+  //pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col);
   pthelm.setAttribute('class', 'svg_' + annoId);
   svgc.canvas.appendChild(pthelm);
 }

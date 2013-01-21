@@ -122,12 +122,20 @@ function islandora_image_annotation_admin() {
     '#options' => array(0 => t('User defined (user selects when creating annotation)'), 1 => t("Optimized (Colors are selected randomly.  Recommended for overlapping annotations")),
     '#default_value' => $optimized,
   );
-  $form['annotation_colors_fs']['annotation_stroke_width'] = array(
+  /*$form['annotation_colors_fs']['annotation_stroke_width'] = array(
     '#type' => 'textfield',
     '#title' => t('Annotation Stroke Width'),
     '#default_value' => variable_get('annotation_stroke_width',1),
     '#description' => t('The width of the lines to use when drawing the annotations. Must be a number, 
       can include a decimal.  For instance .5 is valid'),
+    '#required' => TRUE,
+  );*/
+  $form['annotation_colors_fs']['annotation_stroke_widths'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Annotation Stroke Widths for dropdown'),
+    '#default_value' => variable_get('annotation_stroke_widths','.3'),
+    '#description' => t('The width of the lines to use when drawing the annotations. Must be a number, 
+      can include a decimal.  For instance .5 is valid.  You can Enter several values here seperated by a space.'),
     '#required' => TRUE,
   );
   $form['annotation_controlled_titles'] = array(
@@ -188,6 +196,10 @@ function islandora_image_annotation_admin_submit($form, &$form_state) {
   variable_set('annotation_title_search_field', $form_state['values']['annotation_title_search_field']);
   variable_set('annotation_use_title_vocabulary', $form_state['values']['annotation_use_title_vocabulary']);
   variable_set('annotation_type_search_field', $form_state['values']['annotation_type_search_field']);
-  variable_set('annotation_stroke_width', $form_state['values']['annotation_stroke_width']);
+  variable_set('annotation_stroke_widths', $form_state['values']['annotation_stroke_widths']);
+  //$str = variable_get('annotation_stroke_widths','.3 .7 .9');
+  //$arr = explode(' ',$str);
+  //$json_str = json_encode($arr);
+  //variable_set('annotation_stroke_widths', $json_str);
 }
 

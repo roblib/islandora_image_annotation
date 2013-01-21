@@ -15,6 +15,11 @@ function islandora_canvas_setup($pid) {
   $item = islandora_object_load($pid);
   $rels = $item->relationships->get('info:fedora/fedora-system:def/model#', 'hasModel');
   $cmodel = $rels[0]['object']['value'];
+  $stroke_width = $item->relationships->get(ISLANDORA_RELS_EXT_URI, 'strokeWidth');
+  $stroke_width = $stroke_width[0]['object']['value'];
+  if(empty($stroke_width)){
+    $stroke_width = variable_get('annotation_stroke_width', 1);
+  }
   $mappings = variable_get('islandora_annotation_mappings', array());
   $optimized = variable_get('islandora_annotation_optimized', TRUE);
   $dropdown = variable_get('islandora_annotation_enforce_taxonomy', TRUE);
@@ -47,7 +52,8 @@ function islandora_canvas_setup($pid) {
   $results['islandora_update_annotation'] = "$base_url/islandora/anno/update_annotation/";
   $results['islandora_base_url'] = "$base_url/";
   $results['islandora_anno_use_title_vocab'] = variable_get('annotation_use_title_vocabulary', FALSE);
-  $results['islandora_anno_stroke_width'] = variable_get('annotation_stroke_width', 1);
+  $results['islandora_anno_stroke_width'] = $stroke_width;//default
+  $results['islandora_anno_stroke_widths'] = variable_get('annotation_stroke_widths', '.3 .6. .9  1.2 1.5');
   $results['position'] = $position;
   $results['pages'] = $pages;
   $results['no_edit'] = !user_access(ISLANDORA_IMAGE_ANNOTATION_CREATE);
@@ -68,6 +74,8 @@ function islandora_add_annotation($pid) {
   global $user;
   global $base_url;
   module_load_include('inc', 'islandora', 'includes/utilities');
+  $data = $_POST['data'];
+  $stroke_width = $_POST['strokeWidth'];
   $annotation_xml = islandora_shared_transform_annotationList(urldecode($_POST['data']), 'html');
   $color = $_POST['color'];
   $type = $_POST['type'];
@@ -99,6 +107,7 @@ function islandora_add_annotation($pid) {
   $item->relationships->add(FEDORA_RELS_EXT_URI, 'isAnnotationOf', $pid);
   $item->relationships->add('http://islandora.ca/ontology/relsext#', 'isAnnotationType', $type, TRUE);
   $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasURN', $urn, TRUE);
+  $item->relationships->add(ISLANDORA_RELS_EXT_URI, 'strokeWidth', $stroke_width, TRUE);
   $new_ds = $item->constructDatastream('OAC', 'X');
   $new_ds->label = 'OAC';
   $new_ds->mimetype = 'text/xml';
@@ -173,7 +182,7 @@ PREFIX io: <http://islandora.ca/ontology/relsext#>
 PREFIX fm: <info:fedora/fedora-system:def/model#>
 
 
-SELECT ?id ?type ?color ?urn from <#ri>
+SELECT ?id ?type ?color ?strokeWidth ?urn from <#ri>
 WHERE {
         ?id io:targets <info:fedora/$pid> ;
             io:hasURN ?urn;
@@ -182,6 +191,9 @@ WHERE {
 
             OPTIONAL{
             ?id io:hasColor ?color
+            }
+             OPTIONAL{
+             ?id io:strokeWidth ?strokeWidth;
             }
 }
 ORDER BY ASC(?type)
@@ -195,6 +207,7 @@ QUERY;
       'id' => $object['id']['value'],
       'type' => $object['type']['value'],
       'color' => $object['color']['value'],
+      'strokeWidth' => $object['strokeWidth']['value'],
       'urn' => $object['urn']['value'],
     );
 
@@ -205,6 +218,7 @@ QUERY;
   $json = json_encode($pids);
   echo $json;
 }
+
 
 /**
  * Retrieves details of individual annotation from datastream
@@ -231,8 +245,10 @@ function islandora_get_annotation_data($pid) {
  * @param string $pid
  * @param urn $urn
  */
-function islandora_shared_get_annotation($pid) {
-
+function islandora_shared_get_annotation($pid, $urn=NULL) {
+  if(isset($urn)){
+    $pid = islandora_canvas_get_pid_from_urn($urn);
+  }
   $xml = islandora_get_annotation_data($pid);
   $results = islandora_shared_transform_annotationList($xml, 'rdf');
   $results = preg_replace('/<\?xml.*?\?>/', '', $results);
@@ -324,7 +340,7 @@ and \$urn <mulgara:is> 'urn:uuid:$urn'";
  * Called by Shared Canvas with ajax
  */
 function islandora_canvas_update_annotation() {
-  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  //module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $changed = FALSE;
   //retrieve variables from POST
   $urn = urldecode($_POST['urn']);
@@ -332,29 +348,55 @@ function islandora_canvas_update_annotation() {
   $content = urldecode($_POST['content']);
   $type = urldecode($_POST['annoType']);
   $new_color = urldecode($_POST['color']);
+  $new_stroke_width = urldecode($_POST['strokeWidth']);
+  $annotation_xml = islandora_shared_transform_annotationList(urldecode($_POST['rdfData']), 'html');
   $pid = islandora_canvas_get_pid_from_urn($urn);
   $fedora_object = islandora_object_load($pid);
-
+  
+  $annotation = $fedora_object['OAC']->content;
+  $xml = simplexml_load_string($annotation);
+  
+   //indentify URN of body to retrieve chars node to hold new annotation content
+  $body_urn_array = $xml->xpath("//oa:hasBody");
+  $body_urn = (string) $body_urn_array[0]->attributes('rdf', 'about');
+  $content_node = $xml->xpath("//rdf:Description[@rdf:about = '$body_urn']//cnt:chars");
+  
+  $constrained_urn_array = $xml->xpath("//oa:constrainedBy"); 
+  $constrained_by_urn = $body_urn = (string) $constrained_urn_array[0]->attributes('rdf', 'resource');
+  $target_node = $xml->xpath("//rdf:Description[@rdf:about = '$constrained_by_urn']//cnt:chars");
+  $target_value = (string)$target_node[0];
+  
   //if color picking is allowed, update here
-
   if (!$optimized = variable_get('islandora_annotation_optimized', TRUE)) {
     $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasColor');
     $old_color = $rels[0]['object']['value'];
-    if ($old_color != $new_color) {
-      $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'hasColor', $old_color);
+    if (!empty($new_color) && $old_color != $new_color) {
+      $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'hasColor', NULL, TRUE);
       $fedora_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasColor', $new_color, TRUE);
+      $changed = TRUE;
     }
   }
+  
+   $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'strokeWidth');
+    $old_stroke_width = $rels[0]['object']['value'];
+    if ($old_stroke_width != $new_stroke_width) {
+      $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'strokeWidth', NULL, TRUE);
+      $fedora_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'strokeWidth', $new_stroke_width, TRUE);
+      $svg_xml = simplexml_load_string($target_value);
+      $svg_xml['stroke-width'] = $new_stroke_width.'%';
+      $target_node[0]->{0} = str_replace('<?xml version="1.0"?>','',$svg_xml->asXML());
+     $test_text = urlencode((string)$target_node[0]);
+      $changed = TRUE;
+    }
 
   //update the rels if the category has changed
   $anno_type = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'isAnnotationType');
   $anno_type_value = $annot_type['object']['value'];
   if ($type != $anno_type_value) {
-    $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'isAnnotationType', $annot_type_value);
+    $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'isAnnotationType', NULL, TRUE);
     $fedora_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'isAnnotationType', $type, TRUE);
   }
-  $annotation = $fedora_object['OAC']->content;
-  $xml = simplexml_load_string($annotation);
+  
 
   // identify Title element and replace content
   $title_node = $xml->xpath("//rdf:Description[@rdf:about = 'urn:uuid:$urn']/dc:title");
@@ -368,11 +410,7 @@ function islandora_canvas_update_annotation() {
     $type_node[0][0] = $type;
     $changed = TRUE;
   }
-
-  //indentify URN of body to retrieve chars node to hold new annotation content
-  $body_urn_array = $xml->xpath("//oa:hasBody");
-  $body_urn = (string) $body_urn_array[0]->attributes('rdf', 'about');
-  $content_node = $xml->xpath("//rdf:Description[@rdf:about = '$body_urn']//cnt:chars");
+  
   if ((string) $content_node[0][0] != $content) {
     $content_node[0][0] = $content;
     $changed = TRUE;
@@ -381,6 +419,7 @@ function islandora_canvas_update_annotation() {
 
   // persist updated annotation
   if ($changed) {
+    $test_xml = $xml->asXML();
     $fedora_object['OAC']->content = $xml->asXML();
   }
 }

@@ -402,6 +402,21 @@ $(document).ready(function(){
         }
            
     });  
+    
+    var stroke_widths = islandora_canvas_params.islandora_anno_stroke_widths.split(" ");
+    var s_options = "";
+    for (var i = 0; i < stroke_widths.length; i++){                    
+                    s_options += '<option value="'+ stroke_widths[i] + '">' + stroke_widths[i] + '</option>';
+                }
+                
+    $('#stroke-width-wrapper').empty();
+    $('#stroke-width-wrapper').append('<label for"stroke_width">Stroke Width:</label>');
+    $('#stroke-width-wrapper').append('<select id="stroke_width" />');
+    $('#stroke_width').append(s_options);
+        
+    $('#stroke_width').change(function() {
+    islandora_canvas_params.islandora_anno_stroke_width = $('#stroke_width').val();
+});
            
    
 
