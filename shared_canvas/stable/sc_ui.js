@@ -897,7 +897,7 @@ function paint_commentAnnoTargets(ttldiv, canvasId, annoId, annoType) {
       if(islandora_canvas_params.strokeWidth['urn:uuid:' + annoId] != ''){
         strokeWidth = islandora_canvas_params.strokeWidth[['urn:uuid:' + annoId]];
       } else {
-        strokeWidth = islandora_canvas_params.islandora_anno_stroke_width;
+        strokeWidth = $('#stroke_width').val();
       }
     
       $(ttldiv).append('<span color="' + col + '" class="mycolor" style="margin-right: 2px; margin-top: 2px; background: '+col+';float:right;width:15px;height:15px;">&nbsp;</span>');
@@ -928,10 +928,10 @@ function paint_svgArea(svgc, annoId, col, svg, strokeWidth) {
     npth.setAttribute(attr.nodeName, attr.nodeValue);
   }
   pthelm = npth;
-  //changed by UPEI
+  //changed by UPEI we override the style so after editing we don't have to 
+  //reload the anno from fedora.  this should be addressed when saving the anno
   pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col+
       ';stroke-width:'+strokeWidth+'%');
-  //pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col);
   //pthelm.setAttribute('style', 'fill:none;opacity:none;stroke:'+col);
   pthelm.setAttribute('class', 'svg_' + annoId);
   svgc.canvas.appendChild(pthelm);

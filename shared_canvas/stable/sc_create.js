@@ -229,11 +229,7 @@ function saveAnnotation() {
     var rinfo = create_rdfAnno();
     var rdfa = rinfo[0];
     var tgt = rinfo[1];
-    //added for Islandora
-    if($('#anno_color_activated').attr('value') == 'active'){
-        color = $('#anno_color').attr('value');
-    }
-
+   
     if (tgt == null) {
         alert('You must draw a shape around the target.');
         return 0;
@@ -414,7 +410,7 @@ function create_rdfAnno() {
                 for (s in stuff) {
                     target = cnv;
                     var svgxml = nodeToXml(stuff[s].node);
-                    svgxml = svgxml.replace("stroke='#000000'" , "stroke='" + color +  "'")
+                    //svgxml = svgxml.replace("stroke='#000000'" , "stroke='" + color +  "'")
                     //if(strokeWidth == ''){
                     //   svgxml = svgxml.replace("stroke-width='.3%'" , "stroke-width= ." + strokeWidth +  "%")
                     //}
@@ -740,12 +736,12 @@ function islandora_getOutsideStyle(){
     }
      var outsideStyle = {
         fill: 'none',
-        opacity: 'none'
-        //'stroke-width': '.' + $('#stroke_width').val()+ '%' ,
-        //stroke: color
+        opacity: 'none',
+        'stroke-width': + $('#stroke_width').val() + '%' ,
+        stroke: color
     };
-    if (color != ''){
-        outsideStyle.color = color;
-    }
+    //if (color != ''){
+    //    outsideStyle.color = color;
+    //}
     return outsideStyle;
 }
