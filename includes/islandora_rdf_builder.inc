@@ -55,7 +55,7 @@ class IslandoraRdfBuilder {
         $value = $this->domDoc->createTextNode($child['value']);
         $new->appendChild($value);
       }
-      if ($child['attributes']) {
+      if (array_key_exists('attributes',$child)) {
         foreach ($child['attributes'] as $key => $attVal) {
           $new->setAttribute($key, $attVal);
         }

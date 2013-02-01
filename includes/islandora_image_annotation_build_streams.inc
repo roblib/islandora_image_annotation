@@ -455,7 +455,7 @@ function islandora_serve($pid, $stream, $width = null, $height = null) {
     return;
   }
   if ($stream == 'ImageAnnotations') {
-    $imageAnnotations = get_imageAnnotations($doc_url, $doc_path_url, $height, $width, $title);
+    $imageAnnotations = get_imageAnnotations($doc_url, $doc_path_url, $height, $width, NULL);
     echo $imageAnnotations;
     return;
   }
