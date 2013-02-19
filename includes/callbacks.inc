@@ -1,6 +1,12 @@
 <?php
 
 /**
+ * @file
+ * functions that implement ajax callbacks
+ * 
+ */
+
+/**
  * Ajax callback for Shared Canvas
  * Supplies the basic data, including maifest uri
  * @global url $base_url
@@ -10,7 +16,7 @@ function islandora_canvas_setup($pid) {
   global $base_url;
   global $user;
 
-  module_load_include('inc', 'islandora_image_annotation', 'includes/islandora_rdf_builder');
+  module_load_include('inc', 'islandora_image_annotation', 'includes/rdf_builder');
   module_load_include('module', 'taxonomy', 'module');
   $item = islandora_object_load($pid);
   $rels = $item->relationships->get('info:fedora/fedora-system:def/model#', 'hasModel');
@@ -76,7 +82,7 @@ function islandora_add_annotation($pid) {
   module_load_include('inc', 'islandora', 'includes/utilities');
   $data = $_POST['data'];
   $stroke_width = $_POST['strokeWidth'];
-  $annotation_xml = islandora_shared_transform_annotationList(urldecode($_POST['data']), 'html');
+  $annotation_xml = islandora_shared_transform_annotation_list(urldecode($_POST['data']), 'html');
   $color = $_POST['color'];
   $type = $_POST['type'];
   if (!$type) {
@@ -114,6 +120,7 @@ function islandora_add_annotation($pid) {
   $new_ds->content = $annotation_xml;
   $item->ingestDatastream($new_ds);
   //islandora_ingest_add_object($item);
+  
   $item->repository->ingestObject($item);
   //TODO: reimplement this when islandora 7 refactoring is done
   //foreach (islandora_build_hook_list(ISLANDORA_POST_INGEST_HOOK, $item->models) as $hook) {
@@ -141,7 +148,7 @@ function islandora_ingest_add_object(&$object) {
  * @param string $xml_in
  * @return string
  */
-function islandora_shared_transform_annotationList($xml_in, $input_type) {
+function islandora_shared_transform_annotation_list($xml_in, $input_type) {
 
   if ($xml_in == NULL || strlen($xml_in) < 5) {
     return " ";
@@ -267,7 +274,7 @@ function islandora_shared_get_annotation($pid, $urn = NULL) {
     $pid = islandora_canvas_get_pid_from_urn($urn);
   }
   $xml = islandora_get_annotation_data($pid);
-  $results = islandora_shared_transform_annotationList($xml, 'rdf');
+  $results = islandora_shared_transform_annotation_list($xml, 'rdf');
   $results = preg_replace('/<\?xml.*?\?>/', '', $results);
   $results = preg_replace('/<!DOCTYPE.*?>/', '', $results);
 
@@ -297,37 +304,37 @@ function islandora_save_updated_annotations($pid, $rdf) {
   global $base_url;
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $item = islandora_object_load($pid);
-  $updated_annotationList = $rdf->printRDF();
-  $item['AnnotationList']->content = $updated_annotationList;
+  $updated_annotation_list = $rdf->printRDF();
+  $item['AnnotationList']->content = $updated_annotation_list;
 }
 
-function build_annotationList($pid) {
+function build_annotation_list($pid) {
   global $base_url;
   $doc_url = "$base_url/islandora/object/$pid";
   $doc_path_url = "$base_url/islandora/anno/serve/$pid";
   $item = islandora_object_load($pid);
 
-  $annotationList = get_annotationList($doc_url, $doc_path_url);
-  $domDoc = new DOMDocument();
-  $domDoc->formatOutput = true;
-  $domDoc->loadXML($annotationList);
-  $rdf = new IslandoraRdfBuilder($domDoc);
+  $annotation_list = get_annotation_list($doc_url, $doc_path_url);
+  $dom_doc = new DOMDocument();
+  $dom_doc->formatOutput = TRUE;
+  $dom_doc->loadXML($annotation_list);
+  $rdf = new IslandoraRdfBuilder($dom_doc);
 
   if (isset($item['AnnotationList'])) {
     $list = $item['AnnotationList']->content;
     if (strlen($list) < 50) {
       return;
     }
-    $annoDoc = new DOMDocument();
-    $annoDoc->loadXML($list);
-    $descriptions = $annoDoc->getElementsByTagName('Description');
+    $anno_doc = new DOMDocument();
+    $anno_doc->loadXML($list);
+    $descriptions = $anno_doc->getElementsByTagName('Description');
     foreach ($descriptions as $description) {
       $constrains = $description->getElementsByTagName('constrains');
       foreach ($constrains as $candidate) {
         $candidate->setAttribute("rdf:resource", "$base_url/fedora/repository/$pid/Canvas");
       }
-      $newNode = $domDoc->importNode($description, TRUE);
-      $rdf->root->appendChild($newNode);
+      $new_node = $dom_doc->importNode($description, TRUE);
+      $rdf->root->appendChild($new_node);
     }
   }
 
@@ -366,7 +373,7 @@ function islandora_canvas_update_annotation() {
   $type = urldecode($_POST['annoType']);
   $new_color = urldecode($_POST['color']);
   $new_stroke_width = urldecode($_POST['strokeWidth']);
-  //$annotation_xml = islandora_shared_transform_annotationList(urldecode($_POST['rdfData']), 'html');
+  //$annotation_xml = islandora_shared_transform_annotation_list(urldecode($_POST['rdfData']), 'html');
   $pid = islandora_canvas_get_pid_from_urn($urn);
   $fedora_object = islandora_object_load($pid);
 
@@ -385,16 +392,16 @@ function islandora_canvas_update_annotation() {
 
   //if color picking is allowed, update here
   if (!$optimized = variable_get('islandora_annotation_optimized', TRUE)) {
-    $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasColor');    
+    $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasColor');
     $old_color = (!empty($rels)) ? $rels[0]['object']['value'] : '';
     if (!empty($new_color) && $old_color != $new_color) {
       $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'hasColor', NULL, TRUE);
       $fedora_object->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasColor', $new_color, TRUE);
       $changed = TRUE;
-    }    
+    }
   }
 
-  $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'strokeWidth');  
+  $rels = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'strokeWidth');
   $old_stroke_width = (!empty($rels)) ? $rels[0]['object']['value'] : '';
   if ($old_stroke_width != $new_stroke_width) {
     $fedora_object->relationships->remove(ISLANDORA_RELS_EXT_URI, 'strokeWidth', NULL, TRUE);
@@ -404,7 +411,7 @@ function islandora_canvas_update_annotation() {
     $target_node[0]->{0} = str_replace('<?xml version="1.0"?>', '', $svg_xml->asXML());
     $changed = TRUE;
   }
-  
+
   //update the rels if the category has changed
   $anno_type = $fedora_object->relationships->get(ISLANDORA_RELS_EXT_URI, 'isAnnotationType');
   if (!empty($anno_type) && array_key_exists('object', $anno_type) && array_key_exists('value', $anno_type['object'])) {
@@ -461,7 +468,7 @@ function islandora_annotations_get_type_terms() {
  * return each solr doc found
  * 
  * @type string
- *   the mads genre to search for
+ *   the type to search for
  * @return string
  *   json string
  */
@@ -476,6 +483,17 @@ function islandora_annotations_get_title_terms($type) {
   exit();
 }
 
+
+/**
+ * Currently this reads the the MADS data stream and returns content that will 
+ * populate an annotation, this is specific to UPEI VDP project.
+ * TODO: call module invoke all here and move this function out to be implemented 
+ * by a submodule, this way other modules could control the population of an anno body
+ * from a controlled vocabulary.  As is this function has no real affect on anything except
+ * instances where both the Title and Type are determined from a controlled vocabulary.
+ * @param string $pid
+ *   the identifier of the object to read the datatstream from
+ */
 function islandora_annotations_get_mads_as_json($pid) {
   $object = islandora_object_load($pid);
   if (!isset($object) || !isset($object['MADS'])) {

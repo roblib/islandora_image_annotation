@@ -1,19 +1,21 @@
 <?php
 
-
 /**
+ * @file
+ * build rdf like xml for oac standard
+ * 
  * Convenicence class to build RDF objects
  *
  */
 class IslandoraRdfBuilder {
 
-  public $domDoc = null;
+  public $dom_doc = NULL;
 
-  function IslandoraRdfBuilder($domDoc = null) {
-    if (!isset($domDoc)) {
-      $this->domDoc = new DOMDocument('1.0', 'utf-8');
-      $this->domDoc->formatOutput = true;
-      $this->root = $this->domDoc->appendChild($this->domDoc->createElement('rdf:RDF'));
+  function IslandoraRdfBuilder($dom_doc = NULL) {
+    if (!isset($dom_doc)) {
+      $this->dom_doc = new DOMDocument('1.0', 'utf-8');
+      $this->dom_doc->formatOutput = TRUE;
+      $this->root = $this->dom_doc->appendChild($this->dom_doc->createElement('rdf:RDF'));
       $this->root->setAttribute('xmlns:dc', "http://purl.org/dc/elements/1.1/");
       $this->root->setAttribute('xmlns:dcterms', "http://purl.org/dc/terms/");
       $this->root->setAttribute('xmlns:dms', "http://dms.stanford.edu/ns/");
@@ -22,8 +24,8 @@ class IslandoraRdfBuilder {
       $this->root->setAttribute('xmlns:rdf', "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
     }
     else {
-      $this->domDoc = $domDoc;
-      $this->root = $this->domDoc->documentElement;
+      $this->dom_doc = $dom_doc;
+      $this->root = $this->dom_doc->documentElement;
     }
   }
 
@@ -32,7 +34,7 @@ class IslandoraRdfBuilder {
    * @return string
    */
   function printRDF() {
-    return $this->domDoc->saveXML();
+    return $this->dom_doc->saveXML();
   }
 
   /**
@@ -43,19 +45,19 @@ class IslandoraRdfBuilder {
    * A structured array of child elements to this node
    * Each array entry is a sub array with a manditory name, an optional array of attributes, and an optional value
    */
-  function addDescriptionNode($about, $children = null) {
-    $description = $this->domDoc->createElement('rdf:Description');
+  function addDescriptionNode($about, $children = NULL) {
+    $description = $this->dom_doc->createElement('rdf:Description');
     $description = $this->root->appendChild($description);
     $description->setAttribute("rdf:about", $about);
 
     foreach ($children as $child) {
-      $new = $this->domDoc->createElement($child['name']);
+      $new = $this->dom_doc->createElement($child['name']);
       $description->appendChild($new);
       if (isset($child['value'])) {
-        $value = $this->domDoc->createTextNode($child['value']);
+        $value = $this->dom_doc->createTextNode($child['value']);
         $new->appendChild($value);
       }
-      if (array_key_exists('attributes',$child)) {
+      if (array_key_exists('attributes', $child)) {
         foreach ($child['attributes'] as $key => $attVal) {
           $new->setAttribute($key, $attVal);
         }
@@ -70,8 +72,8 @@ class IslandoraRdfBuilder {
    */
   function addDescriptionsFromNodelist($nodeList) {
     foreach ($nodeList as $domElement) {
-      $domNode = $this->domDoc->importNode($domElement, true);
-      $this->root->appendChild($domNode);
+      $dom_node = $this->dom_doc->importNode($domElement, TRUE);
+      $this->root->appendChild($dom_node);
     }
   }
 
@@ -80,20 +82,19 @@ class IslandoraRdfBuilder {
    * it to this object's DOMDocument
    * @param NodeList $nodeList
    */
-
   function addDescriptionElement($domElement) {
-    $domNode = $this->domDoc->importNode($domElement, true);
-    $this->root->appendChild($domNode);
+    $dom_node = $this->dom_doc->importNode($domElement, TRUE);
+    $this->root->appendChild($dom_node);
   }
 
   function setXPath() {
-    $this->xpath = new DOMXPath($this->domDoc);
+    $this->xpath = new DOMXPath($this->dom_doc);
     $this->xpath->registerNamespace('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
     $this->xpath->registerNamespace('oa', 'http://www.w3.org/ns/openannotation/core/');
   }
 
   function deleteDescriptionElement($node_id) {
-    $xpath = new DOMXPath($this->domDoc);
+    $xpath = new DOMXPath($this->dom_doc);
     $candidates = $xpath->query("//rdf:Description[@rdf:about='$node_id']");
     foreach ($candidates as $candidate) {
       //$parent = $candidate->parentNode;
@@ -112,7 +113,7 @@ class IslandoraRdfBuilder {
    * vale for tag (optional)
    * @return array
    */
-  function build_child($name, $attributes= null, $value = null) {
+  function build_child($name, $attributes = NULL, $value = NULL) {
     $return_array = array();
     $return_array['name'] = $name;
     if ($value) {
@@ -127,12 +128,12 @@ class IslandoraRdfBuilder {
   }
 
   /**
-      *
-      * @param string $id
-      *  the uuid containing urn:uuid:...
-      * @return string
-      *   a uuid containing urn:uuid:... this is the uuid of the hasBody node
-      */
+   *
+   * @param string $id
+   *  the uuid containing urn:uuid:...
+   * @return string
+   *   a uuid containing urn:uuid:... this is the uuid of the hasBody node
+   */
   function getAnnotationBodyUrn($id) {
     if (empty($this->xpath)) {
       $this->setXPath();
@@ -145,13 +146,13 @@ class IslandoraRdfBuilder {
   }
 
   /**
-      *
-      * @param string $id
-      *  the uuid containing urn:uuid:...
-      * @return string
-      *   a uuid containing urn:uuid:... this is the uuid of the hasTarget node
-      *
-      */
+   *
+   * @param string $id
+   *  the uuid containing urn:uuid:...
+   * @return string
+   *   a uuid containing urn:uuid:... this is the uuid of the hasTarget node
+   *
+   */
   function getAnnotationTargetUrn($id) {
     if (empty($this->xpath)) {
       $this->setXPath();
@@ -165,13 +166,13 @@ class IslandoraRdfBuilder {
 
   /**
    *
-      * @param string $id
-      *  the uuid containing urn:uuid:...
-      * @return string
-      *   a uuid containing urn:uuid:... this is the uuid of the constrainedBy node
-      *
-      *
-      */
+   * @param string $id
+   *  the uuid containing urn:uuid:...
+   * @return string
+   *   a uuid containing urn:uuid:... this is the uuid of the constrainedBy node
+   *
+   *
+   */
   function getConstrainedTarget($id) {
     if (empty($this->xpath)) {
       $this->setXPath();

@@ -65,8 +65,7 @@
           <!-- Tabs -->
           <div id="tabs">
 
-            <ul>
-
+            <ul>             
               <li id="annotation_tab"><a href="#image-annotations">Image Annotations</a></li>
             </ul>
 

@@ -2,11 +2,12 @@
 
 /**
  * @file
- * Class override for grid display
+ * Class override for grid display in solr search results
  */
 
 /**
- * Extention of IslandoraSolrResults to create an alternative display type.
+ * Extention of IslandoraSolrResults to create an alternative display type.  This
+ * display is designed for the VDP project at UPEI and assumes certain fields.
  */
 class IslandoraSolrResultsAnno extends IslandoraSolrResults {
 

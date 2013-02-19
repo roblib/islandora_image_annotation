@@ -1,6 +1,11 @@
 <?php
+/**
+ * @file
+ * helper functions for the admin interface
+ */
 
 /**
+ * 
  * themes the form table.
  *
  * @param array $element Drupal Form Element.
@@ -53,7 +58,7 @@ function islandora_annotation_get_content_models() {
                and $ds1 <fedora-view:disseminationType> <info:fedora/*/DS-COMPOSITE-MODEL> in <#ri>)
                order by $title';
   $objects = $repository->repository->ri->itqlQuery($query, 'unlimited', '0');
-  $returnArray = array();
+  $return_array = array();
   foreach ($objects as $object) {
     $cmodel_pid = $object['object']['value'];
     if (strpos($cmodel_pid, 'fedora-system') !== 0) {
@@ -65,10 +70,10 @@ function islandora_annotation_get_content_models() {
         $title_string = $cmodel_pid;
       }
 
-      $returnArray[$cmodel_pid] = $cmodel_title;
+      $return_array[$cmodel_pid] = $cmodel_title;
     }
   }
-  return $returnArray;
+  return $return_array;
 }
 
 function get_annotation_dsids_from_dscomp($pid) {
@@ -103,7 +108,7 @@ function islandora_annotation_get_collections() {
                and $object <fedora-model:label> $title
                and $object <fedora-model:state> <info:fedora/fedora-system:def/model#Active>)';
   $objects = $repository->repository->ri->itqlQuery($query, 'unlimited', '0');
-  $returnArray = array();
+  $return_array = array();
   foreach ($objects as $object) {
     $cmodel_pid = $object['object']['value'];
     if (strpos($cmodel_pid, 'fedora-system') !== 0) {
@@ -115,10 +120,10 @@ function islandora_annotation_get_collections() {
         $title_string = $cmodel_pid;
       }
 
-      $returnArray[$cmodel_pid] = $cmodel_title;
+      $return_array[$cmodel_pid] = $cmodel_title;
     }
   }
-  return $returnArray;
+  return $return_array;
 }
 
 function islandora_annotation_get_taxonomies() {
