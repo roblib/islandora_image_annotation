@@ -371,6 +371,8 @@ function get_image_dimenions_drupal($pid, $dsid, $update = FALSE) {
 }
 
 /**
+ * TODO: modify this function as it could be DESTRUCTIVE if something else is 
+ * being stored in RELS-INT
  * update the object so the RELS-INT datastream contains the height and width of the 
  * selected datastream.  We are using the standard islandora RELS-INT namespace
  * @param string $pid

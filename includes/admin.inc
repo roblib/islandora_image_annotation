@@ -10,7 +10,7 @@ function islandora_image_annotation_admin() {
   drupal_add_css(drupal_get_path('module', 'islandora_image_annotation') . '/css/islandora_annotation.css');
   $form = array();
   $coptions = islandora_annotation_get_content_models();
-  $selected = variable_get('islandora_annotation_mappings', NULL);
+  $selected = variable_get('islandora_annotation_mappings', array());
   $enforced = variable_get('islandora_annotation_enforce_taxonomy', 0);
   $optimized = variable_get('islandora_annotation_optimized', 1);
   $chosen = array_keys($selected);
