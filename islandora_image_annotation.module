@@ -89,8 +89,9 @@ function islandora_image_annotation_menu() {
     'file' => 'includes/callbacks.inc',
   );
 
-  $items['islandora/object/%islandora_object/view/annotation'] = array(
-    'title' => 'Image Annotation',
+  $items['islandora/object/%islandora_object/annotation'] = array(
+    'weight' => -2,
+    'title' => 'Annotations',
     'page callback' => 'islandora_image_annotation_view',
     'page arguments' => array(2),
     'type' => MENU_LOCAL_TASK,
@@ -181,6 +182,10 @@ function islandora_image_annotation_preprocess_islandora_image_annotation_view(&
   global $base_url;
   $islandora_object = $variables['islandora_object'];
   $pid = $islandora_object->id;
+  $label = $islandora_object->label;
+  if(!empty($label)){
+    drupal_set_title($label);
+  }
   $path = drupal_get_path('module', 'islandora_image_annotation');
   $src = "$base_url/$path/shared_canvas/index.php?PID=$pid";
   $variables['islandora_image_annotation_src'] = $src;
