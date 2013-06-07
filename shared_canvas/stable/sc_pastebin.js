@@ -146,6 +146,7 @@ function islandora_updateAnno(urn, title,annoType, content, color){
             strokeWidth: $('#stroke_width').val()
         },
         success: function(data,status,xhr) {
+            content = content.replace(/\n/g, '<br/>');
             $('#create_annotation_box').hide();
             var selector = '#anno_'+urn;
             var text = $(selector).text().trim().substring(2,100);
@@ -155,7 +156,7 @@ function islandora_updateAnno(urn, title,annoType, content, color){
 
             $(selector).html(new_title);
             $(selector).next('.comment_text').find('.comment_type').text(annoType);
-            $(selector).next('.comment_text').find('.comment_content').text(content);
+            $(selector).next('.comment_text').find('.comment_content').html(content);
             var fixed_cat = annoType.replace(/[^\w]/g,'');
 
             $annotation = $(selector).closest('.canvas_annotation');
