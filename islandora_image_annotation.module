@@ -90,15 +90,15 @@ function islandora_image_annotation_menu() {
   );
 
   $items['islandora/object/%islandora_object/annotation'] = array(
-    'weight' => -2,
-    'title' => 'Annotations',
+    'weight' => -3,
+    'title' => 'Annotation',
     'page callback' => 'islandora_image_annotation_view',
     'page arguments' => array(2),
     'type' => MENU_LOCAL_TASK,
     'access callback' => 'islandora_image_annotation_access',
     'access arguments' => array(2),
   );
-
+  
   return $items;
 }
 

@@ -73,7 +73,7 @@ function startAnnotating() {
 }
 
 function startEditting(title, annotation, annoType, urn) {
-    $('#anno_color_activated').attr('value', '');
+     $('#anno_color_activated').attr('value', '');
     if ($('#create_annotation').text() == 'Annotating') {
         return;
     }
@@ -87,8 +87,8 @@ function startEditting(title, annotation, annoType, urn) {
         top:200,
         left:35
     });
-    $('#anno_title').val(title);
-    $('#anno_text').val(annotation);
+    $('#anno_title').html(title);
+    $('#anno_text').html(annotation);
     $('#anno_classification').val(annoType);
     $('#saveAnno').html('<span class="ui-button-text">Update Annotation</span>');
     $('#saveAnno').attr('urn', urn);
