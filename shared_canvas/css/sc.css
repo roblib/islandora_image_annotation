@@ -383,6 +383,7 @@ A:link {
 
 .comment_type{
   font-style:italic;
+  display: none;
 }
 
 .islandora_comment_type_title{

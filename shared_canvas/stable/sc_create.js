@@ -11,7 +11,7 @@ var outsideStyle = islandora_getOutsideStyle()
 //    fill: 'none',
 //    opacity: 'none',
     
- //   stroke: 'black'
+//   stroke: 'black'
 //};
 var insideStyle = {
     fill: '#FFFFFF',
@@ -73,7 +73,7 @@ function startAnnotating() {
 }
 
 function startEditting(title, annotation, annoType, urn) {
-     $('#anno_color_activated').attr('value', '');
+    $('#anno_color_activated').attr('value', '');
     if ($('#create_annotation').text() == 'Annotating') {
         return;
     }
@@ -87,8 +87,15 @@ function startEditting(title, annotation, annoType, urn) {
         top:200,
         left:35
     });
-    $('#anno_title').html(title);
-    $('#anno_text').html(annotation);
+    if(islandora_canvas_params.islandora_anno_use_title_vocab == 1){
+        $('#islandora_titles').empty();
+        $('<label for="anno_title">Title:</label>').appendTo('#islandora_titles');
+        var titles = $('<select  id="anno_title">').appendTo('#islandora_titles');  
+        titles.append($("<option>").attr('value',title).text(title));
+    } else {
+        $('#anno_title').val(title);
+    }
+    $('#anno_text').val(annotation);
     $('#anno_classification').val(annoType);
     $('#saveAnno').html('<span class="ui-button-text">Update Annotation</span>');
     $('#saveAnno').attr('urn', urn);
@@ -116,17 +123,17 @@ function closeAndEndAnnotating() {
     });
     //destroy or hide all annos both render and block represtentations
     $('.comment_text').each(function(i, el) {                        
-                        $(el).hide();                         
-                    });
+        $(el).hide();                         
+    });
     $('.comment_title').each(function(i, el) {                        
-                        $(el).toggleClass('annotation-opened');                         
-                    });
+        $(el).toggleClass('annotation-opened');                         
+    });
     $('.comment_showhide').each(function(i, el) {  
-                       $(el).text('+ ');                         
-                    });  
+        $(el).text('+ ');                         
+    });  
     $('.mycolor').each(function(i, el) {                        
-                        $(el).hide();                         
-                    }); 
+        $(el).hide();                         
+    }); 
 	
     $('#create_annotation_box').hide();
     // empty fields
@@ -734,7 +741,7 @@ function islandora_getOutsideStyle(){
     if($('#anno_color_activated').attr('value') == 'active'){
         color = $('#anno_color').attr('value');
     }
-     var outsideStyle = {
+    var outsideStyle = {
         fill: 'none',
         opacity: 'none',
         'stroke-width': + $('#stroke_width').val() + '%' ,
