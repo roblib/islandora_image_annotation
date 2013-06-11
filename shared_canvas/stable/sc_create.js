@@ -95,7 +95,8 @@ function startEditting(title, annotation, annoType, urn) {
     } else {
         $('#anno_title').val(title);
     }
-    $('#anno_text').val(annotation);
+   // $('#anno_text').html(annotation);
+    $('#anno_text').htmlarea('html',annotation);
     $('#anno_classification').val(annoType);
     $('#saveAnno').html('<span class="ui-button-text">Update Annotation</span>');
     $('#saveAnno').attr('urn', urn);
@@ -138,7 +139,7 @@ function closeAndEndAnnotating() {
     $('#create_annotation_box').hide();
     // empty fields
     $('#anno_title').val('');
-    $('#anno_text').val('');
+    $('#anno_text').htmlarea('html',''); 
     $('#anno_aboutCanvas').prop('checked', false);
     $('#anno_isResource').prop('checked', false);
     $('#annotation_tab').tabs('select', 0);
@@ -212,7 +213,7 @@ function saveAnnotation() {
         //if title is a select box we want the title not the pid
         title = $('#anno_title option:selected').text();
     }
-    var content = $('#anno_text').val();
+    var content = $('#anno_text').htmlarea('toHtmlString');
     var annoType = $('#anno_classification').val();
     var color = '';
 
@@ -378,7 +379,7 @@ function create_rdfAnno() {
     // Build Body
     var isResc = $('#anno_isResource').prop('checked');
     var tgtsCanvas = $('#anno_aboutCanvas').prop('checked');
-    var content = $('#anno_text').val();
+    var content = $('#anno_text').htmlarea('toHtmlString');
     
     if (isResc == true) {
         // XXX Could be constrained resource, eg part of an XML or image

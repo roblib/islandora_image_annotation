@@ -226,6 +226,12 @@ function maybeResize() {
 // Let's start it up!
 
 $(document).ready(function(){
+    $('#anno_text').htmlarea({
+                toolbar: ["html", "|",
+                        "forecolor",  // <-- Add the "forecolor" Toolbar Button
+                        "|", "bold", "italic", "underline", "|", "h1", "h2", "h3"] // Overrides/Specifies the Toolbar buttons to show
+                });
+
     $.urlParam = function(name){
         var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
         if (!results)
@@ -299,7 +305,7 @@ $(document).ready(function(){
                     if(key == 'edit'){
                         $(this).addClass('annotation-opened').next().show();
                         var annotation = comment_text.find('.comment_content').html();
-                        annotation = annotation.replace(/<br\s*[\/]?>/gi,"\n");
+                        //annotation = annotation.replace(/<br\s*[\/]?>/gi,"\n");
                         var pm = $(this).find('.comment_showhide');
                         if (pm.text() == '+ ') {
                             pm.empty().append('- ');
@@ -392,9 +398,9 @@ $(document).ready(function(){
                         }, function(mads){               
                             var mads_text = "";
                             $.each(mads, function(i, val) {
-                                mads_text += i +': ' +val + '\n\n';                   
+                                mads_text += i +': ' +val + '<br /><br />';    //'\n\n'               
                             });
-                            $('#anno_text').val(mads_text);
+                            $('#anno_text').html(mads_text);
                         });
            
                     });  

@@ -156,7 +156,7 @@ function get_normal_sequence($doc_url, $doc_path_url, $pid, $height, $width) {
   $children[] = $rdf->build_child('rdf:type', array('rdf:resource' => 'http://dms.stanford.edu/ns/Canvas'));
   $rdf->addDescriptionNode($name, $children);
 
-  $name = "urn:uuid:07fbb971-6acb-48ce-9ed4-1789dfe5b3a0";
+  //$name = "urn:uuid:07fbb971-6acb-48ce-9ed4-1789dfe5b3a0";
   $children = array();
   $children[] = $rdf->build_child('rdf:type', array('rdf:resource' => 'http://purl.org/dc/terms/Agent'));
   $children[] = $rdf->build_child('foaf:name', NULL, "SharedCanvas: Python/rdflib");

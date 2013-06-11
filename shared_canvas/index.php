@@ -37,6 +37,15 @@
     <script src="stable/sc_rdfjson.js" type="text/javascript"></script>
     <script src="stable/sc_create.js" type="text/javascript"></script>
     <script src="stable/sc_gdata.js" type="text/javascript"></script>
+    
+   
+    
+    <!-- JHTML jQuery plugin -->
+    <script src="js/jHtmlArea-0.7.5.min.js" type="text/javascript"></script>
+    <script src="js/jHtmlArea.ColorPickerMenu-0.7.0.min.js" type="text/javascript"></script>
+    <link rel="Stylesheet" type="text/css" href="style/jHtmlArea.css" />
+    <link rel="Stylesheet" type="text/css" href="style/jHtmlArea.ColorPickerMenu.css" />
+
 
     <!-- Canvas css -->
     <link rel="stylesheet" href="css/sc.css" type="text/css" />
@@ -51,7 +60,9 @@
     <script type="text/javascript" src="js/jquery/jquery.miniColors.js"></script>
     <link type="text/css" rel="stylesheet" href="css/jquery.miniColors.css" />
 
-
+   <style type="text/css">
+        div.jHtmlArea { border: solid 1px #ccc; }
+    </style>
   </head>
   <body>
     <!-- Header -->
@@ -156,7 +167,7 @@
 
           <div class="element-wrap">
             <label for="anno_text">Annotation:</label>
-            <textarea id="anno_text" cols="40" rows="5"></textarea>
+            <textarea id="anno_text" cols="40" rows="7"></textarea>
           </div>
           <!-- Services - to be removed -->
           <span style="width:200px;margin:0px;padding:0px;float:left">
