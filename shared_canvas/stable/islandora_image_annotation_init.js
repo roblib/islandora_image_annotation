@@ -229,7 +229,7 @@ $(document).ready(function(){
     $('#anno_text').htmlarea({
                 toolbar: ["html", "|",
                         "forecolor",  // <-- Add the "forecolor" Toolbar Button
-                        "|", "bold", "italic", "underline", "|", "h1", "h2", "h3"] // Overrides/Specifies the Toolbar buttons to show
+                        "|", "bold", "italic", "underline"] // Overrides/Specifies the Toolbar buttons to show
                 });
 
     $.urlParam = function(name){
