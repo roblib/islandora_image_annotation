@@ -169,7 +169,11 @@ function islandora_shared_transform_annotation_list($xml_in, $input_type) {
   $xsl = new DomDocument();
   $xsl->load($xslts[$input_type]);
   $input = new DomDocument();
-  $input->loadXML(trim($xml_in));
+  if($input_type == 'html'){
+    $input->loadHTML(trim($xml_in));
+  } else {
+    $input->loadXML(trim($xml_in));
+  }
   $xsl = $proc->importStylesheet($xsl);
   $newdom = $proc->transformToDoc($input);
   $return_xml = $newdom->saveXML();

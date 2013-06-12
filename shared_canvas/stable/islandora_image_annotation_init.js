@@ -398,9 +398,9 @@ $(document).ready(function(){
                         }, function(mads){               
                             var mads_text = "";
                             $.each(mads, function(i, val) {
-                                mads_text += i +': ' +val + '<br /><br />';    //'\n\n'               
+                                mads_text += i +': ' +val + '\n\n';             
                             });
-                            $('#anno_text').html(mads_text);
+                            $('#anno_text').htmlarea('html',mads_text);
                         });
            
                     });  

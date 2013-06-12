@@ -77,7 +77,7 @@
                         <xsl:attribute name="property">
                             <xsl:value-of select="name()"/>
                         </xsl:attribute>
-                        <xsl:value-of select="."/>
+                        <xsl:copy-of select="./child::node()"/>
                     </span>
                 </xsl:otherwise>
             </xsl:choose>

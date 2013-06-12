@@ -146,7 +146,7 @@ function islandora_updateAnno(urn, title,annoType, content, color){
             strokeWidth: $('#stroke_width').val()
         },
         success: function(data,status,xhr) {
-            content = content.replace(/\n/g, '<br/>');
+            //content = content.replace(/\n/g, '<br/>');
             $('#create_annotation_box').hide();
             var selector = '#anno_'+urn;
             var text = $(selector).text().trim().substring(2,100);

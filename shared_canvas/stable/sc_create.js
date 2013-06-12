@@ -136,13 +136,14 @@ function closeAndEndAnnotating() {
         $(el).hide();                         
     }); 
 	
-    $('#create_annotation_box').hide();
+    
     // empty fields
-    $('#anno_title').val('');
-    $('#anno_text').htmlarea('html',''); 
+    //$('#anno_title').val('');
+    $('#anno_text').htmlarea('html',' '); 
     $('#anno_aboutCanvas').prop('checked', false);
     $('#anno_isResource').prop('checked', false);
     $('#annotation_tab').tabs('select', 0);
+    $('#create_annotation_box').hide();
     var tabs = $('#tabs').tabs();
     tabs.tabs('select', 3);
 

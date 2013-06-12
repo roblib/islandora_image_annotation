@@ -28,7 +28,7 @@
                     <xsl:for-each select="./span">
                         <xsl:element name="{@property}">
                             <xsl:value-of select="./@content"/>
-                            <xsl:value-of select="."/>
+                            <xsl:copy-of select="./child::node()"/>
                         </xsl:element>
                     </xsl:for-each>
                 </rdf:Description>
