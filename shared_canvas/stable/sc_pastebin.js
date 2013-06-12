@@ -171,6 +171,9 @@ function islandora_updateAnno(urn, title,annoType, content, color){
                 cnv = $(this).attr('canvas');
                 destroyAll(cnv);
             });
+            
+             //$('#anno_title').val('');
+            $('#anno_text').htmlarea('html',' '); 
             //reset all the annos in the columns so things are consistent.
            	
             $('#create_annotation_box').hide();   
