@@ -35,7 +35,7 @@ function islandora_image_annotation_get_recently_viewed() {
   }
   if (empty($links)) {
     drupal_set_message(t('No recently viewed annotations found.'), 'info');
-    return;
+    return " ";
   }
 
   return theme('islandora_image_annotation_recent_views', array('items' => $links));
