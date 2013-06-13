@@ -11,6 +11,11 @@
  * @global type $user
  */
 function islandora_image_annotation_get_recently_viewed() {
+  if(!module_exists('statistics')){
+    drupal_set_message(t('No recently viewed annotations found.  The Statistics module 
+      must be enabled for the recent views to function.'), 'info');
+    return '';
+  }
   $limit = variable_get('islandora_image_annotation_recent_views_limit', 15);
   global $user;
   global $base_url;
@@ -29,8 +34,7 @@ function islandora_image_annotation_get_recently_viewed() {
       'title' => $row->title ? $row->title : t('No Title'), 'url_only' => $base_url . '/' . $row->path);
   }
   if (empty($links)) {
-    drupal_set_message(t('No recently viewed annotations found.  The Statistics module 
-      may need to be enabled'), 'info');
+    drupal_set_message(t('No recently viewed annotations found.'), 'info');
     return;
   }
 
