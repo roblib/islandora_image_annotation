@@ -21,3 +21,8 @@ have to update them as well.
 
 If you have solr configured properly and have Annotation Categories set as user 
 defined you will have a type ahead for the Annotations categories section.
+
+Recently Viewed:
+The menu path islandora/anno/recent will only return results if you have the
+statitics module enabled.  This module is not defined as requiring the statistics 
+module as only the recently viewed relies on the statistics module.

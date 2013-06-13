@@ -98,6 +98,13 @@ function islandora_image_annotation_menu() {
     'access callback' => 'islandora_image_annotation_access',
     'access arguments' => array(2),
   );
+  $items['islandora/anno/recent'] = array(
+    'title' => 'Recently Viewed Annotations',
+    'page callback' => 'islandora_image_annotation_get_recently_viewed',
+    'type' => MENU_CALLBACK,
+    'access arguments' => array(ISLANDORA_IMAGE_ANNOTATION_VIEW),
+    'file' => 'includes/recently_viewed.inc',
+  );
   
   return $items;
 }
@@ -157,6 +164,10 @@ function islandora_image_annotation_theme($existing, $type, $theme, $path) {
     'islandora_image_annotation_solr' => array(
       'template' => 'theme/islandora-image-annotation-solr',
       'variables' => array('results' => NULL, 'elements' => array(), 'key_fields' => array()),
+    ),
+    'islandora_image_annotation_recent_views' => array(
+      'template' => 'theme/islandora-image-annotation-recent-views',
+      'variables' => array('arr' => NULL),
     ),
   );
 }
