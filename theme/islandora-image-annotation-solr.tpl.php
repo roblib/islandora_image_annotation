@@ -36,7 +36,7 @@
         <?php $row_field = 0; ?>
         <?php $max_rows = count($results[$row_result]) - 1; ?>
         <?php foreach($result as $key => $value): ?>
-        <?php if($value['label'] !== 'Link') : ?>
+        <?php if($value['label'] !== 'Link' && $value['label'] !== 'Annotation ID' ) : ?>
           <dt class="solr-label <?php print $value['class']; ?><?php print $row_field == 0 ? ' first' : ''; ?><?php print $row_field == $max_rows ? ' last' : ''; ?>">
             <?php print $value['label']; ?>
           </dt>
