@@ -398,7 +398,7 @@ $(document).ready(function(){
                         }, function(mads){               
                             var mads_text = "";
                             $.each(mads, function(i, val) {
-                                mads_text += i +': ' +val + '<br /><br />'; //\n\n            
+                                mads_text += <b>i</b> +': ' +val + '<br /><br />'; //\n\n            
                             });
                             $('#anno_text').htmlarea('html',mads_text);
                         });
