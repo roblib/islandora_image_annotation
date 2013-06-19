@@ -7,8 +7,13 @@
 
 /**
  * queries the accesslog table to find recently viewed image annotations 
- * accesslog is depentant on the statistics module being enabled
- * @global type $user
+ * accesslog is depentant on the statistics module being enabled.
+ * 
+ * Currently there is no check to see if an object has been deleted before we try 
+ * to add it to the list.  
+ * 
+ * 
+ * @global object $user
  */
 function islandora_image_annotation_get_recently_viewed() {
   if(!module_exists('statistics')){
@@ -16,6 +21,7 @@ function islandora_image_annotation_get_recently_viewed() {
       must be enabled for the recent views to function.'), 'info');
     return '';
   }
+  //TODO: update the admin form so this is configurable
   $limit = variable_get('islandora_image_annotation_recent_views_limit', 15);
   global $user;
   global $base_url;
@@ -28,6 +34,7 @@ function islandora_image_annotation_get_recently_viewed() {
     $result = db_query("SELECT DISTINCT title, path FROM {accesslog} WHERE uid = :uid AND path LIKE :url_limiter ORDER BY timestamp DESC LIMIT $limit", array(':uid' => $user->uid, ':url_limiter' => $url_limiter));
   }
   foreach ($result as $row) {
+    //we are assuming all annotations have a thumbnail
     $thumbnail_url = $base_url . '/' . str_replace('annotation', 'datastream/TN/view', $row->path);
     $thumbnail = "<img src = '$thumbnail_url'/>";
     $links[] = array('TN' => $thumbnail, 'link' => l($row->title ? $row->title : t('No Title'), $row->path),
